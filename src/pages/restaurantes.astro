@@ -1,0 +1,32 @@
+---
+import NichePage from '../components/NichePage.astro';
+import PhoneFrame from '../components/PhoneFrame.astro';
+import { site } from '../config/site';
+const pack = site.packs[0];
+---
+<NichePage
+  pack={pack}
+  metaTitle="Carta online con pedidos por WhatsApp para restaurantes"
+  metaDescription="Carta digital para tu restaurante con pedidos directos a tu WhatsApp, sin comisiones por pedido. Lista en 5 días."
+  title="Tu carta online. Los pedidos, a tu WhatsApp."
+  lead="Tus clientes escanean el QR o entran desde Instagram, eligen y el pedido te llega completo al WhatsApp del local. Sin apps de por medio y sin comisión por pedido."
+  problem="Cada pedido que entra por una app de reparto deja parte del margen por el camino. Los clientes que ya te conocen pueden pedirte directamente."
+  benefits={[
+    ['Pedidos directos', 'El pedido llega ordenado a tu WhatsApp: qué quiere, cuánto es y a dónde va.'],
+    ['Sin comisiones', 'Pagas una cuota fija al mes, vendas 10 pedidos o 1.000.'],
+    ['Tú controlas la carta', 'Cambias platos, precios o agotados desde una hoja de Google, sin llamarnos.'],
+    ['QR para mesas y flyers', 'La misma carta sirve para el local, para llevar y para reparto.'],
+    ['Alérgenos claros', 'Cada plato muestra sus alérgenos, como pide la normativa.'],
+    ['Tu marca, no la de una app', 'Tus colores, tus fotos y tu dominio. El cliente recuerda tu nombre.'],
+  ]}
+  projectSlugs={['italy-pizza']}
+  faq={[
+    { question: '¿Tengo que dejar Glovo o Just Eat?', answer: 'No. Sigue usándolas si te funcionan. La carta propia es para que los clientes que ya te conocen te pidan directamente, sin comisión.' },
+    { question: '¿Cómo me llegan los pedidos?', answer: 'Al WhatsApp del local, con el pedido completo y el total. Tú confirmas y cobras como ya lo haces: efectivo, Bizum o datáfono.' },
+    { question: '¿Y si cambio un precio o se me acaba un plato?', answer: 'Lo cambias en una hoja de Google, como una lista normal, y la carta se actualiza sola.' },
+    { question: '¿Qué necesito para empezar?', answer: 'Tu carta actual (vale una foto) y, si tienes, fotos de los platos. Con eso te preparamos la demo gratis.' },
+    { question: '¿Qué incluyen los 15 € al mes?', answer: site.monthlyIncludes },
+  ]}
+>
+  <div slot="visual" class="desk-composition niche-visual"><PhoneFrame class="hero-phone hero-phone--solo" src="/proyectos/italy-pizza-mobile.webp" alt="Carta online de Italy Pizza en el móvil" /><div class="hero-note">italypizza.es<br/>proyecto real ↘</div></div>
+</NichePage>

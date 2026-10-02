@@ -1,0 +1,25 @@
+{
+  "slug": "alojamiento-la-rueca",
+  "title": "Alojamiento La Rueca",
+  "summary": "Web para un alojamiento rural de grupos en los Arribes del Duero.",
+  "category": "Web",
+  "services": ["Diseño web", "Desarrollo", "Multilingüe", "SEO"],
+  "client": "La Rueca · Fariza, Zamora",
+  "year": "2026",
+  "featured": true,
+  "order": 2,
+  "isDemo": false,
+  "cover": "/proyectos/la-rueca-desktop.webp",
+  "coverAlt": "Web de Alojamiento La Rueca en escritorio, con paisaje de los Arribes del Duero",
+  "gallery": [
+    { "src": "/proyectos/la-rueca-desktop.webp", "alt": "Inicio de alojamientolarueca.com en escritorio", "caption": "Capacidad, propuesta y llamada a la acción desde la primera pantalla", "type": "image" },
+    { "src": "/proyectos/la-rueca-mobile.webp", "alt": "Inicio de alojamientolarueca.com en el móvil", "caption": "La misma información, ordenada para el móvil", "type": "image" }
+  ],
+  "challenge": "Explicar un espacio para grupos (asociaciones, colegios, retiros) con toda la información práctica que necesita quien organiza: capacidad, actividades, cómo llegar y cómo reservar.",
+  "approach": "Ordenamos la web según lo que pregunta un organizador: espacios y capacidad, experiencias, itinerarios de ejemplo, preguntas frecuentes y mapas interactivos para llegar y explorar la zona. Todo en varios idiomas y preparado para buscadores.",
+  "deliverables": ["Web multilingüe", "Mapas interactivos", "Páginas de actividades", "Preguntas frecuentes", "Dossier descargable", "SEO y sitemap"],
+  "outcome": "Una web publicada en alojamientolarueca.com que responde las dudas de los grupos antes de que escriban y les lleva directo al contacto.",
+  "externalUrl": "https://alojamientolarueca.com",
+  "accentColor": "#7fa36b",
+  "templateVariant": "web"
+}

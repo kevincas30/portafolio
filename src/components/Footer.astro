@@ -9,14 +9,16 @@ const year = new Date().getFullYear();
       <nav class="footer-links" aria-label="Navegación del pie">
         <b>Explorar</b>
         {site.navigation.map((item) => <a href={item.href}>{item.label}</a>)}
+        <a href="/servicios/diseno-para-redes">Diseño para redes</a>
+        <a href="/nosotros">Nosotros</a>
       </nav>
       <div class="footer-links">
         <b>Hablemos</b>
         {site.email && <a href={`mailto:${site.email}`}>{site.email}</a>}
-        {site.whatsapp && <a href={site.whatsapp} rel="noreferrer">WhatsApp</a>}
+        {site.whatsapp && <a href={site.whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp {site.whatsappDisplay}</a>}
         {site.socials.map((social) => <a href={social.url} rel="noreferrer">{social.label}</a>)}
         {!site.email && !site.whatsapp && <a href="/contacto">Formulario de contacto →</a>}
-        <span>México · España</span>
+        <span>{site.area}</span>
       </div>
     </div>
     <div class="footer-bottom">

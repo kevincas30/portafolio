@@ -13,13 +13,14 @@ const path = Astro.url.pathname;
         <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
         <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.3A9 9 0 0 1 8.7 3.5a9 9 0 1 0 11.8 11.8Z"></path></svg>
       </button>
-      <a class="button button--lime nav-cta" href="/contacto">Cuéntanos tu idea <span aria-hidden="true">↗</span></a>
+      <a class="button button--lime nav-cta" href={site.whatsapp} target="_blank" rel="noopener noreferrer">Demo gratis <span aria-hidden="true">↗</span></a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Abrir menú"><span aria-hidden="true">☰</span></button>
     </div>
   </div>
   <nav class="mobile-nav" id="mobile-menu" data-open="false" aria-label="Navegación móvil">
     {site.navigation.map((item) => <a href={item.href}>{item.label}</a>)}
-    <div class="mobile-meta">México · España · Proyectos desde cualquier lugar</div>
+    <a class="button mobile-cta" href={site.whatsapp} target="_blank" rel="noopener noreferrer">Pedir demo gratis por WhatsApp <span aria-hidden="true">↗</span></a>
+    <div class="mobile-meta">{site.area}</div>
   </nav>
 </header>
 

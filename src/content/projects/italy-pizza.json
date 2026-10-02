@@ -1,0 +1,25 @@
+{
+  "slug": "italy-pizza",
+  "title": "Italy Pizza",
+  "summary": "Carta online con pedidos por WhatsApp para una pizzería de Zamora.",
+  "category": "Web",
+  "services": ["Diseño web", "Desarrollo", "Carta digital", "Pedidos por WhatsApp"],
+  "client": "Italy Pizza · Fariza, Zamora",
+  "year": "2026",
+  "featured": true,
+  "order": 1,
+  "isDemo": false,
+  "cover": "/proyectos/italy-pizza-desktop.webp",
+  "coverAlt": "Web de Italy Pizza en escritorio, con el titular Sabor que nos reúne",
+  "gallery": [
+    { "src": "/proyectos/italy-pizza-desktop.webp", "alt": "Inicio de italypizza.es en escritorio", "caption": "La carta, el pedido y la información del local en la primera pantalla", "type": "image" },
+    { "src": "/proyectos/italy-pizza-mobile.webp", "alt": "Inicio de italypizza.es en el móvil", "caption": "Pensada para el móvil: así la ve quien escanea el QR", "type": "image" }
+  ],
+  "challenge": "La pizzería necesitaba que sus clientes vieran la carta y pidieran desde el móvil, sin depender de apps de reparto y sin tener que tocar la web cada vez que cambia un precio.",
+  "approach": "Diseñamos una carta cálida pensada para el móvil, con fotos y alérgenos, y un carrito que envía el pedido completo al WhatsApp del local. La carta se gestiona desde una hoja de Google: los dueños cambian platos y precios sin tocar código.",
+  "deliverables": ["Carta digital con fotos y alérgenos", "Carrito con pedido por WhatsApp", "Carta editable desde Google Sheets", "Mapa de zonas de reparto", "Código QR para las mesas", "Blog del local"],
+  "outcome": "Una carta online publicada en italypizza.es, que el negocio actualiza por su cuenta y que recibe pedidos directos por WhatsApp, sin comisiones por pedido.",
+  "externalUrl": "https://www.italypizza.es",
+  "accentColor": "#f2a516",
+  "templateVariant": "web"
+}

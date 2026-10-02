@@ -22,6 +22,12 @@ El sitio se genera como HTML estático (`output: 'static'`) con el adaptador `@a
 - Los textos de cada página están en `src/pages/`.
 - Los componentes reutilizables viven en `src/components/`.
 
+### Packs, precios y WhatsApp
+
+- WhatsApp, email, packs (`packs`), cuota mensual y precio de lanzamiento (`launchOffer`) están en `src/config/site.ts`. Las tarjetas de precios, las páginas `/restaurantes` y `/alojamientos` y todos los botones de WhatsApp leen de ahí.
+- Cuando se cubran las plazas del precio de lanzamiento, pon `launchOffer.enabled` en `false`: anunciar plazas limitadas que ya no lo son engaña al cliente.
+- `waLink(texto)` genera un enlace de WhatsApp con el mensaje ya escrito.
+
 ### 2. Añadir un proyecto
 
 Duplica uno de los JSON de `src/content/projects/`, cambia `slug` y completa todos los campos. El esquema tipado y validado está en `src/content.config.ts`. Las variantes disponibles son `web`, `social` y `video`. Los bloques opcionales (`testimonial`, `video`, `beforeAfter`, `metrics`, `externalUrl`) desaparecen si no existen.

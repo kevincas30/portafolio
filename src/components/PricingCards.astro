@@ -1,0 +1,37 @@
+---
+import { site, waLink, launchPrice } from '../config/site';
+const offer = site.launchOffer;
+---
+<div class="pricing" data-reveal>
+  {offer.enabled && (
+    <p class="pricing-offer"><b>Precio de lanzamiento:</b> {offer.discount}% de descuento para los {offer.slots} primeros negocios.</p>
+  )}
+  <div class="pricing-grid">
+    {site.packs.map((pack) => (
+      <article class="price-card">
+        <span class="label">{pack.label}</span>
+        <h3>{pack.title}</h3>
+        <p class="price-pitch">{pack.pitch}</p>
+        <div class="price-amount">
+          {offer.enabled ? (
+            <>
+              <s aria-label={`Antes ${pack.price} euros`}>{pack.price} €</s>
+              <strong>{launchPrice(pack.price)} €</strong>
+            </>
+          ) : (
+            <strong>{pack.price} €</strong>
+          )}
+          <span>pago único + {pack.monthly} €/mes</span>
+        </div>
+        <ul class="price-list">{pack.includes.map((item) => <li>{item}</li>)}</ul>
+        {pack.extra && <p class="price-extra">{pack.extra}</p>}
+        <p class="price-delivery">{pack.delivery}, desde que tenemos tu material.</p>
+        <div class="button-row">
+          <a class="button button--lime" href={waLink(pack.waText)} target="_blank" rel="noopener noreferrer">Pedir demo gratis <span aria-hidden="true">↗</span></a>
+          <a class="arrow-link" href={pack.href}>Ver detalles <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+    ))}
+  </div>
+  <p class="pricing-note"><b>Los {site.packs[0].monthly} €/mes incluyen:</b> {site.monthlyIncludes} Se paga el 50% al empezar y el 50% al publicar, por Bizum o transferencia.</p>
+</div>

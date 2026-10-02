@@ -1,0 +1,33 @@
+---
+import NichePage from '../components/NichePage.astro';
+import BrowserFrame from '../components/BrowserFrame.astro';
+import PhoneFrame from '../components/PhoneFrame.astro';
+import { site } from '../config/site';
+const pack = site.packs[1];
+---
+<NichePage
+  pack={pack}
+  metaTitle="Webs para casas rurales y alojamientos con reservas directas"
+  metaDescription="Web para tu casa rural o alojamiento con galería, mapa y reservas directas por WhatsApp o email, sin comisión por reserva."
+  title="Tu alojamiento, con reservas directas."
+  lead="Una web que enseña tu casa y tu entorno, responde las dudas antes de que te escriban y lleva al cliente directo a reservar contigo."
+  problem="Cuando el huésped solo te encuentra en una plataforma, cada reserva paga comisión. Con una web propia, quien ya te conoce o repite reserva contigo."
+  benefits={[
+    ['Contacto directo', 'Un botón para escribirte por WhatsApp o email y reservar contigo, sin intermediarios.'],
+    ['Fotos que venden', 'Una galería pensada para el móvil, que es donde se decide un viaje.'],
+    ['Cómo llegar, resuelto', 'Mapa interactivo para llegar y para descubrir la zona.'],
+    ['Las dudas, antes de que pregunten', 'Capacidad, servicios, normas y preguntas frecuentes, claras y a mano.'],
+    ['Que te encuentren', 'SEO básico para que Google entienda qué ofreces y dónde estás.'],
+    ['Tu casa, tu marca', 'Tus colores, tus fotos y tu dominio. El huésped recuerda tu nombre.'],
+  ]}
+  projectSlugs={['alojamiento-la-rueca']}
+  faq={[
+    { question: '¿Tengo que dejar Booking o Airbnb?', answer: 'No. La web propia es para que los huéspedes que repiten, o que te encuentran en Google, reserven contigo sin comisión.' },
+    { question: '¿Incluye un sistema de reservas?', answer: 'El pack incluye un botón de contacto directo por WhatsApp o email, que es lo que mejor funciona en alojamientos pequeños. Si quieres un sistema de reservas con calendario o pago online, consúltanos y te lo presupuestamos.' },
+    { question: '¿Puede estar en inglés?', answer: 'Sí. La versión en otros idiomas se presupuesta aparte según el número de secciones.' },
+    { question: '¿Qué necesito para empezar?', answer: 'Fotos de la casa y del entorno, y lo que quieras contar. Si no tienes textos, te ayudamos a escribirlos.' },
+    { question: '¿Qué incluyen los 15 € al mes?', answer: site.monthlyIncludes },
+  ]}
+>
+  <div slot="visual" class="desk-composition niche-visual"><BrowserFrame class="hero-browser" src="/proyectos/la-rueca-desktop.webp" alt="Web de Alojamiento La Rueca en escritorio" /><PhoneFrame class="hero-phone" src="/proyectos/la-rueca-mobile.webp" alt="Web de Alojamiento La Rueca en el móvil" /><div class="hero-note">alojamientolarueca.com<br/>proyecto real ↘</div></div>
+</NichePage>

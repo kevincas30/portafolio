@@ -2,23 +2,29 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import BrowserFrame from '../../components/BrowserFrame.astro';
+import PhoneFrame from '../../components/PhoneFrame.astro';
+import PricingCards from '../../components/PricingCards.astro';
 import Accordion from '../../components/Accordion.astro';
 import ContactBlock from '../../components/ContactBlock.astro';
+import { site } from '../../config/site';
+const [restaurantes, alojamientos] = site.packs;
 const faq = [
-  { question: '¿Puedo contratar solo una pieza o una página?', answer: 'Sí. El alcance se ajusta a la necesidad: desde una landing o un flyer hasta un sistema completo. Antes de empezar dejamos claro qué incluye la entrega.' },
-  { question: '¿Trabajáis con marcas fuera de México y España?', answer: 'Sí. El proceso está preparado para trabajar a distancia, compartir avances y tomar decisiones sin depender de la ubicación.' },
-  { question: '¿Podéis trabajar con una identidad que ya existe?', answer: 'Sí. Podemos aplicar y extender un sistema existente. Si faltan reglas visuales para el nuevo soporte, proponemos las necesarias dentro del alcance acordado.' },
+  { question: '¿Puedo pedir algo que no está en los packs?', answer: 'Sí. Los packs cubren lo que más piden restaurantes y alojamientos. Si necesitas algo distinto, como una tienda, reservas con pago online o más idiomas, te lo presupuestamos aparte.' },
+  { question: '¿La demo gratis me compromete a algo?', answer: 'No. Te la enseñamos, y si no te convence, no pasa nada.' },
+  { question: '¿Trabajáis con negocios de toda España?', answer: 'Sí. Trabajamos en remoto, por WhatsApp y videollamada.' },
+  { question: '¿Qué pasa si dejo de pagar la cuota?', answer: 'No hay permanencia. El dominio es tuyo y te ayudamos a trasladar la web si lo necesitas.' },
 ];
 ---
-<BaseLayout title="Servicios" description="Diseño y desarrollo web, diseño de contenido para redes y vídeo para marcas de cualquier lugar.">
-  <section class="section"><div class="container"><span class="eyebrow">Servicios</span><h1 class="page-title">Lo que necesitas ver, contar y poner en marcha.</h1><p class="lead">Dos áreas que pueden trabajar juntas o por separado: una web que explica bien tu negocio y contenido visual que mantiene reconocible tu marca.</p></div></section>
+<BaseLayout title="Servicios y precios" description="Packs con precio cerrado: carta online con pedidos por WhatsApp para restaurantes y web con reservas directas para alojamientos rurales.">
+  <section class="section"><div class="container"><span class="eyebrow">Servicios</span><h1 class="page-title">Dos packs. Precio cerrado.</h1><p class="lead">Para negocios que viven de sus clientes: restaurantes que quieren pedidos directos y alojamientos que quieren reservas directas.</p></div></section>
   <section class="section--tight"><div class="container"><div class="feature-grid">
-    <article class="feature" style="grid-column:span 2"><b>01 · WEB</b><h2 class="section-title">Diseño y desarrollo web</h2><p>Ordenamos el contenido, diseñamos cada pantalla y construimos una web usable, responsive y lista para conectar con tus herramientas.</p><a class="arrow-link" href="/servicios/diseno-web">Ver el servicio <span>→</span></a></article>
-    <BrowserFrame src="/visuals/casa-lumbre.svg" alt="Concepto web Casa Lumbre" />
-    <div><img src="/visuals/nopal-club.svg" alt="Piezas para redes de Nopal Club" width="1400" height="900" loading="lazy" /></div>
-    <article class="feature" style="grid-column:span 2"><b>02 · CONTENIDO</b><h2 class="section-title">Diseño para redes</h2><p>Diseñamos posts, historias, carruseles, flyers y reels para que las piezas cambien de formato sin perder la voz de la marca.</p><a class="arrow-link" href="/servicios/diseno-para-redes">Ver el servicio <span>→</span></a></article>
+    <article class="feature" style="grid-column:span 2"><b>01 · {restaurantes.label.toUpperCase()}</b><h2 class="section-title">{restaurantes.title}</h2><p>{restaurantes.pitch}</p><a class="arrow-link" href={restaurantes.href}>Ver el pack <span>→</span></a></article>
+    <div class="feature-visual"><PhoneFrame class="service-phone" src="/proyectos/italy-pizza-mobile.webp" alt="Carta online de Italy Pizza en el móvil" /></div>
+    <div class="feature-visual"><BrowserFrame src="/proyectos/la-rueca-desktop.webp" alt="Web de Alojamiento La Rueca" /></div>
+    <article class="feature" style="grid-column:span 2"><b>02 · {alojamientos.label.toUpperCase()}</b><h2 class="section-title">{alojamientos.title}</h2><p>{alojamientos.pitch}</p><a class="arrow-link" href={alojamientos.href}>Ver el pack <span>→</span></a></article>
   </div></div></section>
-  <section class="section section--dark"><div class="container"><SectionHeading number="Incluye" title="Un alcance que se entiende antes de empezar." /><div class="feature-grid"><article class="feature"><b>01</b><h3>Qué hacemos</h3><p>Estrategia, dirección visual, diseño, producción o desarrollo según el proyecto.</p></article><article class="feature"><b>02</b><h3>Qué entregamos</h3><p>Archivos, pantallas, código o piezas terminadas, con formatos acordados.</p></article><article class="feature"><b>03</b><h3>Para quién encaja</h3><p>Marcas que necesitan ordenar su presencia o crear una pieza concreta con criterio.</p></article></div></div></section>
+  <section class="section" id="precios"><div class="container"><SectionHeading number="Precios" title="Lo que cuesta, sin letra pequeña." /><PricingCards /></div></section>
+  <section class="section section--dark"><div class="container"><SectionHeading number="Extra" title="También diseñamos tu contenido para redes." intro="Posts, historias, carruseles y flyers con la misma imagen que tu web. Se presupuesta aparte." /><a class="button button--lime" href="/servicios/diseno-para-redes">Ver diseño para redes <span>→</span></a></div></section>
   <section class="section"><div class="narrow"><SectionHeading number="FAQ" title="Preguntas antes de empezar." /><Accordion items={faq} /></div></section>
   <ContactBlock />
 </BaseLayout>

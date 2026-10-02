@@ -2,15 +2,7 @@
 import { site } from '../config/site';
 const compact = Astro.props.compact ?? false;
 ---
-{!site.form.enabled ? (
-<div class="contact-form">
-  <p class="form-status">El formulario estará disponible muy pronto.</p>
-  {(site.email || site.whatsapp) && <div class="footer-links">
-    {site.email && <a class="arrow-link" href={`mailto:${site.email}`}>Escribir a {site.email} <span aria-hidden="true">↗</span></a>}
-    {site.whatsapp && <a class="arrow-link" href={site.whatsapp} rel="noreferrer">Escribir por WhatsApp <span aria-hidden="true">↗</span></a>}
-  </div>}
-</div>
-) : (
+{site.form.enabled && (
 <form class="contact-form" data-contact-form novalidate>
   <input type="hidden" name="startedAt" value={Date.now()} />
   <div class="honeypot" aria-hidden="true"><label>Deja este campo vacío <input name="website" tabindex="-1" autocomplete="off" /></label></div>

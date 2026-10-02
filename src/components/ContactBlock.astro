@@ -1,10 +1,20 @@
 ---
 import ContactForm from './ContactForm.astro';
+import { site } from '../config/site';
 const { compact = true } = Astro.props;
 ---
 <section class="section">
   <div class="container contact-card" data-reveal>
-    <div><span class="eyebrow">Hablemos</span><h2>Cuéntanos lo que quieres hacer.</h2><p>No necesitas tenerlo todo resuelto. Con una idea y un poco de contexto podemos empezar.</p></div>
-    <ContactForm compact={compact} />
+    <div>
+      <span class="eyebrow">Hablemos</span>
+      <h2>Te preparamos una demo gratis.</h2>
+      <p>Escríbenos por WhatsApp con el nombre de tu negocio. Te enseñamos cómo quedaría tu web antes de que pagues nada.</p>
+    </div>
+    <div class="contact-actions">
+      <a class="button" href={site.whatsapp} target="_blank" rel="noopener noreferrer">Escribir por WhatsApp <span aria-hidden="true">↗</span></a>
+      <a class="arrow-link" href={`mailto:${site.email}`}>{site.email} <span aria-hidden="true">↗</span></a>
+      <p class="contact-hint">{site.whatsappDisplay} · Te respondemos en menos de 48 h.</p>
+      {site.form.enabled && <ContactForm compact={compact} />}
+    </div>
   </div>
 </section>

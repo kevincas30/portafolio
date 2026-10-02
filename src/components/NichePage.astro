@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from './SectionHeading.astro';
+import ProjectCard from './ProjectCard.astro';
+import PricingCards from './PricingCards.astro';
+import Accordion from './Accordion.astro';
+import ContactBlock from './ContactBlock.astro';
+import { waLink, type Pack } from '../config/site';
+
+interface Props {
+  pack: Pack;
+  metaTitle: string;
+  metaDescription: string;
+  title: string;
+  lead: string;
+  problem: string;
+  benefits: Array<[string, string]>;
+  projectSlugs: string[];
+  faq: Array<{ question: string; answer: string }>;
+}
+const { pack, metaTitle, metaDescription, title, lead, problem, benefits, projectSlugs, faq } = Astro.props;
+const projects = (await getCollection('projects'))
+  .filter((p) => projectSlugs.includes(p.data.slug))
+  .sort((a, b) => projectSlugs.indexOf(a.data.slug) - projectSlugs.indexOf(b.data.slug));
+---
+<BaseLayout title={metaTitle} description={metaDescription} image={projects[0]?.data.cover}>
+  <section class="section">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">{pack.label}</span>
+        <h1 class="page-title" style="margin-top:1.5rem">{title}</h1>
+        <p class="lead">{lead}</p>
+        <div class="button-row"><a class="button button--lime" href={waLink(pack.waText)} target="_blank" rel="noopener noreferrer">Pide tu demo gratis <span>↗</span></a><a class="arrow-link" href="#precio">Ver precio <span>→</span></a></div>
+      </div>
+      <slot name="visual" />
+    </div>
+  </section>
+
+  <section class="section section--dark"><div class="narrow" data-reveal><span class="eyebrow">El problema</span><p class="intro-statement">{problem}</p></div></section>
+
+  <section class="section"><div class="container"><SectionHeading number="01" title="Qué cambia para tu negocio." /><div class="feature-grid">{benefits.map((item, i) => <article class="feature"><b>0{i + 1}</b><h3>{item[0]}</h3><p>{item[1]}</p></article>)}</div></div></section>
+
+  {projects.length > 0 && <section class="section"><div class="container"><SectionHeading number="02" title="Hecho y funcionando." intro="Entra desde tu móvil y pruébalo tú mismo." /><div class="project-list">{projects.map((project) => <ProjectCard project={project} />)}</div></div></section>}
+
+  <section class="section" id="precio"><div class="container"><SectionHeading number="03" title="Precio cerrado, sin sorpresas." /><PricingCards /></div></section>
+
+  <section class="section"><div class="narrow"><SectionHeading number="FAQ" title="Antes de empezar." /><Accordion items={faq} /></div></section>
+  <ContactBlock />
+</BaseLayout>

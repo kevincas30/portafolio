@@ -5,6 +5,6 @@ import PortfolioExplorer from '../../components/PortfolioExplorer';
 const entries = (await getCollection('projects')).sort((a,b) => a.data.order - b.data.order);
 const projects = entries.map(({ data }) => ({ slug: data.slug, title: data.title, summary: data.summary, category: data.category, cover: data.cover, coverAlt: data.coverAlt, isDemo: data.isDemo }));
 ---
-<BaseLayout title="Proyectos" description="Portfolio de diseño web, contenido para redes y vídeo de Diseño Creativo.">
-  <section class="section"><div class="container"><span class="eyebrow">Portfolio</span><h1 class="page-title">Diseño para verlo.<br/>Criterio para usarlo.</h1><p class="lead">Estos proyectos son conceptos originales de muestra. Enseñan cómo pensamos una web, un sistema de contenido o una pieza en movimiento sin presentarlos como encargos reales.</p><PortfolioExplorer client:load projects={projects} /></div></section>
+<BaseLayout title="Proyectos" description="Webs reales para restaurantes, alojamientos y eventos, y conceptos de diseño de Diseño Creativo.">
+  <section class="section"><div class="container"><span class="eyebrow">Portfolio</span><h1 class="page-title">Webs reales.<br/>Funcionando hoy.</h1><p class="lead">Los primeros son proyectos reales, publicados y en uso. Los marcados como “Concepto” son ejemplos de diseño que muestran otros estilos que podemos trabajar.</p><PortfolioExplorer client:load projects={projects} /></div></section>
 </BaseLayout>

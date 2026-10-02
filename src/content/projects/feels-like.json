@@ -1,0 +1,25 @@
+{
+  "slug": "feels-like-festival",
+  "title": "Feels Like Festival",
+  "summary": "Web multilingüe y registro de asistentes para un festival en Ibiza.",
+  "category": "Web",
+  "services": ["Diseño web", "Desarrollo", "Registro de emails"],
+  "client": "Feels Like Festival",
+  "year": "2026",
+  "featured": true,
+  "order": 3,
+  "isDemo": false,
+  "cover": "/proyectos/feels-like-desktop.webp",
+  "coverAlt": "Web de Feels Like Festival en escritorio, con un eclipse y la fecha del festival",
+  "gallery": [
+    { "src": "/proyectos/feels-like-desktop.webp", "alt": "Inicio de feelslikefestival.com en escritorio", "caption": "Impacto visual desde el primer segundo", "type": "image" },
+    { "src": "/proyectos/feels-like-mobile.webp", "alt": "Inicio de feelslikefestival.com en el móvil", "caption": "Cuenta atrás y acceso a entradas en el móvil", "type": "image" }
+  ],
+  "challenge": "El festival necesitaba una web con mucho impacto visual, en varios idiomas, que recogiera los emails de los interesados antes de abrir la venta de entradas.",
+  "approach": "Construimos una web animada con mapa del festival, preguntas frecuentes y un registro de emails protegido: validación de datos, límite de envíos contra el spam y datos guardados de forma segura.",
+  "deliverables": ["Web multilingüe", "Animaciones", "Mapa del festival", "Registro de emails anti-spam", "Gestión de cookies", "SEO"],
+  "outcome": "Una web publicada en feelslikefestival.com que presenta el festival y convierte visitas en registros.",
+  "externalUrl": "https://feelslikefestival.com",
+  "accentColor": "#e8622c",
+  "templateVariant": "web"
+}
