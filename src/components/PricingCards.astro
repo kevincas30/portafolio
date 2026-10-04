@@ -9,9 +9,15 @@ const offer = site.launchOffer;
   <div class="pricing-grid">
     {site.packs.map((pack) => (
       <article class="price-card">
+        <svg class="price-edge" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="6" />
+        </svg>
         <span class="label">{pack.label}</span>
         <h3>{pack.title}</h3>
         <p class="price-pitch">{pack.pitch}</p>
+        <ul class="price-list">{pack.includes.map((item) => <li>{item}</li>)}</ul>
+        {pack.extra && <p class="price-extra">{pack.extra}</p>}
+        <p class="price-delivery">{pack.delivery}, desde que tenemos tu material.</p>
         <div class="price-amount">
           {offer.enabled ? (
             <>
@@ -21,13 +27,10 @@ const offer = site.launchOffer;
           ) : (
             <strong>{pack.price} €</strong>
           )}
-          <span>pago único + {pack.monthly} €/mes</span>
+          <span class="price-monthly">Pago único <b>+ {pack.monthly} €/mes</b></span>
         </div>
-        <ul class="price-list">{pack.includes.map((item) => <li>{item}</li>)}</ul>
-        {pack.extra && <p class="price-extra">{pack.extra}</p>}
-        <p class="price-delivery">{pack.delivery}, desde que tenemos tu material.</p>
         <div class="button-row">
-          <a class="button button--lime" href={waLink(pack.waText)} target="_blank" rel="noopener noreferrer">Pedir demo gratis <span aria-hidden="true">↗</span></a>
+          <a class="button button--lime price-demo" href={waLink(pack.waText)} target="_blank" rel="noopener noreferrer">Pedir demo gratis <span aria-hidden="true">↗</span></a>
           <a class="arrow-link" href={pack.href}>Ver detalles <span aria-hidden="true">→</span></a>
         </div>
       </article>
@@ -35,3 +38,44 @@ const offer = site.launchOffer;
   </div>
   <p class="pricing-note"><b>Los {site.packs[0].monthly} €/mes incluyen:</b> {site.monthlyIncludes} Se paga el 50% al empezar y el 50% al publicar, por Bizum o transferencia.</p>
 </div>
+
+<script>
+  // CSS draws the light; this observer only pauses cards outside the viewport.
+  let cleanupPriceEdges: (() => void) | undefined;
+  const edgeMotionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+
+  const initPriceEdges = () => {
+    cleanupPriceEdges?.();
+    cleanupPriceEdges = undefined;
+    const cards = [...document.querySelectorAll<HTMLElement>('.price-card')];
+    if (!cards.length || edgeMotionPreference.matches || !('IntersectionObserver' in window)) return;
+
+    const visible = new Set<HTMLElement>();
+    const update = () => cards.forEach((card) => {
+      card.dataset.edgeActive = String(visible.has(card) && !document.hidden);
+    });
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const card = entry.target as HTMLElement;
+        if (entry.isIntersecting) visible.add(card);
+        else visible.delete(card);
+      });
+      update();
+    });
+    cards.forEach((card) => observer.observe(card));
+    document.addEventListener('visibilitychange', update);
+    cleanupPriceEdges = () => {
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', update);
+      cards.forEach((card) => card.removeAttribute('data-edge-active'));
+      visible.clear();
+    };
+  };
+
+  document.addEventListener('astro:page-load', initPriceEdges);
+  document.addEventListener('astro:before-preparation', () => {
+    cleanupPriceEdges?.();
+    cleanupPriceEdges = undefined;
+  });
+  edgeMotionPreference.addEventListener('change', initPriceEdges);
+</script>

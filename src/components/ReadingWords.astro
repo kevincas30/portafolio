@@ -1,0 +1,7 @@
+---
+interface Props { text: string; }
+const { text } = Astro.props;
+// Keep whitespace as text nodes: wrapping, selection and punctuation stay native.
+const parts = text.split(/(\s+)/);
+---
+{parts.map((part) => !part || /^\s+$/.test(part) ? part : <span data-reading-word>{part}</span>)}

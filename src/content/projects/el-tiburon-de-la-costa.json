@@ -1,0 +1,98 @@
+{
+  "slug": "el-tiburon-de-la-costa",
+  "title": "El Tiburón de la Costa",
+  "summary": "Web para una marisquería de Ixtapa, con menú, galería, ubicación y vías de contacto.",
+  "caseStudy": {
+    "summary": "Una web para El Tiburón de la Costa, una marisquería de Ixtapa. Pensada para conocer el restaurante, consultar el menú y encontrar su información práctica.",
+    "services": ["Diseño web", "Desarrollo", "Menú digital", "Galería"],
+    "externalLabel": "Ver la web",
+    "challengeTitle": "Qué necesitaban",
+    "approachTitle": "Qué hicimos",
+    "processTitle": "Del esquema a la pantalla.",
+    "processSteps": [
+      { "title": "Organizar", "description": "Ordenamos el menú, la información del restaurante y las vías de contacto." },
+      { "title": "Diseñar", "description": "Dimos forma a una web visual donde el producto y el ambiente tienen protagonismo." },
+      { "title": "Desarrollar", "description": "Construimos las páginas y conectamos el menú, la galería y la ubicación." },
+      { "title": "Probar", "description": "Revisamos la navegación, los enlaces y la lectura de cada sección." },
+      { "title": "Publicar", "description": "Dejamos la web online con su propio dominio." }
+    ],
+    "gallery": {
+      "title": "El trabajo, de cerca.",
+      "intro": "El menú, la galería y los datos prácticos que ayudan a conocer el restaurante.",
+      "items": [
+        {
+          "id": "recorrido",
+          "type": "video",
+          "src": "/proyectos/Tiburon/tiburon.mp4",
+          "poster": "/proyectos/Tiburon/tiburon-poster.webp",
+          "alt": "Recorrido por la web de El Tiburón de la Costa",
+          "caption": "Un recorrido por la web.",
+          "fit": "cover",
+          "position": "center",
+          "placeholderLabel": "Vídeo horizontal · 16:9"
+        },
+        {
+          "id": "menu",
+          "type": "placeholder",
+          "src": "",
+          "alt": "Menú digital de El Tiburón de la Costa",
+          "caption": "El menú, organizado por categorías.",
+          "fit": "contain",
+          "position": "top center",
+          "placeholderLabel": "Imagen vertical · 3:4"
+        },
+        {
+          "id": "galeria",
+          "type": "placeholder",
+          "src": "",
+          "alt": "Galería de El Tiburón de la Costa",
+          "caption": "Los platos y el ambiente, de cerca.",
+          "fit": "cover",
+          "position": "center",
+          "placeholderLabel": "Imagen vertical · 3:4"
+        },
+        {
+          "id": "ubicacion",
+          "type": "placeholder",
+          "src": "",
+          "alt": "Ubicación e información de contacto de El Tiburón de la Costa",
+          "caption": "La ubicación y el contacto, a mano.",
+          "fit": "contain",
+          "position": "center",
+          "placeholderLabel": "Imagen vertical · 3:4"
+        }
+      ]
+    },
+    "outcomeTitle": "La información, en un mismo lugar.",
+    "outcomeButtonLabel": "Ver la web"
+  },
+  "category": "Web",
+  "services": ["Diseño web", "Desarrollo", "Menú digital", "Galería"],
+  "client": "El Tiburón de la Costa · Ixtapa, Guerrero",
+  "year": "2026",
+  "featured": true,
+  "order": 3,
+  "isDemo": false,
+  "cover": "/proyectos/Tiburon/tiburon-poster.webp",
+  "coverAlt": "Vista de la web de El Tiburón de la Costa dentro de un portátil",
+  "homePreviewVideo": {
+    "src": "/proyectos/Tiburon/tiburon.mp4",
+    "alt": "Recorrido por la web de El Tiburón de la Costa",
+    "poster": "/proyectos/Tiburon/tiburon-poster.webp"
+  },
+  "challenge": "Una web donde presentar la marisquería y dejar accesibles el menú, la ubicación y las vías de contacto.",
+  "approach": "Diseñamos y desarrollamos una web con una navegación directa entre la presentación del restaurante, el menú y su información. Organizamos los platos por categorías, incorporamos una galería y reunimos el mapa y las vías de contacto en una misma experiencia.",
+  "deliverablesTitle": "Qué incluye la web.",
+  "deliverables": [
+    { "title": "Menú digital", "description": "Platos organizados por categorías con sus precios." },
+    { "title": "Galería", "description": "Imágenes de los platos, el espacio y su comunidad." },
+    { "title": "Ubicación", "description": "Un mapa para encontrar el restaurante en Ixtapa." },
+    { "title": "Reservaciones", "description": "La vía telefónica para apartar una mesa, visible desde la web." },
+    { "title": "Contacto", "description": "Accesos al Instagram del restaurante y a su contacto por WhatsApp." },
+    { "title": "Información del restaurante", "description": "La propuesta y los datos principales, reunidos en una navegación sencilla." }
+  ],
+  "outcome": "La web está publicada en tiburondelacostaixtapa.com y reúne el menú, la galería, la ubicación y la información de contacto de El Tiburón de la Costa.",
+  "externalUrl": "https://www.tiburondelacostaixtapa.com/",
+  "accentColor": "#4C89EC",
+  "templateVariant": "web"
+}

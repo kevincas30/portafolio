@@ -3,6 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import BeforeAfter from '../../components/BeforeAfter';
+import ProjectGallery from '../../components/ProjectGallery.astro';
+import { projectBranding } from '../../config/project-branding';
 
 export const prerender = true;
 
@@ -15,18 +17,25 @@ const sorted = [...projects].sort((a,b) => a.data.order - b.data.order);
 const currentIndex = sorted.findIndex((item) => item.data.slug === project.data.slug);
 const next = sorted[(currentIndex + 1) % sorted.length];
 const d = project.data;
+const branding = projectBranding[d.slug];
+const caseStudy = d.caseStudy;
 ---
-<BaseLayout title={d.title} description={d.summary} image={d.cover}>
-  <article style={`--project-accent:${d.accentColor || '#c9f568'}`}>
-    <header class="case-hero"><div class="container"><div class="project-tags"><span class="label demo-label">{d.isDemo ? 'Proyecto de ejemplo' : 'Proyecto real'}</span><span class="label">{d.category}</span></div><h1 class="page-title" style="margin-top:1.5rem">{d.title}</h1><p class="lead">{d.summary}</p>{d.externalUrl && <div class="button-row" style="margin-top:2rem"><a class="button button--lime" href={d.externalUrl} target="_blank" rel="noopener noreferrer">Ver la web en vivo <span>↗</span></a></div>}<div class="case-meta"><span>{d.client}</span><span>{d.year}</span><span>{d.services.join(' · ')}</span></div></div></header>
-    <div class="case-cover" data-parallax><img src={d.cover} alt={d.coverAlt} width="1400" height="900" fetchpriority="high" /></div>
-    <section class="section"><div class="container case-copy-grid"><div data-reveal><span class="eyebrow">El contexto</span><h2>La necesidad</h2><p class="lead">{d.challenge}</p></div><div data-reveal><span class="eyebrow">La respuesta</span><h2>Qué hicimos</h2><p class="lead">{d.approach}</p></div></div></section>
-    <section class="section section--dark"><div class="container"><SectionHeading number="01" title={d.templateVariant === 'web' ? 'Del esquema a la pantalla.' : d.templateVariant === 'social' ? 'Un sistema que cambia de formato.' : 'Una historia contada en frames.'} /><div class="timeline"><article class="timeline-step"><b>01</b><h3>Ordenar</h3><p>Objetivo, material y mensaje principal.</p></article><article class="timeline-step"><b>02</b><h3>Explorar</h3><p>Direcciones visuales con decisiones concretas.</p></article><article class="timeline-step"><b>03</b><h3>Diseñar</h3><p>Sistema, ritmo y jerarquías.</p></article><article class="timeline-step"><b>04</b><h3>Probar</h3><p>Formatos, tamaños y lectura real.</p></article><article class="timeline-step"><b>05</b><h3>Entregar</h3><p>Archivos organizados para el uso acordado.</p></article></div></div></section>
-    <section class="section"><div class="container"><SectionHeading number="02" title="El trabajo, de cerca." /><div class="gallery">{d.gallery.map((item) => <figure><img src={item.src} alt={item.alt} width="1400" height="900" loading="lazy" />{item.caption && <figcaption>{item.caption}</figcaption>}</figure>)}</div></div></section>
+<BaseLayout title={d.title} description={caseStudy.summary} image={d.cover}>
+  <article class="project-case" data-project-accent="true" data-project-slug={d.slug} style={`--project-accent:${branding?.primary || d.accentColor || '#c9f568'};--project-accent-hover:${branding?.hover || d.accentColor || '#c9f568'};--project-accent-contrast:${branding?.contrast || '#171917'};--project-accent-hover-contrast:${branding?.hoverContrast || '#171917'};--project-support:${branding?.support || d.accentColor || '#171917'};--project-support-dark:${branding?.darkSupport || branding?.primary || d.accentColor || '#c9f568'}`}>
+    <header class="case-hero"><div class="container"><div class="project-tags"><span class="label demo-label">{d.isDemo ? 'Proyecto de ejemplo' : 'Proyecto real'}</span><span class="label">{d.category}</span></div><h1 class="page-title" style="margin-top:1.5rem">{d.title}</h1><p class="lead">{caseStudy.summary}</p>{d.externalUrl && <div class="button-row" style="margin-top:2rem"><a class="button button--lime case-hero-cta" href={d.externalUrl} target="_blank" rel="noopener noreferrer">{caseStudy.externalLabel} <span>↗</span></a></div>}<div class="case-meta"><span>{d.client}</span><span>{d.year}</span><span>{caseStudy.services.join(' · ')}</span></div></div></header>
+    <div class="case-cover case-cover--framed" data-parallax>
+      <div class="case-cover-browser">
+        <div class="case-cover-browser-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="case-cover-browser-media"><img src={d.cover} alt={d.coverAlt} width="1440" height="900" fetchpriority="high" /></div>
+      </div>
+    </div>
+    <section class="section"><div class="container case-copy-grid"><div data-reveal><span class="eyebrow">El contexto</span><h2>{caseStudy.challengeTitle}</h2><p class="lead">{d.challenge}</p></div><div data-reveal><span class="eyebrow">La respuesta</span><h2>{caseStudy.approachTitle}</h2><p class="lead">{d.approach}</p></div></div></section>
+    <section class="section section--dark"><div class="container"><SectionHeading number="01" title={caseStudy.processTitle} /><div class="timeline" data-process-timeline><div class="timeline-track" aria-hidden="true"><span class="timeline-progress"></span></div>{caseStudy.processSteps.map((step, index) => <article class="timeline-step"><b>{String(index + 1).padStart(2, '0')}</b><h3>{step.title}</h3><p>{step.description}</p></article>)}</div></div></section>
+    <section class="section"><div class="container"><SectionHeading number="02" title={caseStudy.gallery.title} intro={caseStudy.gallery.intro} /><ProjectGallery projectTitle={d.title} items={caseStudy.gallery.items} reveal /></div></section>
     {d.beforeAfter && <section class="section section--tight"><div class="container"><SectionHeading number="Comparar" title="Jerarquía antes que decoración." /><BeforeAfter client:visible before={d.beforeAfter.before.src} after={d.beforeAfter.after.src} beforeAlt={d.beforeAfter.before.alt} afterAlt={d.beforeAfter.after.alt} /></div></section>}
     {d.templateVariant === 'video' && !d.video && <section class="section--tight"><div class="narrow"><div class="form-status"><strong>Estado honesto del medio:</strong> este concepto incluye poster y storyboard, no un archivo de vídeo reproducible. Por eso no mostramos un botón de reproducción sin función.</div></div></section>}
-    <section class="section"><div class="container"><SectionHeading number="03" title="Qué queda preparado." /><div class="deliverables">{d.deliverables.map((item) => <div class="deliverable">{item}</div>)}</div><div class="case-copy-grid" style="margin-top:5rem"><div><span class="eyebrow">Resumen de entrega</span><h2 class="section-title">Un resultado que se puede explicar.</h2></div><div><p class="lead">{d.outcome}</p>{d.externalUrl && <a class="button button--ghost" href={d.externalUrl} rel="noreferrer">Visitar proyecto <span>↗</span></a>}</div></div></div></section>
+    <section class="section"><div class="container"><SectionHeading number="03" title={d.deliverablesTitle} /><div class="deliverables deliverables--compact">{d.deliverables.map((item) => <div class="deliverable"><h3>{item.title}</h3><p>{item.description}</p></div>)}</div><div class="case-copy-grid" style="margin-top:5rem"><div><span class="eyebrow">Resumen de entrega</span><h2 class="section-title">{caseStudy.outcomeTitle}</h2></div><div><p class="lead">{d.outcome}</p>{d.externalUrl && <a class="button button--ghost" href={d.externalUrl} target="_blank" rel="noreferrer">{caseStudy.outcomeButtonLabel} <span>↗</span></a>}</div></div></div></section>
     {d.testimonial && <section class="section"><div class="narrow"><blockquote><p class="section-title">“{d.testimonial.quote}”</p><footer>{d.testimonial.name} · {d.testimonial.company}</footer></blockquote></div></section>}
-    <a class="next-project" href={`/proyectos/${next.data.slug}`}><div class="container"><div><span class="eyebrow">Siguiente proyecto</span><strong>{next.data.title}</strong></div><span aria-hidden="true" style="font-size:4rem">→</span></div></a>
+    <a class="next-project" href={`/proyectos/${next.data.slug}`}><div class="container"><div><span class="next-project-label">Siguiente proyecto</span><strong>{next.data.title}</strong></div><span aria-hidden="true" style="font-size:4rem">→</span></div></a>
   </article>
 </BaseLayout>

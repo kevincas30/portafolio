@@ -1,0 +1,36 @@
+---
+interface Props { steps: string[][]; }
+const { steps } = Astro.props;
+---
+<div class="process-board" data-process-flips>
+  {steps.map(([title, description, shortTitle], index) => (
+    <article class="process-note">
+      <div class="process-flip" data-process-flip>
+        <div class="process-face process-summary" aria-hidden="true">
+          <img class="process-asterisk" src="/cursor%20negro.svg" width="48" height="48" alt="" />
+          <span class="process-summary-number">0{index + 1}</span>
+          <span class="process-summary-title">{shortTitle}</span>
+        </div>
+        <div class="process-face process-content">
+          {index < 2 && <span class="status">gratis</span>}
+          <b>0{index + 1}</b>
+          <h3>{title}</h3>
+          <p>{description}</p>
+        </div>
+      </div>
+    </article>
+  ))}
+</div>
+<script>
+  import { setupProcessFlips } from '../scripts/process-flips';
+  let cleanupProcessFlips: (() => void) | undefined;
+  document.addEventListener('astro:page-load', () => {
+    cleanupProcessFlips?.();
+    const board = document.querySelector<HTMLElement>('[data-process-flips]');
+    cleanupProcessFlips = board ? setupProcessFlips(board) : undefined;
+  });
+  document.addEventListener('astro:before-preparation', () => {
+    cleanupProcessFlips?.();
+    cleanupProcessFlips = undefined;
+  });
+</script>

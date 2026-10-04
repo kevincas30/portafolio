@@ -1,11 +1,19 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type Project = { slug: string; title: string; summary: string; category: string; cover: string; coverAlt: string; isDemo: boolean };
-const filters = ['Todos', 'Web', 'Diseño para redes', 'Vídeo'];
 
 export default function PortfolioExplorer({ projects }: { projects: Project[] }) {
-  const initial = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tipo') || 'Todos' : 'Todos';
-  const [active, setActive] = useState(filters.includes(initial) ? initial : 'Todos');
+  const filters = useMemo(() => ['Todos', ...['Web', 'Diseño para redes', 'Vídeo'].filter(category => projects.some(project => project.category === category))], [projects]);
+  const [active, setActive] = useState('Todos');
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const initial = url.searchParams.get('tipo') || 'Todos';
+    setActive(filters.includes(initial) ? initial : 'Todos');
+    if (!filters.includes(initial)) {
+      url.searchParams.delete('tipo');
+      history.replaceState({}, '', url);
+    }
+  }, [filters]);
   const shown = useMemo(() => active === 'Todos' ? projects : projects.filter((project) => project.category === active), [active, projects]);
   const select = (filter: string) => {
     setActive(filter);

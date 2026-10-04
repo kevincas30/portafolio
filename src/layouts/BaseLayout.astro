@@ -7,7 +7,7 @@ import { site } from '../config/site';
 import '../styles/global.css';
 
 interface Props { title: string; description?: string; image?: string; noindex?: boolean; }
-const { title, description = site.description, image = '/proyectos/italy-pizza-desktop.webp', noindex = false } = Astro.props;
+const { title, description = site.description, image = '/proyectos/Italy%20pizza/italy-pizza-desktop.webp', noindex = false } = Astro.props;
 const pageTitle = title === site.name ? title : `${title} — ${site.name}`;
 const canonical = site.url ? new URL(Astro.url.pathname, site.url).toString() : undefined;
 const ogImage = site.url ? new URL(image, site.url).toString() : image;
@@ -30,16 +30,13 @@ const ogImage = site.url ? new URL(image, site.url).toString() : image;
     <meta id="theme-color" name="theme-color" content="#f3f1eb" />
     <script is:inline>
       (() => {
+        let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         try {
           const saved = localStorage.getItem('dc-theme');
-          const theme = saved === 'light' || saved === 'dark'
-            ? saved
-            : 'light';
-          document.documentElement.dataset.theme = theme;
-          document.documentElement.style.colorScheme = theme;
-        } catch {
-          document.documentElement.dataset.theme = 'light';
-        }
+          if (saved === 'light' || saved === 'dark') theme = saved;
+        } catch {}
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
       })();
     </script>
     <link rel="icon" href="/favicon.svg" />
@@ -58,12 +55,31 @@ const ogImage = site.url ? new URL(image, site.url).toString() : image;
       import ScrollTrigger from 'gsap/ScrollTrigger';
       import Lenis from 'lenis';
       import 'lenis/dist/lenis.css';
+      import { setupHeroMotion } from '../scripts/hero-motion';
+      import { setupReadingMotion } from '../scripts/reading-motion';
+      import { setupTypewriterTitle } from '../scripts/typewriter-title';
+      import { setupPackFloating } from '../scripts/pack-floating';
+      import { setupProcessTimeline } from '../scripts/process-timeline';
+      import { setupProjectGalleryReveal } from '../scripts/project-gallery-reveal';
 
       let context: gsap.Context | undefined;
       let lenis: Lenis | undefined;
       let removeTicker: (() => void) | undefined;
+      let removeHeroMotion: (() => void) | undefined;
+      let removeReadingMotion: (() => void) | undefined;
+      let removeTypewriterTitle: (() => void) | undefined;
+      let removePackFloating: (() => void) | undefined;
+      let removeProcessTimeline: (() => void) | undefined;
+      let removeProjectGalleryReveal: (() => void) | undefined;
+      const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 
       const cleanup = () => {
+        removeHeroMotion?.(); removeHeroMotion = undefined;
+        removeReadingMotion?.(); removeReadingMotion = undefined;
+        removeTypewriterTitle?.(); removeTypewriterTitle = undefined;
+        removePackFloating?.(); removePackFloating = undefined;
+        removeProcessTimeline?.(); removeProcessTimeline = undefined;
+        removeProjectGalleryReveal?.(); removeProjectGalleryReveal = undefined;
         context?.revert(); context = undefined;
         lenis?.destroy(); lenis = undefined;
         removeTicker?.(); removeTicker = undefined;
@@ -71,7 +87,7 @@ const ogImage = site.url ? new URL(image, site.url).toString() : image;
 
       const init = () => {
         cleanup();
-        const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const reduced = motionPreference.matches;
         gsap.registerPlugin(ScrollTrigger);
         if (!reduced && matchMedia('(pointer: fine)').matches) {
           lenis = new Lenis({ duration: 1.05, smoothWheel: true, anchors: true });
@@ -82,15 +98,30 @@ const ogImage = site.url ? new URL(image, site.url).toString() : image;
         }
         if (reduced) { document.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => { el.style.opacity = '1'; el.style.transform = 'none'; }); return; }
         context = gsap.context(() => {
-          gsap.from('.hero-copy > *', { opacity: 0, y: 22, duration: .8, stagger: .09, ease: 'power3.out' });
-          gsap.from('.desk-composition > *', { opacity: 0, scale: .96, y: 25, duration: .9, stagger: .1, ease: 'power3.out', delay: .2 });
+          const copy = gsap.utils.toArray<HTMLElement>('.hero-copy > *').filter((element) => !element.closest('[data-hero-motion]'));
+          if (copy.length) gsap.from(copy, { opacity: 0, y: 22, duration: .8, stagger: .09, ease: 'power3.out' });
+          const compositions = document.querySelectorAll('.desk-composition:not([data-hero-composition]) > *');
+          if (compositions.length) gsap.from(compositions, { opacity: 0, scale: .96, y: 25, duration: .9, stagger: .1, ease: 'power3.out', delay: .2 });
           document.querySelectorAll('[data-reveal]').forEach((element) => gsap.to(element, { opacity: 1, y: 0, duration: .8, ease: 'power3.out', scrollTrigger: { trigger: element, start: 'top 88%', once: true } }));
           document.querySelectorAll<HTMLElement>('[data-parallax]').forEach((element) => gsap.to(element, { yPercent: -5, ease: 'none', scrollTrigger: { trigger: element, start: 'top bottom', end: 'bottom top', scrub: .6 } }));
         });
+        const hero = document.querySelector<HTMLElement>('[data-hero-motion]');
+        if (hero) removeHeroMotion = setupHeroMotion(hero);
+        const reading = document.querySelector<HTMLElement>('[data-scroll-reading]');
+        if (reading) removeReadingMotion = setupReadingMotion(reading);
+        const typewriter = document.querySelector<HTMLElement>('[data-typewriter-title]');
+        if (typewriter) removeTypewriterTitle = setupTypewriterTitle(typewriter);
+        const packs = document.querySelector<HTMLElement>('.home-packs');
+        if (packs) removePackFloating = setupPackFloating(packs);
+        const processTimeline = document.querySelector<HTMLElement>('[data-process-timeline]');
+        if (processTimeline) removeProcessTimeline = setupProcessTimeline(processTimeline);
+        const projectGallery = document.querySelector<HTMLElement>('[data-project-gallery-reveal]');
+        if (projectGallery) removeProjectGalleryReveal = setupProjectGalleryReveal(projectGallery);
         ScrollTrigger.refresh();
       };
       document.addEventListener('astro:before-preparation', cleanup);
       document.addEventListener('astro:page-load', init);
+      motionPreference.addEventListener('change', init);
     </script>
   </body>
 </html>

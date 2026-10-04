@@ -1,11 +1,16 @@
 ---
-interface Props { number: string; title: string; intro?: string; }
-const { number, title, intro } = Astro.props;
+interface Props { number?: string; title: string; intro?: string; typewriter?: boolean; }
+const { title, intro, typewriter = false } = Astro.props;
 ---
 <header class="section-head" data-reveal>
-  <span class="eyebrow">{number}</span>
   <div>
-    <h2 class="section-title">{title}</h2>
+    {typewriter ? (
+      <h2 class="section-title" data-typewriter-title aria-label={title}>
+        <span aria-hidden="true">{title.split(/(\s+)/).map((part) => /^\s+$/.test(part) ? part : (
+          <span class="typewriter-word">{Array.from(part).map((character) => <span data-typewriter-char>{character}</span>)}</span>
+        ))}</span>
+      </h2>
+    ) : <h2 class="section-title">{title}</h2>}
     {intro && <p class="lead">{intro}</p>}
   </div>
 </header>

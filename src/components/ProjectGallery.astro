@@ -1,0 +1,45 @@
+---
+interface GalleryItem {
+  id: string;
+  type: 'placeholder' | 'image' | 'video';
+  src: string;
+  poster?: string;
+  alt: string;
+  caption: string;
+  fit: 'contain' | 'cover';
+  position: string;
+  placeholderLabel: string;
+}
+
+interface Props {
+  projectTitle: string;
+  items: GalleryItem[];
+  reveal?: boolean;
+}
+
+const { projectTitle, items, reveal = false } = Astro.props;
+---
+<div class="project-gallery" data-project-gallery-reveal={reveal ? '' : undefined} aria-label={`Galería del proyecto ${projectTitle}`}>
+  {items.map((item, index) => {
+    const hasMedia = item.type !== 'placeholder' && item.src.length > 0;
+    const style = `--gallery-fit:${item.fit};--gallery-position:${item.position}`;
+    return (
+      <figure class:list={['project-gallery-item', { 'project-gallery-item--wide': index === 0 }]} data-gallery-item={reveal ? '' : undefined}>
+        <div class="project-gallery-frame" style={style}>
+          {hasMedia && item.type === 'image' ? (
+            <img src={item.src} alt={item.alt} width={index === 0 ? 1600 : 900} height={index === 0 ? 900 : 1200} loading="lazy" />
+          ) : hasMedia && item.type === 'video' ? (
+            <video controls playsinline preload="none" poster={item.poster || undefined} aria-label={item.alt}>
+              <source src={item.src} />
+            </video>
+          ) : (
+            <div class="project-gallery-placeholder" aria-label={`Espacio pendiente: ${item.alt}`}>
+              <span>{item.placeholderLabel}</span>
+            </div>
+          )}
+        </div>
+        <figcaption>{item.caption}</figcaption>
+      </figure>
+    );
+  })}
+</div>

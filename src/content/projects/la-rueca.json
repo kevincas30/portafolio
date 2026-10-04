@@ -2,6 +2,70 @@
   "slug": "alojamiento-la-rueca",
   "title": "Alojamiento La Rueca",
   "summary": "Web para un alojamiento rural de grupos en los Arribes del Duero.",
+  "caseStudy": {
+    "summary": "Una web para presentar un alojamiento rural para grupos en los Arribes del Duero. Pensada para entender el espacio, explorar la zona y encontrar fácilmente cómo reservar.",
+    "services": ["Diseño web", "Desarrollo", "Web multilingüe", "SEO"],
+    "externalLabel": "Ver la web",
+    "challengeTitle": "Qué necesitaban",
+    "approachTitle": "Qué hicimos",
+    "processTitle": "Del esquema a la pantalla.",
+    "processSteps": [
+      { "title": "Organizar", "description": "Ordenamos los espacios, las experiencias y la información práctica para grupos." },
+      { "title": "Diseñar", "description": "Dimos forma a una navegación clara para móvil y escritorio." },
+      { "title": "Desarrollar", "description": "Construimos la web multilingüe y conectamos sus mapas y recursos." },
+      { "title": "Probar", "description": "Revisamos la navegación, los idiomas y cómo se veía en distintos tamaños." },
+      { "title": "Publicar", "description": "Dejamos la web online con su propio dominio." }
+    ],
+    "gallery": {
+      "title": "El trabajo, de cerca.",
+      "intro": "Los espacios, la versión móvil y los detalles que ayudan a preparar una estancia en grupo.",
+      "items": [
+        {
+          "id": "recorrido",
+          "type": "video",
+          "src": "/proyectos/La%20rueca/la-rueca.mp4",
+          "poster": "/proyectos/La%20rueca/la-rueca-video-poster.webp",
+          "alt": "Recorrido por la web de Alojamiento La Rueca",
+          "caption": "Un recorrido por la web.",
+          "fit": "cover",
+          "position": "center",
+          "placeholderLabel": "Vídeo horizontal · 16:9"
+        },
+        {
+          "id": "movil",
+          "type": "image",
+          "src": "/proyectos/La%20rueca/la-rueca-mobile.webp",
+          "alt": "Web de Alojamiento La Rueca vista desde un móvil",
+          "caption": "La información, ordenada para el móvil.",
+          "fit": "contain",
+          "position": "top center",
+          "placeholderLabel": "Imagen vertical · 3:4"
+        },
+        {
+          "id": "espacios",
+          "type": "placeholder",
+          "src": "",
+          "alt": "Detalle de los espacios de Alojamiento La Rueca",
+          "caption": "Los espacios, de cerca.",
+          "fit": "cover",
+          "position": "center",
+          "placeholderLabel": "Imagen vertical · 3:4"
+        },
+        {
+          "id": "informacion",
+          "type": "placeholder",
+          "src": "",
+          "alt": "Información práctica en la web de Alojamiento La Rueca",
+          "caption": "La información práctica, a mano.",
+          "fit": "contain",
+          "position": "center",
+          "placeholderLabel": "Imagen vertical · 3:4"
+        }
+      ]
+    },
+    "outcomeTitle": "El alojamiento, online.",
+    "outcomeButtonLabel": "Ver la web"
+  },
   "category": "Web",
   "services": ["Diseño web", "Desarrollo", "Multilingüe", "SEO"],
   "client": "La Rueca · Fariza, Zamora",
@@ -9,17 +73,22 @@
   "featured": true,
   "order": 2,
   "isDemo": false,
-  "cover": "/proyectos/la-rueca-desktop.webp",
+  "cover": "/proyectos/La%20rueca/la-rueca-desktop.webp",
   "coverAlt": "Web de Alojamiento La Rueca en escritorio, con paisaje de los Arribes del Duero",
-  "gallery": [
-    { "src": "/proyectos/la-rueca-desktop.webp", "alt": "Inicio de alojamientolarueca.com en escritorio", "caption": "Capacidad, propuesta y llamada a la acción desde la primera pantalla", "type": "image" },
-    { "src": "/proyectos/la-rueca-mobile.webp", "alt": "Inicio de alojamientolarueca.com en el móvil", "caption": "La misma información, ordenada para el móvil", "type": "image" }
-  ],
+  "homePreviewVideo": { "src": "/proyectos/La%20rueca/la-rueca.mp4", "alt": "Recorrido por la web de Alojamiento La Rueca y sus espacios", "poster": "/proyectos/La%20rueca/la-rueca-video-poster.webp" },
   "challenge": "Explicar un espacio para grupos (asociaciones, colegios, retiros) con toda la información práctica que necesita quien organiza: capacidad, actividades, cómo llegar y cómo reservar.",
   "approach": "Ordenamos la web según lo que pregunta un organizador: espacios y capacidad, experiencias, itinerarios de ejemplo, preguntas frecuentes y mapas interactivos para llegar y explorar la zona. Todo en varios idiomas y preparado para buscadores.",
-  "deliverables": ["Web multilingüe", "Mapas interactivos", "Páginas de actividades", "Preguntas frecuentes", "Dossier descargable", "SEO y sitemap"],
+  "deliverablesTitle": "Qué incluye la web.",
+  "deliverables": [
+    { "title": "Web multilingüe", "description": "El contenido está disponible en varios idiomas." },
+    { "title": "Mapas interactivos", "description": "Indicaciones para llegar y explorar los puntos de interés de la zona." },
+    { "title": "Páginas de actividades", "description": "Experiencias e itinerarios organizados para preparar la estancia." },
+    { "title": "Preguntas frecuentes", "description": "Las dudas prácticas de los grupos, reunidas en un mismo lugar." },
+    { "title": "Dossier descargable", "description": "La información del alojamiento también puede consultarse en un documento." },
+    { "title": "SEO y sitemap", "description": "La estructura técnica queda preparada para buscadores." }
+  ],
   "outcome": "Una web publicada en alojamientolarueca.com que responde las dudas de los grupos antes de que escriban y les lleva directo al contacto.",
   "externalUrl": "https://alojamientolarueca.com",
-  "accentColor": "#7fa36b",
+  "accentColor": "#607753",
   "templateVariant": "web"
 }

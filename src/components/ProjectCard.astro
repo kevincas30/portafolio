@@ -1,13 +1,18 @@
 ---
+import ProjectVideoPreview from './ProjectVideoPreview.astro';
 interface Props {
-  project: { id: string; data: { slug: string; title: string; summary: string; category: string; cover: string; coverAlt: string; isDemo: boolean; services: string[] } };
+  project: { id: string; data: { slug: string; title: string; summary: string; category: string; cover: string; coverAlt: string; isDemo: boolean; services: string[]; homePreviewVideo?: { src: string; alt: string; poster?: string } } };
+  showVideoPreview?: boolean;
 }
-const { project } = Astro.props;
+const { project, showVideoPreview = false } = Astro.props;
+const video = showVideoPreview ? project.data.homePreviewVideo : undefined;
 ---
 <article class="project-card" data-reveal>
-  <a class="project-media" href={`/proyectos/${project.data.slug}`} aria-label={`Ver proyecto ${project.data.title}`}>
+  {video ? <div class="project-media">
+    <ProjectVideoPreview src={video.src} label={video.alt} poster={video.poster ?? project.data.cover} posterAlt={video.poster ? video.alt : project.data.coverAlt} />
+  </div> : <a class="project-media" href={`/proyectos/${project.data.slug}`} aria-label={`Ver proyecto ${project.data.title}`}>
     <img src={project.data.cover} alt={project.data.coverAlt} width="1400" height="900" loading="lazy" />
-  </a>
+  </a>}
   <div class="project-info">
     <div class="project-tags">
       {project.data.isDemo && <span class="label demo-label">Concepto</span>}

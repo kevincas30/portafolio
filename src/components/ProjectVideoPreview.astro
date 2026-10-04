@@ -1,0 +1,206 @@
+---
+interface Props { src: string; label: string; poster: string; posterAlt: string; }
+const { src, label, poster, posterAlt } = Astro.props;
+---
+<div class="project-video-preview" data-project-video-preview>
+  <div class="project-preview-window">
+    <div class="project-preview-bar">
+      <span class="project-preview-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <button class="project-preview-toggle" data-preview-toggle data-playing="false" type="button" aria-label={`Reproducir vídeo: ${label}`} hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="preview-icon-play" d="M8 5l11 7-11 7Z" /><path class="preview-icon-pause" d="M7 5v14M17 5v14" /></svg>
+      </button>
+    </div>
+    <div class="project-preview-viewport">
+      <video loop muted playsinline disablepictureinpicture disableRemotePlayback tabindex="-1" preload="none" poster={poster} width="1920" height="1080" aria-label={label}>
+        <source src={src} type="video/mp4" />
+        Tu navegador no puede reproducir este vídeo. Puedes ver los detalles del proyecto en su caso de estudio.
+      </video>
+      <img class="project-preview-poster" src={poster} alt={posterAlt} width="1920" height="1080" loading="lazy" aria-hidden="true" />
+    </div>
+  </div>
+  <p class="project-preview-status" role="status" hidden>No se pudo cargar el vídeo. Puedes seguir viendo el caso de estudio.</p>
+</div>
+
+<script>
+  let cleanupPreviews: (() => void) | undefined;
+  const setupPreviews = () => {
+    cleanupPreviews?.();
+    cleanupPreviews = undefined;
+    const elements = document.querySelectorAll<HTMLElement>('[data-project-video-preview]');
+    if (!elements.length) return;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+    const cleanups: (() => void)[] = [];
+    type Preview = {
+      element: HTMLElement; viewport: HTMLElement; video: HTMLVideoElement; poster: HTMLImageElement;
+      toggle: HTMLButtonElement | null; userPaused: boolean; failed: boolean;
+      pending: boolean; blocked: boolean; manualPlayback: boolean;
+    };
+    const previews: Preview[] = [];
+    let active: Preview | undefined;
+    let manualSelection: Preview | undefined;
+    let frame = 0;
+    let disposed = false;
+    const intersecting = new Set<Element>();
+
+    const updateControl = (item: Preview) => {
+      if (!item.toggle) return;
+      item.toggle.dataset.playing = String(!item.video.paused);
+      item.toggle.setAttribute('aria-label', `${item.video.paused ? 'Reproducir' : 'Pausar'} vídeo: ${item.video.getAttribute('aria-label') ?? ''}`);
+    };
+    const deactivate = (item: Preview) => {
+      item.video.pause();
+      item.poster.hidden = false;
+      item.element.dataset.previewActive = 'false';
+      item.manualPlayback = false;
+      // Keep the source loaded, but restart the next viewing from the beginning.
+      if (item.video.currentTime > 0) {
+        try { item.video.currentTime = 0; } catch { /* Failed media still shows its poster. */ }
+      }
+      updateControl(item);
+    };
+    const select = (next: Preview | undefined) => {
+      if (next === active) return;
+      if (active) deactivate(active);
+      active = next;
+      if (active) active.element.dataset.previewActive = 'true';
+    };
+    const visible = (item: Preview) => {
+      const rect = item.viewport.getBoundingClientRect();
+      const height = Math.max(0, Math.min(rect.bottom, innerHeight) - Math.max(rect.top, 0));
+      const width = Math.max(0, Math.min(rect.right, innerWidth) - Math.max(rect.left, 0));
+      return !item.failed && rect.height > 0 && rect.width > 0 && width * height / (rect.width * rect.height) >= .2;
+    };
+    const distance = (item: Preview) => {
+      const rect = item.viewport.getBoundingClientRect();
+      return Math.abs(rect.top + rect.height / 2 - innerHeight / 2);
+    };
+    const schedule = () => {
+      if (!disposed && !frame) frame = requestAnimationFrame(sync);
+    };
+    const play = (item: Preview) => {
+      if (disposed || item.pending || !item.video.paused || !visible(item) || document.hidden) return;
+      item.pending = true;
+      item.video.play().then(() => {
+        if (disposed || active !== item || document.hidden) item.video.pause();
+      }).catch((error: unknown) => {
+        if (active === item && !(error instanceof DOMException && error.name === 'AbortError')) item.blocked = true;
+        item.poster.hidden = false;
+      }).finally(() => {
+        item.pending = false;
+        updateControl(item);
+        if (!disposed && active === item && !item.blocked && !item.userPaused && item.video.paused) schedule();
+      });
+    };
+    function sync() {
+      frame = 0;
+      if (disposed) return;
+      if (document.hidden) {
+        previews.forEach((item) => { item.video.pause(); item.poster.hidden = false; });
+        return;
+      }
+      const candidates = previews.filter(visible).sort((a, b) => distance(a) - distance(b));
+      if (manualSelection && !candidates.includes(manualSelection)) manualSelection = undefined;
+      let next = manualSelection ?? candidates[0];
+      // A small hysteresis prevents flickering between two equally visible cards.
+      if (!manualSelection && active && candidates.includes(active) && next && next !== active && distance(next) + 24 >= distance(active)) next = active;
+      select(next);
+      if (active && !active.userPaused && !active.blocked && !active.failed && (active.manualPlayback || (!reduced.matches && !saveData))) play(active);
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => entry.isIntersecting ? intersecting.add(entry.target) : intersecting.delete(entry.target));
+      schedule();
+    });
+    const onScroll = () => { if (intersecting.size) schedule(); };
+    const onMotion = () => {
+      manualSelection = undefined;
+      previews.forEach((item) => {
+        item.manualPlayback = false;
+        if (reduced.matches) { item.video.pause(); item.poster.hidden = false; }
+      });
+      schedule();
+    };
+    elements.forEach((preview) => {
+      const video = preview.querySelector<HTMLVideoElement>('video');
+      const viewport = preview.querySelector<HTMLElement>('.project-preview-viewport');
+      const poster = preview.querySelector<HTMLImageElement>('.project-preview-poster');
+      if (!video || !viewport || !poster) return;
+      const source = video.querySelector('source');
+      const toggle = preview.querySelector<HTMLButtonElement>('[data-preview-toggle]');
+      const item: Preview = { element: preview, viewport, video, poster, toggle, userPaused: false, failed: false, pending: false, blocked: false, manualPlayback: false };
+      previews.push(item);
+      preview.dataset.previewActive = 'false';
+      const onPause = () => updateControl(item);
+      const onPlay = () => {
+        // Also guard pending play promises that resolve after selection changes.
+        if (disposed || active !== item || document.hidden || !visible(item)) { video.pause(); poster.hidden = false; }
+        updateControl(item);
+      };
+      const onPlaying = () => { onPlay(); if (!video.paused && active === item) poster.hidden = true; };
+      const onToggle = () => {
+        if (video.paused) {
+          item.userPaused = false;
+          item.blocked = false;
+          manualSelection = item;
+          select(item);
+          item.manualPlayback = true;
+          play(item);
+        } else {
+          item.userPaused = true;
+          video.pause();
+        }
+      };
+      const onError = () => {
+        item.failed = true;
+        if (toggle) toggle.hidden = true;
+        video.pause();
+        video.hidden = true;
+        poster.hidden = false;
+        const status = preview.querySelector<HTMLElement>('.project-preview-status');
+        if (status) status.hidden = false;
+        if (active === item) select(undefined);
+        if (manualSelection === item) manualSelection = undefined;
+        schedule();
+      };
+      video.muted = true;
+      if (toggle) toggle.hidden = false;
+      updateControl(item);
+      toggle?.addEventListener('click', onToggle);
+      observer.observe(viewport);
+      video.addEventListener('pause', onPause);
+      video.addEventListener('play', onPlay);
+      video.addEventListener('playing', onPlaying);
+      video.addEventListener('error', onError);
+      source?.addEventListener('error', onError);
+      cleanups.push(() => {
+        toggle?.removeEventListener('click', onToggle);
+        video.removeEventListener('pause', onPause);
+        video.removeEventListener('play', onPlay);
+        video.removeEventListener('playing', onPlaying);
+        video.removeEventListener('error', onError);
+        source?.removeEventListener('error', onError);
+        video.pause();
+      });
+    });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', schedule);
+    document.addEventListener('visibilitychange', schedule);
+    reduced.addEventListener('change', onMotion);
+    schedule();
+    cleanupPreviews = () => {
+      disposed = true;
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', schedule);
+      document.removeEventListener('visibilitychange', schedule);
+      reduced.removeEventListener('change', onMotion);
+      cleanups.forEach((cleanup) => cleanup());
+    };
+  };
+  document.addEventListener('astro:before-preparation', () => {
+    cleanupPreviews?.();
+    cleanupPreviews = undefined;
+  });
+  document.addEventListener('astro:page-load', setupPreviews);
+</script>
