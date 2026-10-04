@@ -1,8 +1,8 @@
 ---
-interface Props { number?: string; title: string; intro?: string; typewriter?: boolean; }
-const { title, intro, typewriter = false } = Astro.props;
+interface Props { number?: string; title: string; intro?: string; typewriter?: boolean; reveal?: boolean; }
+const { title, intro, typewriter = false, reveal = true } = Astro.props;
 ---
-<header class="section-head" data-reveal>
+<header class="section-head" data-reveal={reveal ? '' : undefined}>
   <div>
     {typewriter ? (
       <h2 class="section-title" data-typewriter-title aria-label={title}>

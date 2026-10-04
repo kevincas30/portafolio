@@ -22,24 +22,84 @@ const { projectTitle, items, reveal = false } = Astro.props;
 <div class="project-gallery" data-project-gallery-reveal={reveal ? '' : undefined} aria-label={`Galería del proyecto ${projectTitle}`}>
   {items.map((item, index) => {
     const hasMedia = item.type !== 'placeholder' && item.src.length > 0;
+    const shouldAutoplay = item.type === 'video';
     const style = `--gallery-fit:${item.fit};--gallery-position:${item.position}`;
     return (
       <figure class:list={['project-gallery-item', { 'project-gallery-item--wide': index === 0 }]} data-gallery-item={reveal ? '' : undefined}>
-        <div class="project-gallery-frame" style={style}>
-          {hasMedia && item.type === 'image' ? (
-            <img src={item.src} alt={item.alt} width={index === 0 ? 1600 : 900} height={index === 0 ? 900 : 1200} loading="lazy" />
-          ) : hasMedia && item.type === 'video' ? (
-            <video controls playsinline preload="none" poster={item.poster || undefined} aria-label={item.alt}>
-              <source src={item.src} />
-            </video>
-          ) : (
-            <div class="project-gallery-placeholder" aria-label={`Espacio pendiente: ${item.alt}`}>
-              <span>{item.placeholderLabel}</span>
-            </div>
-          )}
+        <div class="project-gallery-item-inner">
+          <div class="project-gallery-frame" style={style}>
+            {hasMedia && item.type === 'image' ? (
+              <img src={item.src} alt={item.alt} width={index === 0 ? 1600 : 900} height={index === 0 ? 900 : 1200} loading="lazy" />
+            ) : hasMedia && item.type === 'video' ? (
+              <video controls playsinline autoplay={shouldAutoplay} muted={shouldAutoplay} loop={shouldAutoplay} preload="metadata" poster={item.poster || undefined} aria-label={item.alt} data-gallery-autoplay>
+                <source src={item.src} type="video/mp4" />
+              </video>
+            ) : (
+              <div class="project-gallery-placeholder" aria-label={`Espacio pendiente: ${item.alt}`}>
+                <span>{item.placeholderLabel}</span>
+              </div>
+            )}
+          </div>
+          <figcaption>{item.caption}</figcaption>
         </div>
-        <figcaption>{item.caption}</figcaption>
       </figure>
     );
   })}
 </div>
+
+<script>
+  let cleanupGalleryAutoplay: (() => void) | undefined;
+
+  const setupGalleryAutoplay = () => {
+    cleanupGalleryAutoplay?.();
+    cleanupGalleryAutoplay = undefined;
+
+    const videos = [...document.querySelectorAll<HTMLVideoElement>('video[data-gallery-autoplay]')];
+    if (!videos.length) return;
+
+    const visible = new Set<HTMLVideoElement>();
+    const sync = () => {
+      videos.forEach((video) => {
+        if (!document.hidden && visible.has(video)) {
+          video.muted = true;
+          video.defaultMuted = true;
+          void video.play().catch(() => {
+            // The poster and native controls remain available if a browser blocks autoplay.
+          });
+        } else {
+          video.pause();
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const video = entry.target as HTMLVideoElement;
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.15) visible.add(video);
+        else visible.delete(video);
+      });
+      sync();
+    }, { threshold: [0, 0.15, 0.5] });
+
+    videos.forEach((video) => {
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+      observer.observe(video);
+    });
+    document.addEventListener('visibilitychange', sync);
+
+    cleanupGalleryAutoplay = () => {
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', sync);
+      videos.forEach((video) => video.pause());
+      visible.clear();
+    };
+  };
+
+  document.addEventListener('astro:before-preparation', () => {
+    cleanupGalleryAutoplay?.();
+    cleanupGalleryAutoplay = undefined;
+  });
+  document.addEventListener('astro:page-load', setupGalleryAutoplay);
+</script>

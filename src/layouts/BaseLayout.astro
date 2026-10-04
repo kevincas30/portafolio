@@ -61,6 +61,7 @@ const ogImage = site.url ? new URL(image, site.url).toString() : image;
       import { setupPackFloating } from '../scripts/pack-floating';
       import { setupProcessTimeline } from '../scripts/process-timeline';
       import { setupProjectGalleryReveal } from '../scripts/project-gallery-reveal';
+      import { setupProjectCaseMotion } from '../scripts/project-case-motion';
 
       let context: gsap.Context | undefined;
       let lenis: Lenis | undefined;
@@ -71,6 +72,7 @@ const ogImage = site.url ? new URL(image, site.url).toString() : image;
       let removePackFloating: (() => void) | undefined;
       let removeProcessTimeline: (() => void) | undefined;
       let removeProjectGalleryReveal: (() => void) | undefined;
+      let removeProjectCaseMotion: (() => void) | undefined;
       const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 
       const cleanup = () => {
@@ -80,6 +82,7 @@ const ogImage = site.url ? new URL(image, site.url).toString() : image;
         removePackFloating?.(); removePackFloating = undefined;
         removeProcessTimeline?.(); removeProcessTimeline = undefined;
         removeProjectGalleryReveal?.(); removeProjectGalleryReveal = undefined;
+        removeProjectCaseMotion?.(); removeProjectCaseMotion = undefined;
         context?.revert(); context = undefined;
         lenis?.destroy(); lenis = undefined;
         removeTicker?.(); removeTicker = undefined;
@@ -117,6 +120,8 @@ const ogImage = site.url ? new URL(image, site.url).toString() : image;
         if (processTimeline) removeProcessTimeline = setupProcessTimeline(processTimeline);
         const projectGallery = document.querySelector<HTMLElement>('[data-project-gallery-reveal]');
         if (projectGallery) removeProjectGalleryReveal = setupProjectGalleryReveal(projectGallery);
+        const projectCase = document.querySelector<HTMLElement>('.project-case');
+        if (projectCase) removeProjectCaseMotion = setupProjectCaseMotion(projectCase);
         ScrollTrigger.refresh();
       };
       document.addEventListener('astro:before-preparation', cleanup);
