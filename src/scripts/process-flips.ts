@@ -16,6 +16,7 @@ export function setupProcessFlips(board: HTMLElement): () => void {
   let context: gsap.Context | undefined;
   let refreshFrame = 0;
   let active = true;
+  let layoutWidth = document.documentElement.clientWidth;
   const pendingReveals = new Set<ReturnType<typeof setTimeout>>();
 
   const reset = () => {
@@ -147,13 +148,19 @@ export function setupProcessFlips(board: HTMLElement): () => void {
   };
 
   build();
-  window.addEventListener('resize', scheduleBuild);
+  const onResize = () => {
+    const width = document.documentElement.clientWidth;
+    if (width === layoutWidth) return;
+    layoutWidth = width;
+    scheduleBuild();
+  };
+  window.addEventListener('resize', onResize);
   preferences.forEach((preference) => preference.addEventListener('change', scheduleBuild));
 
   return () => {
     active = false;
     cancelAnimationFrame(refreshFrame);
-    window.removeEventListener('resize', scheduleBuild);
+    window.removeEventListener('resize', onResize);
     preferences.forEach((preference) => preference.removeEventListener('change', scheduleBuild));
     reset();
   };
