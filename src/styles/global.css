@@ -644,6 +644,7 @@ html[data-theme="dark"] [data-project-accent="true"] .case-meta { border-color: 
 .hero-phone { position: absolute; z-index: 2; left: 0; bottom: 0; width: 40%; transform: rotate(-4deg); }
 .hero-phone--solo { left: 50%; bottom: auto; top: 0; width: min(60%, 17rem); transform: translateX(-50%) rotate(-3deg); }
 .niche-visual { min-height: 36rem; }
+.restaurant-visual { isolation: isolate; }
 .service-phone { width: min(62%, 17rem); transform: rotate(-3deg); }
 .service-visual .browser { width: min(100%, 38rem); transform: rotate(1.5deg); }
 .feature-visual { display: grid; place-items: center; min-height: 17rem; padding: 1.5rem; background: var(--mist); }
@@ -666,6 +667,14 @@ body.menu-open .wa-float { display: none; }
 .pricing-offer { display: inline-block; margin: 0 0 1.5rem; padding: .7rem 1rem; border: 1px solid var(--dark); border-radius: 999px; background: var(--lime); color: var(--dark); font-size: .95rem; }
 .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
 .price-card { --price-edge-color: color-mix(in srgb, var(--lime) 80%, var(--dark)); --price-edge-duration: 12s; --price-edge-delay: -1s; position: relative; display: flex; flex-direction: column; gap: 1rem; padding: clamp(1.5rem, 3vw, 2.5rem); border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--paper); }
+.pricing:not(.pricing--single) .price-overview, .pricing:not(.pricing--single) .price-features, .pricing:not(.pricing--single) .price-purchase { display: contents; }
+.price-overview, .price-features, .price-purchase { display: grid; align-content: start; gap: 1rem; min-width: 0; }
+.price-features { gap: .8rem; }
+.pricing--single .pricing-grid { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 901px) {
+  .pricing--single .price-card { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; gap: clamp(1.5rem, 3vw, 3rem); }
+  .pricing--single .price-features, .pricing--single .price-purchase { padding-left: clamp(1.5rem, 3vw, 3rem); border-left: 1px solid var(--line); }
+}
 .price-card:nth-child(2) { --price-edge-delay: -7s; }
 html[data-theme="dark"] .price-card { --price-edge-color: var(--lime); }
 @property --price-edge-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
@@ -724,6 +733,10 @@ html[data-theme="dark"] .price-list li::before { color: var(--lime); }
   .hero-phone { width: 42%; }
   .hero-phone--solo { width: 62%; }
   .niche-visual { min-height: 26rem; }
+  .restaurant-visual { width: min(100%, 26rem); min-height: clamp(18rem, 74vw, 23rem); margin-inline: auto; }
+  .restaurant-visual .hero-browser { top: .5rem; right: 0; width: 82%; }
+  .restaurant-visual .hero-phone { left: 0; bottom: .25rem; width: min(36%, 8.5rem); }
+  .restaurant-visual .hero-note { right: 0; bottom: .25rem; width: 8rem; padding: .6rem; font-size: .6rem; }
   .service-phone { width: 70%; }
   .home-packs .service-phone { width: min(58%, 12rem); }
 }

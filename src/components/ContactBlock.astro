@@ -8,9 +8,10 @@ interface Props {
   home?: boolean;
   service?: 'web' | 'redes';
   waText?: string;
+  title?: string;
 }
 
-const { compact = true, class: className, home = false, service = 'web', waText } = Astro.props;
+const { compact = true, class: className, home = false, service = 'web', waText, title } = Astro.props;
 const isRedes = service === 'redes';
 const whatsappHref = isRedes ? waLink(redesWhatsAppText) : waText ? waLink(waText) : site.whatsapp;
 ---
@@ -18,7 +19,9 @@ const whatsappHref = isRedes ? waLink(redesWhatsAppText) : waText ? waLink(waTex
   <div class:list={["container", "contact-card", home && "contact-card--home"]} data-reveal>
     <div>
       <span class="eyebrow">Hablemos</span>
-      {isRedes
+      {title
+        ? <h2>{title}</h2>
+        : isRedes
         ? <h2>¿Qué contenido necesitas?</h2>
         : home
         ? <h2><span class="contact-title-line">Te preparamos</span> <span class="contact-title-line">una demo</span> <span class="contact-title-line">gratis.</span></h2>

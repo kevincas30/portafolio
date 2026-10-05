@@ -1,5 +1,6 @@
 ---
 import NichePage from '../components/NichePage.astro';
+import BrowserFrame from '../components/BrowserFrame.astro';
 import PhoneFrame from '../components/PhoneFrame.astro';
 import { site } from '../config/site';
 const pack = site.packs[0];
@@ -8,6 +9,10 @@ const pack = site.packs[0];
   pack={pack}
   metaTitle="Web esencial para restaurantes"
   metaDescription="Presenta tu restaurante, tu carta, horarios, ubicación y contacto. Pedidos preparados por WhatsApp si ofreces comida para llevar o reparto."
+  animatedHero
+  readingProblem
+  singlePrice
+  compactContactTitle="Una demo para tu restaurante."
   title="Tu carta, tu espacio y cómo encontrarte."
   lead="Una web para presentar tu restaurante, consultar la carta desde el móvil y encontrar tus horarios, ubicación y contacto. Si recibes pedidos para llevar o reparto, también podemos prepararlos por WhatsApp."
   problem="Antes de visitarte, la gente quiere ver la carta, conocer tu espacio, saber cuándo abres y cómo llegar. Reúne todo en una web fácil de consultar."
@@ -29,5 +34,9 @@ const pack = site.packs[0];
     { question: '¿Qué incluyen los 15 € al mes?', answer: site.monthlyIncludes },
   ]}
 >
-  <div slot="visual" class="desk-composition niche-visual"><PhoneFrame class="hero-phone hero-phone--solo" src="/proyectos/Italy%20pizza/italy-pizza-mobile.webp" alt="Carta online de Italy Pizza en el móvil" /><div class="hero-note">italypizza.es<br/>proyecto real ↘</div></div>
+  <div slot="visual" class="desk-composition niche-visual restaurant-visual" data-hero-composition aria-label="Web de Italy Pizza en ordenador y móvil">
+    <div class="hero-entry"><div class="hero-float"><BrowserFrame class="hero-browser" src="/proyectos/Italy%20pizza/italy-pizza-desktop.webp" alt="Web de Italy Pizza en ordenador" /></div></div>
+    <div class="hero-entry"><div class="hero-float"><PhoneFrame class="hero-phone" src="/proyectos/Italy%20pizza/italy-pizza-mobile.webp" alt="Carta de Italy Pizza en el móvil" /></div></div>
+    <div class="hero-entry"><div class="hero-float"><div class="hero-note">italypizza.es<br/>proyecto real ↘</div></div></div>
+  </div>
 </NichePage>
