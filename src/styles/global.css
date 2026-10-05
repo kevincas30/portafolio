@@ -93,8 +93,8 @@ img, svg, video { display: block; max-width: 100%; }
 button, input, select, textarea { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid #547b13; outline-offset: 4px; }
-.skip-link { position: fixed; z-index: 999; top: 1rem; left: 1rem; padding: .8rem 1rem; background: var(--lime); transform: translateY(-160%); transition: transform var(--fast); }
-.skip-link:focus { transform: translateY(0); }
+.skip-link { position: fixed; z-index: 999; top: 1rem; left: 1rem; padding: .8rem 1rem; background: var(--lime); clip-path: inset(100%); transform: translateY(calc(-100% - 2rem)); transition: transform var(--fast); }
+.skip-link:focus-visible { clip-path: none; transform: translateY(0); }
 .container { width: min(var(--content), calc(100% - 2 * var(--gutter))); margin-inline: auto; }
 .narrow { width: min(var(--narrow), calc(100% - 2 * var(--gutter))); margin-inline: auto; }
 .section { position: relative; padding-block: clamp(5rem, 10vw, 9rem); }
@@ -175,7 +175,7 @@ body.menu-open .menu-toggle { border-color: rgba(23, 25, 23, .35); }
 .noise { position: absolute; inset: 0; opacity: .025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 @keyframes drift { to { transform: translate3d(8vw, 8vh, 0) rotate(28deg); } }
 
-.hero { min-height: calc(100svh - 6rem); display: grid; align-items: center; padding-block: clamp(1.5rem, 4svh, 3rem); }
+.hero { min-height: calc(100svh - 6rem); display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; padding-block: clamp(1.5rem, 4svh, 3rem); }
 [data-hero-motion] { position: relative; isolation: isolate; }
 [data-hero-motion] .hero-grid { position: relative; z-index: 1; }
 .hero-color-bends {
@@ -223,14 +223,17 @@ html[data-theme="dark"] .hero-color-bends-fallback {
       radial-gradient(ellipse 80% 20% at 65% 75%, color-mix(in srgb, var(--bends-secondary-dark) 24%, transparent), transparent);
   }
 }
-.hero-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+.hero-grid { display: grid; min-width: 0; grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+.hero-copy { min-width: 0; }
 .hero-copy .lead { max-width: 42rem; margin: 2rem 0; }
-.hero .display { font-size: clamp(3.25rem, min(6.5vw, 12svh), 5.5rem); line-height: .98; letter-spacing: -.055em; }
+.hero .display { font-size: clamp(3.25rem, min(6.5vw, 12svh), 4.2rem); line-height: .98; letter-spacing: -.055em; }
 .hero .display > span { display: block; }
 .hero-title-motion { display: block; }
 .hero .lead { max-width: 38rem; margin: clamp(1rem, 3svh, 1.5rem) 0; font-size: clamp(1rem, min(1.45vw, 2.8svh), 1.25rem); line-height: 1.5; }
 .hero .niche-pills { margin-top: 1rem; }
 .hero .hero-meta { margin: clamp(2rem, 4svh, 2.75rem) 0 0; line-height: 1.5; }
+.hero-support { margin: .75rem 0 0; color: var(--muted); font-size: .9rem; }
+.case-service-link { margin-top: 1.25rem; font-size: .9rem; text-decoration: underline; text-underline-offset: .2em; }
 .hero-meta { position: relative; display: flex; gap: .75rem; align-items: center; margin-top: 2.3rem; font: .7rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
 .hero-meta::before { content: ""; flex: 0 0 .5rem; width: .5rem; height: .5rem; border-radius: 50%; background: var(--orange); }
 .hero-meta::after { content: ""; position: absolute; left: 0; top: 50%; width: .5rem; height: .5rem; border: 1px solid var(--orange); border-radius: 50%; pointer-events: none; animation: location-pulse 2.4s ease-out infinite; }
@@ -330,6 +333,7 @@ html[data-theme="dark"] [data-hero-motion] .hero-note { background: var(--lime);
 .home-packs .service-visual { min-height: 24rem; padding: 2.5rem 1rem; background: transparent; }
 .pack-float { display: grid; place-items: center; width: 100%; perspective: 1300px; }
 .pack-tilt { display: grid; place-items: center; width: 100%; transform-origin: center; }
+@media (max-width: 900px) { .pack-float, .pack-tilt { transform-style: preserve-3d; will-change: transform; } }
 .home-packs .extra-service { margin: clamp(1.5rem, 3vw, 2.5rem) 0 0; padding: clamp(1.25rem, 2vw, 1.75rem); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
 .stage-stack { position: relative; width: min(100%, 38rem); aspect-ratio: 4/3; }
 .stage { position: absolute; width: 74%; aspect-ratio: 4/3; border: 1px solid var(--dark); background: #fff; color: var(--dark); padding: 1rem; box-shadow: 8px 8px 0 rgba(23,25,23,.12); }
@@ -562,7 +566,7 @@ html[data-theme="dark"] [data-project-accent="true"] .case-meta { border-color: 
   .nav-wrap { grid-template-columns: 1fr auto; height: 5rem; }
   .menu-toggle { display: grid; place-items: center; }
   .hero { min-height: auto; padding-top: 3rem; }
-  .hero-grid, .contact-card, .case-copy-grid { grid-template-columns: 1fr; }
+  .hero-grid, .contact-card, .case-copy-grid { grid-template-columns: minmax(0, 1fr); }
   .contact-card--home { gap: 2rem; }
   .contact-card--home .contact-actions { align-content: start; }
   .contact-title-line { display: inline; }
@@ -589,7 +593,10 @@ html[data-theme="dark"] [data-project-accent="true"] .case-meta { border-color: 
 
 @media (max-width: 600px) {
   .display { font-size: clamp(3.2rem, 17vw, 5.2rem); }
+  .niche-hero { padding-top: 2.5rem; }
+  .niche-hero .page-title { font-size: clamp(2.5rem, 11.5vw, 3.25rem); }
   .hero { padding-top: 2rem; }
+  .idea-box .button { min-height: 2.9rem; padding: .7rem 1rem; font-size: .9rem; }
   .hero .display { font-size: clamp(2.5rem, 10.5vw, 3.5rem); }
   .page-title { font-size: clamp(3rem, 15vw, 5rem); }
   .case-meta { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
@@ -597,11 +604,11 @@ html[data-theme="dark"] [data-project-accent="true"] .case-meta { border-color: 
   .case-meta span:last-child { grid-column: 1 / -1; }
   .section-head { grid-template-columns: 1fr; gap: 1rem; }
   .desk-composition { min-height: 23rem; }
-  .hero .desk-composition { min-height: 23rem; }
-  .hero .hero-phone { width: min(42%, 10rem); }
-  .hero-browser { width: 92%; }
+  .hero .desk-composition { width: min(100%, 25rem); min-height: clamp(17.5rem, 82vw, 21rem); margin-inline: auto; }
+  .hero .hero-phone { left: 3%; width: min(32%, 8rem); }
+  .hero .hero-browser { top: .5rem; width: 78%; }
   .hero-piece { width: 42%; }
-  .hero-note { width: 10.5rem; right: 0; bottom: .5rem; }
+  .hero .hero-note { width: 8rem; right: .25rem; bottom: .25rem; padding: .6rem; font-size: .6rem; }
   .service-visual { min-height: 25rem; }
   .process-board { grid-template-columns: 1fr; }
   .process-note, .process-note:nth-child(4), .process-note:nth-child(5) { grid-column: auto; margin-top: 0; min-height: 12rem; }
@@ -693,6 +700,15 @@ html[data-theme="dark"] .price-card { --price-edge-color: var(--lime); }
   .price-demo:hover:not(:active), .price-demo:active, .price-demo span, .price-demo:hover:not(:active) span { transform: none; }
 }
 .price-list { display: grid; gap: .55rem; margin: 0; padding: 0; list-style: none; }
+.price-group-label { margin: .4rem 0 -.5rem; font: 600 .7rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.price-amount { gap: 1rem; }
+.price-part { display: grid; gap: .2rem; flex: 1 1 9rem; }
+.price-part > span { font: 600 .7rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.price-part strong { font-size: clamp(2rem, 4vw, 3rem); }
+.price-part:nth-child(2) strong { font-size: clamp(1.5rem, 3vw, 2rem); }
+.price-extra p { margin: .3rem 0 0; }
+.feature--wide { grid-column: span 2; }
+@media (max-width: 600px) { .feature--wide { grid-column: auto; } }
 .price-list li { position: relative; padding-left: 1.6rem; }
 .price-list li::before { content: "✓"; position: absolute; left: 0; font-weight: 800; color: #54820d; }
 html[data-theme="dark"] .price-list li::before { color: var(--lime); }

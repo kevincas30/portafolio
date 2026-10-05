@@ -87,8 +87,8 @@
     { "title": "Menú digital", "description": "Platos organizados por categorías con sus precios." },
     { "title": "Galería", "description": "Imágenes de los platos, el espacio y su comunidad." },
     { "title": "Ubicación", "description": "Un mapa para encontrar el restaurante en Ixtapa." },
-    { "title": "Reservaciones", "description": "La vía telefónica para apartar una mesa, visible desde la web." },
-    { "title": "Contacto", "description": "Accesos al Instagram del restaurante y a su contacto por WhatsApp." },
+    { "title": "Consulta de mesa por teléfono", "description": "Los teléfonos de las sucursales permiten llamar para consultar una mesa; no hay reservas automáticas." },
+    { "title": "Contacto", "description": "Accesos a las redes del restaurante y WhatsApp para consultas de facturas." },
     { "title": "Información del restaurante", "description": "La propuesta y los datos principales, reunidos en una navegación sencilla." }
   ],
   "outcome": "La web está publicada en tiburondelacostaixtapa.com y reúne el menú, la galería, la ubicación y la información de contacto de El Tiburón de la Costa.",

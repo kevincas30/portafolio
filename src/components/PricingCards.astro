@@ -15,20 +15,14 @@ const offer = site.launchOffer;
         <span class="label">{pack.label}</span>
         <h3>{pack.title}</h3>
         <p class="price-pitch">{pack.pitch}</p>
+        <p class="price-group-label">Funciones incluidas</p>
         <ul class="price-list">{pack.includes.map((item) => <li>{item}</li>)}</ul>
-        {pack.extra && <p class="price-extra">{pack.extra}</p>}
         <p class="price-delivery">{pack.delivery}, desde que tenemos tu material.</p>
         <div class="price-amount">
-          {offer.enabled ? (
-            <>
-              <s aria-label={`Antes ${pack.price} euros`}>{pack.price} €</s>
-              <strong>{launchPrice(pack.price)} €</strong>
-            </>
-          ) : (
-            <strong>{pack.price} €</strong>
-          )}
-          <span class="price-monthly">Pago único <b>+ {pack.monthly} €/mes</b></span>
+          <div class="price-part"><span>Pago por creación</span>{offer.enabled ? <><s aria-label={`Antes ${pack.price} euros`}>{pack.price} €</s><strong>{launchPrice(pack.price)} €</strong></> : <strong>{pack.price} €</strong>}</div>
+          <div class="price-part"><span>Cuota mensual</span><strong>{pack.monthly} €/mes</strong></div>
         </div>
+        {pack.extra && <div class="price-extra"><b>Incluido y presupuestado aparte</b><p>{pack.extra}</p></div>}
         <div class="button-row">
           <a class="button button--lime price-demo" href={waLink(pack.waText)} target="_blank" rel="noopener noreferrer">Pedir demo gratis <span aria-hidden="true">↗</span></a>
           <a class="arrow-link" href={pack.href}>Ver detalles <span aria-hidden="true">→</span></a>
@@ -36,7 +30,7 @@ const offer = site.launchOffer;
       </article>
     ))}
   </div>
-  <p class="pricing-note"><b>Los {site.packs[0].monthly} €/mes incluyen:</b> {site.monthlyIncludes} Se paga el 50% al empezar y el 50% al publicar, por Bizum o transferencia.</p>
+  <p class="pricing-note"><b>La cuota mensual incluye:</b> {site.monthlyIncludes} El pago por creación se divide en 50 % al empezar y 50 % al publicar, por Bizum o transferencia. La demo gratuita es una muestra visual inicial, no una web completa.</p>
 </div>
 
 <script>

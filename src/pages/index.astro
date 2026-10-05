@@ -15,18 +15,19 @@ import { site, waLink } from '../config/site';
 const projects = (await getCollection('projects')).filter((p) => !p.data.isDemo).sort((a,b) => a.data.order - b.data.order);
 const [restaurantes, alojamientos] = site.packs;
 const steps = [
-  ['Nos escribes por WhatsApp.', 'Nos dices el nombre de tu negocio y qué necesitas. Dos minutos.', 'Hablemos'],
-  ['Te preparamos una demo gratis.', 'Con tu carta o tus fotos reales, para que la veas en tu propio móvil.', 'Tu demo gratis'],
-  ['Si te gusta, empezamos.', 'Pagas el 50% y nos pasas el material que tengas. Si falta algo, te ayudamos.', 'Empezamos'],
+  ['Nos cuentas qué necesitas.', 'Cuéntanos qué negocio tienes y pásanos tu web, carta o algunas fotos.', 'Hablemos'],
+  ['Preparamos una muestra visual.', 'Te enseñamos un enfoque inicial para tu web antes de contratar; todavía no es la web completa.', 'Tu demo gratis'],
+  ['Si te gusta, empezamos.', 'Acordamos el trabajo y pagas el 50% al empezar. Si falta material, te ayudamos a prepararlo.', 'Empezamos'],
   ['Revisamos contigo.', 'Ajustamos textos, fotos y detalles hasta que esté como quieres.', 'Afinamos juntos'],
   ['La publicamos.', 'Pagas el 50% restante y tu web queda online con tu propio dominio.', 'Tu web online'],
 ];
 const faq = [
-  { question: '¿Tengo que dejar Glovo, Just Eat o Booking?', answer: 'No. Tu web es un canal más, pero sin comisión. Muchos clientes que ya te conocen prefieren pedir o reservar directamente si se lo pones fácil.' },
-  { question: '¿Puedo cambiar precios y platos yo mismo?', answer: 'Sí. En el pack de restaurantes la carta se edita desde una hoja de Google, como una lista normal. Y los cambios pequeños que nos pidas entran en la cuota mensual.' },
+  { question: '¿Sirve para un restaurante sin reparto o un hotel grande?', answer: 'Sí. La web presenta lo que ofreces y facilita el contacto. Los packs tienen un alcance concreto; funciones adicionales se presupuestan aparte.' },
+  { question: '¿Puedo cambiar precios y platos yo mismo?', answer: 'Sí. En el pack de restaurantes la carta se edita desde una hoja de Google. La cuota mensual incluye cambios pequeños, como precios, horarios y fotos.' },
   { question: '¿Qué incluyen los 15 € al mes?', answer: `${site.monthlyIncludes}` },
-  { question: '¿Cuánto tarda?', answer: `${restaurantes.delivery} el pack de restaurantes y ${alojamientos.delivery.toLowerCase()} el de alojamientos, contando desde que tenemos tu material.` },
-  { question: '¿Cómo se paga?', answer: 'El 50% al empezar y el 50% al publicar, por Bizum o transferencia. La demo es gratis y no te compromete a nada.' },
+  { question: '¿Cuánto tarda?', answer: `${restaurantes.delivery} el pack de restaurantes y ${alojamientos.delivery.toLowerCase()} el de hoteles, contando desde que tenemos el material necesario.` },
+  { question: '¿Qué es la demo gratis?', answer: 'Una muestra visual inicial del enfoque para tu web. No es una web completa terminada y no te compromete a contratar.' },
+  { question: '¿Cómo se paga?', answer: 'El 50 % al empezar y el 50 % al publicar, por Bizum o transferencia.' },
   { question: '¿No tengo fotos ni textos, puedo igual?', answer: 'Sí. Te ayudamos a escribir los textos y a elegir las fotos. Con las de tu móvil, bien hechas, suele ser suficiente para empezar.' },
   { question: '¿Trabajáis fuera de mi ciudad?', answer: 'Sí, en toda España. Trabajamos en remoto, por WhatsApp y videollamada.' },
 ];
@@ -36,27 +37,28 @@ const faq = [
     <HeroColorBends client:visible />
     <div class="container hero-grid">
       <div class="hero-copy">
-        <h1 class="display"><span><span class="hero-title-motion">Más pedidos.</span></span> <span><span class="hero-title-motion">Cero comisiones.</span></span></h1>
-        <p class="lead">Webs para <strong>restaurantes</strong> y <strong>alojamientos rurales</strong>: tu carta online con pedidos por WhatsApp, o tu casa con reservas directas. Sin pagar a una plataforma por cada cliente.</p>
-        <div class="button-row"><a class="button hero-demo" href={site.whatsapp} target="_blank" rel="noopener noreferrer"><span class="hero-demo-label">Pide tu demo gratis</span> <span class="hero-demo-arrow" aria-hidden="true">↗</span></a><a class="arrow-link hero-project-link" href="/proyectos">Ver proyectos reales <span aria-hidden="true">→</span></a></div>
+        <h1 class="display"><span><span class="hero-title-motion">Tu negocio merece</span></span> <span><span class="hero-title-motion">una web que invite</span></span> <span><span class="hero-title-motion">a elegirlo.</span></span></h1>
+        <p class="lead">Diseñamos webs para <strong>hoteles</strong> y <strong>restaurantes</strong>: muestra tus habitaciones o tu carta, resuelve las dudas de tus clientes y facilita que contacten contigo.</p>
+        <div class="button-row"><a class="button hero-demo" href={site.whatsapp} target="_blank" rel="noopener noreferrer"><span class="hero-demo-label">Pedir mi demo gratis</span> <span class="hero-demo-arrow" aria-hidden="true">↗</span></a><a class="arrow-link hero-project-link" href="/proyectos">Ver proyectos reales <span aria-hidden="true">→</span></a></div>
+        <p class="hero-support">Una muestra de cómo podría quedar tu web, sin compromiso.</p>
         <p class="hero-meta">{site.area}</p>
       </div>
       <div class="desk-composition" data-hero-composition aria-label="Webs reales: Alojamiento La Rueca en escritorio e Italy Pizza en el móvil">
         <div class="hero-entry"><div class="hero-float"><div class="hero-highlight hero-highlight--browser"><BrowserFrame class="hero-browser" src="/proyectos/La%20rueca/la-rueca-desktop.webp" alt="Web de Alojamiento La Rueca en escritorio" /></div></div></div>
         <div class="hero-entry"><div class="hero-float"><div class="hero-highlight hero-highlight--phone"><PhoneFrame class="hero-phone" src="/proyectos/Italy%20pizza/italy-pizza-mobile.webp" alt="Carta online de Italy Pizza en el móvil" /></div></div></div>
-        <div class="hero-entry"><div class="hero-float"><div class="hero-note">proyectos reales,<br/>publicados y en uso ↘</div></div></div>
+        <div class="hero-entry"><div class="hero-float"><div class="hero-note">proyectos reales,<br/>publicados online ↘</div></div></div>
       </div>
     </div>
   </section>
 
   <section class="section section--dark">
-    <div class="narrow" data-scroll-reading><span class="eyebrow"><span><ReadingWords text="El problema" /></span></span><p class="intro-statement"><ReadingWords text="Las plataformas cobran por cada pedido y cada reserva. " /><em><ReadingWords text="Una web propia, no:" /></em><ReadingWords text=" el cliente es tuyo y el margen también." /></p></div>
+    <div class="narrow" data-scroll-reading><h2 class="intro-statement"><ReadingWords text="Antes de llamar o reservar, " /><em><ReadingWords text="quieren conocerte." /></em></h2><p class="lead">Qué ofreces, cómo es tu espacio, dónde estás y cómo contactar. Una web propia reúne esa información y facilita el siguiente paso.</p><p>No cobramos comisión por los pedidos o consultas que recibas desde tu web.</p></div>
   </section>
 
   <section class="section home-projects"><div class="container"><SectionHeading number="01" title="Webs reales, hechas para cada negocio." intro="Tres proyectos con contenidos, recorridos y decisiones diferentes." /><div class="project-list">{projects.map((project) => <ProjectCard project={project} showVideoPreview />)}</div><div style="margin-top:4rem"><a class="button button--ghost" href="/proyectos">Ver todos los proyectos <span>→</span></a></div></div></section>
 
   <section class="section home-packs"><div class="container packs-workspace">
-    <SectionHeading number="02" title="Dos packs. Un precio claro." typewriter intro="Pensados para negocios que viven de sus clientes y no tienen tiempo para webs complicadas." />
+    <SectionHeading number="02" title="Dos packs. Un precio claro." typewriter intro="Uno para presentar tu restaurante y su carta; otro para mostrar tu hotel y facilitar el contacto." />
     <div class="services-split">
       <article class="service-panel">
         <div class="service-copy"><div><span class="label">{restaurantes.label}</span><h3>{restaurantes.title}</h3><p>{restaurantes.pitch}</p></div><div class="button-row"><a class="button button--lime" href={waLink(restaurantes.waText)} target="_blank" rel="noopener noreferrer">Quiero mi demo <span>↗</span></a><a class="arrow-link" href={restaurantes.href}>Ver el pack <span>→</span></a></div></div>
@@ -73,11 +75,11 @@ const faq = [
 
   <section class="section home-closing-section" id="precios"><div class="container"><SectionHeading number="03" title="Lo que cuesta, sin letra pequeña." /><PricingCards /></div></section>
 
-  <section class="section section--dark home-closing-section"><div class="container"><SectionHeading number="04" title="Primero lo ves. Después decides." intro="No pagas nada hasta que hayas visto tu demo y te guste." /><ProcessBoard steps={steps} /></div></section>
+  <section class="section section--dark home-closing-section"><div class="container"><SectionHeading number="04" title="Primero lo ves. Después decides." intro="La demo gratuita es una muestra visual inicial para valorar el enfoque antes de contratar." /><ProcessBoard steps={steps} /></div></section>
 
   <section class="section home-closing-section"><div class="narrow"><SectionHeading number="FAQ" title="Lo que nos suelen preguntar." /><Accordion items={faq} /></div></section>
 
-  <section class="section section--tight home-closing-section"><div class="container idea-box" data-reveal><div><span class="eyebrow">Tu turno</span><h2 class="section-title">¿Qué necesita tu negocio?</h2><p class="typed-line"><span data-typed aria-hidden="true">Una carta online para mi restaurante.</span><span class="typed-cursor" aria-hidden="true"></span><span class="sr-only">Por ejemplo: una carta online para un restaurante, una web para un hotel o recibir pedidos por WhatsApp.</span></p><p>Escríbenos y te preparamos una demo gratis.</p><a class="button" href={site.whatsapp} target="_blank" rel="noopener noreferrer">Pedir mi demo por WhatsApp <span>↗</span></a></div></div></section>
+  <section class="section section--tight home-closing-section"><div class="container idea-box" data-reveal><div><span class="eyebrow">Tu turno</span><h2 class="section-title">¿Qué necesita tu negocio?</h2><p class="typed-line"><span data-typed aria-hidden="true">Mostrar mi restaurante y su carta.</span><span class="typed-cursor" aria-hidden="true"></span><span class="sr-only">Por ejemplo: mostrar un restaurante y su carta, presentar las habitaciones de un hotel o facilitar el contacto.</span></p><p>Cuéntanos tu idea y te mostramos una propuesta visual inicial.</p><a class="button" href={site.whatsapp} target="_blank" rel="noopener noreferrer">Pedir mi demo <span aria-hidden="true">↗</span></a></div></div></section>
 
   <section class="section home-closing-section"><div class="container case-copy-grid" data-reveal><div><span class="eyebrow">El estudio</span><h2 class="section-title">Cerca, aunque trabajemos en remoto.</h2></div><div><p class="lead">Somos un estudio independiente de diseño y desarrollo. Hablas directamente con quienes hacen tu web, por WhatsApp o videollamada. Trabajamos con negocios de toda España.</p><a class="arrow-link" href="/nosotros">Conocer el estudio <span>→</span></a></div></div></section>
   <ContactBlock class="home-closing-section" home />
@@ -85,7 +87,7 @@ const faq = [
     const setupTyping = () => {
       const el = document.querySelector<HTMLElement>('[data-typed]'); if (!el || el.dataset.ready) return; el.dataset.ready = 'true';
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const phrases = ['Una carta online para mi restaurante.', 'Una web para mi hotel.', 'Recibir pedidos por WhatsApp.'];
+      const phrases = ['Mostrar mi restaurante y su carta.', 'Presentar las habitaciones de mi hotel.', 'Facilitar el contacto con mis clientes.'];
       let p = 0, i = phrases[0].length, deleting = true;
       const type = () => { const phrase = phrases[p]; i += deleting ? -1 : 1; el.textContent = phrase.slice(0, i); if (i <= 0) { deleting = false; p = (p + 1) % phrases.length; } if (i >= phrases[p].length && !deleting) { deleting = true; setTimeout(type, 1800); return; } setTimeout(type, deleting ? 42 : 72); };
       setTimeout(type, 1700);

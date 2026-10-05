@@ -25,7 +25,7 @@ const projects = (await getCollection('projects'))
   .sort((a, b) => projectSlugs.indexOf(a.data.slug) - projectSlugs.indexOf(b.data.slug));
 ---
 <BaseLayout title={metaTitle} description={metaDescription} image={projects[0]?.data.cover}>
-  <section class="section">
+  <section class="section niche-hero">
     <div class="container hero-grid">
       <div class="hero-copy">
         <span class="eyebrow">{pack.label}</span>
@@ -41,10 +41,10 @@ const projects = (await getCollection('projects'))
 
   <section class="section"><div class="container"><SectionHeading number="01" title="Qué cambia para tu negocio." /><div class="feature-grid">{benefits.map((item, i) => <article class="feature"><b>0{i + 1}</b><h3>{item[0]}</h3><p>{item[1]}</p></article>)}</div></div></section>
 
-  {projects.length > 0 && <section class="section"><div class="container"><SectionHeading number="02" title="Hecho y funcionando." intro="Entra desde tu móvil y pruébalo tú mismo." /><div class="project-list">{projects.map((project) => <ProjectCard project={project} />)}</div></div></section>}
+  {projects.length > 0 && <section class="section"><div class="container"><SectionHeading number="02" title="Proyectos publicados." intro="Explora qué muestra y qué permite hacer cada web." /><div class="project-list">{projects.map((project) => <ProjectCard project={project} />)}</div></div></section>}
 
   <section class="section" id="precio"><div class="container"><SectionHeading number="03" title="Precio cerrado, sin sorpresas." /><PricingCards /></div></section>
 
   <section class="section"><div class="narrow"><SectionHeading number="FAQ" title="Antes de empezar." /><Accordion items={faq} /></div></section>
-  <ContactBlock />
+  <ContactBlock waText={pack.waText} />
 </BaseLayout>

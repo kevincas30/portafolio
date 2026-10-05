@@ -5,6 +5,8 @@ export function setupHeroMotion(hero: HTMLElement): () => void {
   const entries = hero.querySelectorAll<HTMLElement>('.hero-entry');
   const floats = hero.querySelectorAll<HTMLElement>('.hero-float');
   const titleLines = hero.querySelectorAll<HTMLElement>('.hero-title-motion');
+  const title = hero.querySelector<HTMLElement>('.hero-copy .display');
+  const titleRows = title?.querySelectorAll<HTMLElement>(':scope > span');
   const browser = hero.querySelector<HTMLElement>('.hero-browser');
   const phone = hero.querySelector<HTMLElement>('.hero-phone');
   const note = hero.querySelector<HTMLElement>('.hero-note');
@@ -24,9 +26,8 @@ export function setupHeroMotion(hero: HTMLElement): () => void {
     const composition = hero.querySelector<HTMLElement>('[data-hero-composition]') ?? hero;
     const bounds = composition.getBoundingClientRect();
     let visible = bounds.bottom > 0 && bounds.top < window.innerHeight;
-    let atTop = window.scrollY <= 2;
     let entranceReady = entered;
-    const amplitudes = mobile ? [4, 6, 3] : [8, 12, 6];
+    const amplitudes = mobile ? [7, 10, 5] : [8, 12, 6];
     const floating = Array.from(floats, (layer, index) => gsap.fromTo(layer, { y: 0 }, {
       y: -(amplitudes[index] ?? 6),
       duration: [2.4, 2.8, 2.2][index] ?? 2.4,
@@ -38,7 +39,7 @@ export function setupHeroMotion(hero: HTMLElement): () => void {
       immediateRender: false,
     }));
     const syncFloating = () => {
-      const active = entranceReady && atTop && visible && !document.hidden;
+      const active = entranceReady && visible && !document.hidden;
       floating.forEach((animation) => active ? animation.play() : animation.pause());
     };
     const visibility = new IntersectionObserver(([entry]) => {
@@ -64,6 +65,16 @@ export function setupHeroMotion(hero: HTMLElement): () => void {
 
     if (!entered) {
       entered = true;
+      if (mobile && titleRows?.length) {
+        gsap.from(titleRows, {
+          opacity: 0,
+          y: 22,
+          duration: .7,
+          stagger: .12,
+          ease: 'power3.out',
+          clearProps: 'transform,opacity',
+        });
+      }
       gsap.from(entries, {
         opacity: 0,
         y: 20,
@@ -75,31 +86,41 @@ export function setupHeroMotion(hero: HTMLElement): () => void {
       });
     }
 
-    // Initial progress is zero below the header. No pin or wheel interception.
+    // On mobile the composition sits below the copy, so its own viewport crossing
+    // drives the scroll movement. The floating wrappers remain independent.
+    const headerOffset = () => document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0;
     const scrollTimeline = gsap.timeline({
       defaults: { duration: 1, ease: 'none' },
       scrollTrigger: {
         id: 'hero-composition',
-        trigger: hero,
-        start: () => `top top+=${document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0}`,
+        trigger: mobile ? composition : hero,
+        start: mobile ? 'top 85%' : () => `top top+=${headerOffset()}`,
         end: 'bottom 20%',
         scrub: .6,
         invalidateOnRefresh: true,
-        onUpdate: (trigger) => {
-          atTop = trigger.progress === 0 && window.scrollY <= 2;
-          syncFloating();
-        },
       },
     })
-      .to(browser, { y: mobile ? -14 : -35, rotation: mobile ? 1.75 : .5 }, 0)
-      .to(phone, { x: mobile ? 0 : -15, y: mobile ? -25 : -62.5, rotation: mobile ? -4.5 : -5.5 }, 0)
-      .to(note, { y: mobile ? -11 : -25, rotation: mobile ? -2 : -1 }, 0);
+      .to(browser, { y: mobile ? -28 : -35, rotation: mobile ? 1 : .5 }, 0)
+      .to(phone, { x: mobile ? -10 : -15, y: mobile ? -48 : -62.5, rotation: mobile ? -6 : -5.5 }, 0)
+      .to(note, { y: mobile ? -22 : -25, rotation: mobile ? -2 : -1 }, 0);
 
-    if (titleLines.length === 2) {
-      // The upper line moves first, keeping the tight leading readable on exit.
-      scrollTimeline
-        .to(titleLines[0], { y: mobile ? -5 : -12.5, ease: 'power1.out' }, 0)
-        .to(titleLines[1], { y: mobile ? -9 : -22.5 }, 0);
+    if (titleLines.length) {
+      // Each line moves a little farther than the one above it on exit.
+      const titleTimeline = mobile && title ? gsap.timeline({
+        defaults: { duration: 1, ease: 'none' },
+        scrollTrigger: {
+          id: 'hero-title',
+          trigger: title,
+          start: () => `top top+=${headerOffset()}`,
+          end: () => `bottom top+=${headerOffset()}`,
+          scrub: .6,
+          invalidateOnRefresh: true,
+        },
+      }) : scrollTimeline;
+      titleLines.forEach((line, index) => titleTimeline.to(line, {
+        y: -(mobile ? 10 : 12.5) - index * (mobile ? 7 : 10),
+        ease: index === 0 ? 'power1.out' : 'none',
+      }, 0));
     }
 
     syncFloating();

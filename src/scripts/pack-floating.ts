@@ -15,7 +15,7 @@ export function setupPackFloating(section: HTMLElement): () => void {
     if (reduced) return;
 
     // Small front-facing angles keep the flat screenshots readable, without pinning.
-    const angles = mobile ? { x: 6, y: 12 } : { x: 8, y: 20 };
+    const angles = mobile ? { x: 10, y: 18 } : { x: 8, y: 20 };
     layers.forEach((layer) => {
       const tilt = layer.querySelector<HTMLElement>('[data-pack-tilt]');
       if (!tilt) return;
@@ -41,7 +41,7 @@ export function setupPackFloating(section: HTMLElement): () => void {
 
     const visible = new Set<HTMLElement>();
     const animations = layers.map((layer, index) => gsap.fromTo(layer, { y: 0 }, {
-      y: -(layer.querySelector('.phone') ? (mobile ? 6 : 12) : (mobile ? 4 : 8)),
+      y: -(layer.querySelector('.phone') ? (mobile ? 11 : 12) : (mobile ? 8 : 8)),
       duration: layer.querySelector('.phone') ? 2.8 : 2.4,
       delay: index * .2,
       repeat: -1,

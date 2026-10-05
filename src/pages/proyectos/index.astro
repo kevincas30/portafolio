@@ -3,6 +3,6 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 const entries = (await getCollection('projects')).sort((a,b) => a.data.order - b.data.order);
 ---
-<BaseLayout title="Proyectos" description="Proyectos web reales de Diseño Creativo para restaurantes y alojamientos.">
+<BaseLayout title="Proyectos" description="Webs reales para una pizzería, una marisquería y un alojamiento rural para grupos. Conoce el trabajo de Diseño Creativo.">
   <section class="section"><div class="container"><span class="eyebrow">Portfolio</span><h1 class="page-title">Webs reales.<br/>Cada una, con su carácter.</h1><p class="lead">Italy Pizza, Alojamiento La Rueca y El Tiburón de la Costa: tres proyectos construidos alrededor de negocios y necesidades diferentes.</p><p class="portfolio-count"><strong>{entries.length}</strong> {entries.length === 1 ? 'proyecto' : 'proyectos'}</p><div class="portfolio-grid">{entries.map(({ data }) => <article class="portfolio-item" data-reveal><a href={`/proyectos/${data.slug}`}><img src={data.cover} alt={data.coverAlt} width="1400" height="900" loading="lazy" /><h2>{data.title}</h2><p>{data.summary}</p><span class="arrow-link">Ver proyecto <span aria-hidden="true">→</span></span></a></article>)}</div></div></section>
 </BaseLayout>

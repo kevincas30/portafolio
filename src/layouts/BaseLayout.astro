@@ -7,10 +7,11 @@ import { site } from '../config/site';
 import '../styles/global.css';
 
 interface Props { title: string; description?: string; image?: string; noindex?: boolean; }
-const { title, description = site.description, image = '/proyectos/Italy%20pizza/italy-pizza-desktop.webp', noindex = false } = Astro.props;
+const { title, description = site.description, image = '/og-diseno-creativo.png', noindex = false } = Astro.props;
 const pageTitle = title === site.name ? title : `${title} — ${site.name}`;
 const canonical = site.url ? new URL(Astro.url.pathname, site.url).toString() : undefined;
-const ogImage = site.url ? new URL(image, site.url).toString() : image;
+const ogImage = image ? (site.url ? new URL(image, site.url).toString() : image) : undefined;
+const isBrandImage = image === '/og-diseno-creativo.png';
 ---
 <!doctype html>
 <html lang="es">
@@ -24,9 +25,13 @@ const ogImage = site.url ? new URL(image, site.url).toString() : image;
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:alt" content={isBrandImage ? 'Diseño Creativo: webs para hoteles y restaurantes' : pageTitle} />}
+    {isBrandImage && <meta property="og:image:width" content="1200" />}
+    {isBrandImage && <meta property="og:image:height" content="630" />}
     <meta property="og:locale" content="es_ES" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
     <meta id="theme-color" name="theme-color" content="#f3f1eb" />
     <script is:inline>
       (() => {

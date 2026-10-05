@@ -1,7 +1,7 @@
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 
-/** Reveals each row on entry and gently closes it when scrolling back above it. */
+/** Pauses on each summary before revealing it, then reverses as soon as scrolling returns. */
 export function setupProcessFlips(board: HTMLElement): () => void {
   const notes = [...board.querySelectorAll<HTMLElement>('.process-note')];
   const layers = notes.map((note) => note.querySelector<HTMLElement>('[data-process-flip]'));
@@ -16,8 +16,11 @@ export function setupProcessFlips(board: HTMLElement): () => void {
   let context: gsap.Context | undefined;
   let refreshFrame = 0;
   let active = true;
+  const pendingReveals = new Set<ReturnType<typeof setTimeout>>();
 
   const reset = () => {
+    pendingReveals.forEach(clearTimeout);
+    pendingReveals.clear();
     context?.revert();
     context = undefined;
     board.removeAttribute('data-process-ready');
@@ -68,12 +71,30 @@ export function setupProcessFlips(board: HTMLElement): () => void {
 
           timeline.progress(rowWasOpen ? 1 : 0).pause();
           row.forEach((note) => { note.dataset.processRevealed = String(rowWasOpen); });
-          const reveal = () => {
+          let revealTimer: ReturnType<typeof setTimeout> | undefined;
+          let rowTrigger: ScrollTrigger | undefined;
+          const cancelReveal = () => {
+            if (revealTimer === undefined) return;
+            clearTimeout(revealTimer);
+            pendingReveals.delete(revealTimer);
+            revealTimer = undefined;
+          };
+          const play = () => {
             if (timeline.progress() >= 1) return;
             row.forEach((note) => { note.dataset.processTurning = 'true'; });
             timeline.play();
           };
+          const reveal = () => {
+            if (timeline.progress() >= 1 || revealTimer !== undefined) return;
+            revealTimer = setTimeout(() => {
+              pendingReveals.delete(revealTimer!);
+              revealTimer = undefined;
+              if (active && rowTrigger && rowTrigger.direction > 0 && rowTrigger.scroll() >= rowTrigger.start) play();
+            }, 650);
+            pendingReveals.add(revealTimer);
+          };
           const finish = () => {
+            cancelReveal();
             timeline.progress(1).pause();
             row.forEach((note) => {
               note.dataset.processRevealed = 'true';
@@ -81,23 +102,27 @@ export function setupProcessFlips(board: HTMLElement): () => void {
             });
           };
           const close = () => {
+            cancelReveal();
             if (timeline.progress() <= 0) return;
             row.forEach((note) => { note.dataset.processTurning = 'true'; });
             timeline.reverse();
           };
 
-          ScrollTrigger.create({
+          rowTrigger = ScrollTrigger.create({
             id: `process-flip-row-${index + 1}`,
             trigger: row[0],
             start: 'top 78%',
-            end: 'bottom top',
+            end: 'top 20%',
             onEnter: reveal,
-            onEnterBack: reveal,
-            onLeave: finish,
+            onEnterBack: close,
             onLeaveBack: close,
+            onUpdate: (trigger) => trigger.direction < 0 ? close() : reveal(),
             onRefresh: (trigger) => {
               if (trigger.scroll() >= trigger.end) finish();
-              else if (trigger.scroll() >= trigger.start) reveal();
+              else if (trigger.scroll() >= trigger.start) {
+                if (trigger.direction < 0) close();
+                else reveal();
+              }
               else close();
             },
           });

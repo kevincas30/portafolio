@@ -9,19 +9,19 @@ import ContactBlock from '../../components/ContactBlock.astro';
 import { site } from '../../config/site';
 const [restaurantes, alojamientos] = site.packs;
 const faq = [
-  { question: '¿Puedo pedir algo que no está en los packs?', answer: 'Sí. Los packs cubren lo que más piden restaurantes y alojamientos. Si necesitas algo distinto, como una tienda, reservas con pago online o más idiomas, te lo presupuestamos aparte.' },
-  { question: '¿La demo gratis me compromete a algo?', answer: 'No. Te la enseñamos, y si no te convence, no pasa nada.' },
+  { question: '¿Puedo pedir algo que no está en los packs?', answer: 'Sí. Los packs cubren una web esencial para restaurantes y hoteles. Un motor de reservas, pagos online, integraciones o más idiomas se presupuestan aparte.' },
+  { question: '¿La demo gratis me compromete a algo?', answer: 'No. Es una muestra visual inicial para valorar el enfoque antes de contratar, no una web completa terminada.' },
   { question: '¿Trabajáis con negocios de toda España?', answer: 'Sí. Trabajamos en remoto, por WhatsApp y videollamada.' },
   { question: '¿Qué pasa si dejo de pagar la cuota?', answer: 'No hay permanencia. El dominio es tuyo y te ayudamos a trasladar la web si lo necesitas.' },
 ];
 ---
-<BaseLayout title="Servicios y precios" description="Packs con precio cerrado: carta online con pedidos por WhatsApp para restaurantes y web con reservas directas para alojamientos rurales.">
-  <section class="section"><div class="container"><span class="eyebrow">Servicios</span><h1 class="page-title">Dos packs. Precio cerrado.</h1><p class="lead">Para negocios que viven de sus clientes: restaurantes que quieren pedidos directos y alojamientos que quieren reservas directas.</p></div></section>
+<BaseLayout title="Servicios y precios para hoteles y restaurantes" description="Packs con precio cerrado para hoteles y restaurantes: presenta tu oferta, facilita el contacto y consulta las funciones incluidas.">
+  <section class="section"><div class="container"><span class="eyebrow">Servicios</span><h1 class="page-title">Dos packs. Precio cerrado.</h1><p class="lead">Una web para presentar tu restaurante o tu hotel, responder las dudas habituales y facilitar el contacto.</p></div></section>
   <section class="section--tight"><div class="container"><div class="feature-grid">
-    <article class="feature" style="grid-column:span 2"><b>01 · {restaurantes.label.toUpperCase()}</b><h2 class="section-title">{restaurantes.title}</h2><p>{restaurantes.pitch}</p><a class="arrow-link" href={restaurantes.href}>Ver el pack <span>→</span></a></article>
+    <article class="feature feature--wide"><b>01 · {restaurantes.label.toUpperCase()}</b><h2 class="section-title">{restaurantes.title}</h2><p>{restaurantes.pitch}</p><a class="arrow-link" href={restaurantes.href}>Ver el pack <span>→</span></a></article>
     <div class="feature-visual"><PhoneFrame class="service-phone" src="/proyectos/Italy%20pizza/italy-pizza-mobile.webp" alt="Carta online de Italy Pizza en el móvil" /></div>
     <div class="feature-visual"><BrowserFrame src="/proyectos/La%20rueca/la-rueca-desktop.webp" alt="Web de Alojamiento La Rueca" /></div>
-    <article class="feature" style="grid-column:span 2"><b>02 · {alojamientos.label.toUpperCase()}</b><h2 class="section-title">{alojamientos.title}</h2><p>{alojamientos.pitch}</p><a class="arrow-link" href={alojamientos.href}>Ver el pack <span>→</span></a></article>
+    <article class="feature feature--wide"><b>02 · {alojamientos.label.toUpperCase()}</b><h2 class="section-title">{alojamientos.title}</h2><p>{alojamientos.pitch}</p><a class="arrow-link" href={alojamientos.href}>Ver el pack <span>→</span></a></article>
   </div></div></section>
   <section class="section" id="precios"><div class="container"><SectionHeading number="Precios" title="Lo que cuesta, sin letra pequeña." /><PricingCards /></div></section>
   <section class="section section--dark"><div class="container"><SectionHeading number="Extra" title="También diseñamos tu contenido para redes." intro="Posts, historias, carruseles y flyers con la misma imagen que tu web. Se presupuesta aparte." /><a class="button button--lime" href="/servicios/diseno-para-redes">Ver diseño para redes <span>→</span></a></div></section>

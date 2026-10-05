@@ -1,11 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactForm from '../components/ContactForm.astro';
-import { site } from '../config/site';
+import { site, waLink, redesWhatsAppText } from '../config/site';
+export const prerender = false;
+const isRedes = Astro.url.searchParams.get('servicio') === 'redes';
+const contactTitle = isRedes ? 'Pide presupuesto de contenido.' : 'Pide tu demo gratis.';
+const contactDescription = isRedes
+  ? 'Cuéntanos qué negocio tienes y qué contenido necesitas para redes. Te proponemos un alcance y un presupuesto.'
+  : 'Cuéntanos qué negocio tienes y pásanos tu web, carta o algunas fotos. Preparamos una muestra visual inicial antes de contratar.';
 ---
-<BaseLayout title="Contacto" description="Escríbenos por WhatsApp o email y te preparamos una demo gratis de tu web.">
-  <section class="section"><div class="container"><span class="eyebrow">Contacto</span><h1 class="page-title">Pide tu demo gratis.</h1><p class="lead">Dinos el nombre de tu negocio y qué necesitas. Te enseñamos cómo quedaría tu web antes de que pagues nada.</p></div></section>
-  <section class="section--tight"><div class="container contact-card"><div><h2>Un mensaje es suficiente.</h2><p>Te respondemos en menos de 48 h.</p></div><div class="contact-actions"><a class="button" href={site.whatsapp} target="_blank" rel="noopener noreferrer">Escribir por WhatsApp <span aria-hidden="true">↗</span></a><a class="arrow-link" href={`mailto:${site.email}`}>{site.email} <span aria-hidden="true">↗</span></a><p class="contact-hint">{site.whatsappDisplay}</p><ContactForm compact={false} /></div></div></section>
+<BaseLayout title={isRedes ? 'Contacto para contenido de redes' : 'Contacto'} description={contactDescription}>
+  <section class="section"><div class="container"><span class="eyebrow">Contacto</span><h1 class="page-title">{contactTitle}</h1><p class="lead">{contactDescription}</p></div></section>
+  <section class="section--tight"><div class="container contact-card"><div><h2>{isRedes ? 'Hablemos de tus piezas.' : 'Un mensaje es suficiente.'}</h2><p>{isRedes ? 'Indícanos qué formatos buscas y si tienes material o identidad visual.' : 'Te respondemos en menos de 48 h.'}</p></div><div class="contact-actions"><a class="button" href={isRedes ? waLink(redesWhatsAppText) : site.whatsapp} target="_blank" rel="noopener noreferrer">{isRedes ? 'Pedir presupuesto de contenido' : 'Escribir por WhatsApp'} <span aria-hidden="true">↗</span></a><a class="arrow-link" href={`mailto:${site.email}${isRedes ? '?subject=Consulta%20de%20contenido%20para%20redes' : ''}`}>{site.email} <span aria-hidden="true">↗</span></a><p class="contact-hint">{site.whatsappDisplay}</p><ContactForm compact={false} /></div></div></section>
   <section class="section--tight"><div class="narrow"><p><strong>Qué ocurre con tus datos:</strong> se utilizan únicamente para responder a tu consulta según lo descrito en el borrador de privacidad. No se guardan en esta web por defecto.</p></div></section>
   <script>
     const preselect = () => { const query = new URLSearchParams(location.search).get('servicio'); const select = document.querySelector<HTMLSelectElement>('select[name="service"]'); if (!select || !query) return; if (query === 'web') select.value = 'Diseño y desarrollo web'; if (query === 'redes') select.value = 'Diseño para redes'; };

@@ -1,9 +1,9 @@
 {
   "slug": "italy-pizza",
   "title": "Italy Pizza",
-  "summary": "Carta online con pedidos por WhatsApp para una pizzería de Zamora.",
+  "summary": "Carta digital publicada para una pizzería de Zamora.",
   "caseStudy": {
-    "summary": "Una carta online para una pizzería de Fariza, Zamora. Pensada para consultar desde el móvil y contactar con el local por WhatsApp.",
+    "summary": "Una carta online para una pizzería de Fariza, Zamora. Se puede consultar desde el móvil y contactar con el local por WhatsApp.",
     "services": ["Diseño web", "Desarrollo", "Carta digital", "Google Sheets"],
     "externalLabel": "Ver la web",
     "challengeTitle": "Qué necesitaban",
@@ -67,7 +67,7 @@
     "outcomeButtonLabel": "Ver la web"
   },
   "category": "Web",
-  "services": ["Diseño web", "Desarrollo", "Carta digital", "Pedidos por WhatsApp"],
+  "services": ["Diseño web", "Desarrollo", "Carta digital", "Google Sheets"],
   "client": "Italy Pizza · Fariza, Zamora",
   "year": "2026",
   "featured": true,
@@ -76,19 +76,19 @@
   "cover": "/proyectos/Italy%20pizza/portada-italy.jpg",
   "coverAlt": "Portada de la web de Italy Pizza",
   "homePreviewVideo": { "src": "/proyectos/Italy%20pizza/italy-home.mp4", "alt": "Recorrido por la web y la carta online de Italy Pizza", "poster": "/proyectos/Italy%20pizza/italy-video-poster.webp" },
-  "challenge": "Que sus clientes pudieran consultar la carta desde el móvil y encontrar fácilmente cómo pedir. También necesitaban una forma sencilla de mantener los platos y precios al día.",
-  "approach": "Diseñamos y desarrollamos una web con la carta y la información del local. Organizamos el contenido para consultarlo desde el móvil y dejamos preparado el acceso a WhatsApp. Conectamos la carta a una hoja de Google para que el negocio pueda actualizar platos y precios sin tocar la web.",
+  "challenge": "Que sus clientes pudieran consultar la carta y la información del local desde el móvil. También necesitaban una forma sencilla de mantener los platos y precios al día.",
+  "approach": "Diseñamos y desarrollamos una web con la carta y la información del local. Organizamos el contenido para consultarlo desde el móvil e integramos el contacto por WhatsApp. Conectamos la carta a una hoja de Google para actualizar platos y precios sin tocar la web.",
   "deliverablesTitle": "Qué incluye la web.",
   "deliverables": [
     { "title": "Carta digital", "description": "Productos, precios y alérgenos para consultar desde el móvil." },
-    { "title": "Contacto por WhatsApp", "description": "Un acceso preparado para hablar con el local cuando se configure su número." },
+    { "title": "Contacto por WhatsApp", "description": "Un acceso directo para escribir al local desde la web." },
     { "title": "Carta editable", "description": "Los responsables pueden cambiar platos y precios desde una hoja de Google." },
     { "title": "Código QR", "description": "Un acceso a la carta para colocar en mesas y flyers." },
     { "title": "Reparto y horarios", "description": "Información sobre las zonas de reparto y los horarios del local." },
     { "title": "Dominio propio", "description": "La web está publicada en italypizza.es." },
     { "title": "Blog", "description": "Un espacio para compartir contenido del local." }
   ],
-  "outcome": "La web está publicada en italypizza.es y reúne la carta y la información del local en un mismo lugar. El negocio puede mantener los platos y precios al día por su cuenta desde Google Sheets.",
+  "outcome": "La web está publicada en italypizza.es y reúne la carta, la información del local y el contacto por WhatsApp en un mismo lugar. El negocio puede mantener los platos y precios al día desde Google Sheets.",
   "externalUrl": "https://www.italypizza.es",
   "accentColor": "#FFA401",
   "templateVariant": "web"
