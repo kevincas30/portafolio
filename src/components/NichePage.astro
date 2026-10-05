@@ -30,7 +30,7 @@ const projects = (await getCollection('projects'))
   .sort((a, b) => projectSlugs.indexOf(a.data.slug) - projectSlugs.indexOf(b.data.slug));
 ---
 <BaseLayout title={metaTitle} description={metaDescription} image={projects[0]?.data.cover}>
-  <section class:list={["section", "niche-hero", animatedHero && "niche-hero--animated"]} data-hero-motion={animatedHero ? true : undefined}>
+  <section class:list={["section", "niche-section", "niche-hero", animatedHero && "niche-hero--animated"]} data-hero-motion={animatedHero ? true : undefined}>
     <div class="container hero-grid">
       <div class="hero-copy">
         <span class="eyebrow">{pack.label}</span>
@@ -42,14 +42,14 @@ const projects = (await getCollection('projects'))
     </div>
   </section>
 
-  <section class="section section--dark"><div class="narrow" data-reveal={readingProblem ? undefined : true} data-scroll-reading={readingProblem ? true : undefined}><span class="eyebrow">El problema</span><p class="intro-statement">{readingProblem ? <ReadingWords text={problem} /> : problem}</p></div></section>
+  <section class="section niche-section section--dark"><div class="narrow" data-reveal={readingProblem ? undefined : true} data-scroll-reading={readingProblem ? true : undefined}><span class="eyebrow">El problema</span><p class="intro-statement">{readingProblem ? <ReadingWords text={problem} /> : problem}</p></div></section>
 
-  <section class="section"><div class="container"><SectionHeading number="01" title="Qué cambia para tu negocio." /><div class="feature-grid">{benefits.map((item, i) => <article class="feature"><b>0{i + 1}</b><h3>{item[0]}</h3><p>{item[1]}</p></article>)}</div></div></section>
+  <section class="section niche-section"><div class="container"><SectionHeading number="01" title="Qué cambia para tu negocio." /><div class="feature-grid">{benefits.map((item, i) => <article class="feature"><b>0{i + 1}</b><h3>{item[0]}</h3><p>{item[1]}</p></article>)}</div></div></section>
 
-  {projects.length > 0 && <section class="section"><div class="container"><SectionHeading number="02" title="Proyectos publicados." intro="Explora qué muestra y qué permite hacer cada web." /><div class="project-list">{projects.map((project) => <ProjectCard project={project} />)}</div></div></section>}
+  {projects.length > 0 && <section class="section niche-section"><div class="container"><SectionHeading number="02" title="Proyectos publicados." intro="Explora qué muestra y qué permite hacer cada web." /><div class="project-list">{projects.map((project) => <ProjectCard project={project} />)}</div></div></section>}
 
-  <section class="section" id="precio"><div class="container"><SectionHeading number="03" title="Precio cerrado, sin sorpresas." /><PricingCards packs={singlePrice ? [pack] : undefined} horizontalSingle={singlePrice} showDetailsLink={!singlePrice} /></div></section>
+  <section class="section niche-section" id="precio"><div class="container"><SectionHeading number="03" title="Precio cerrado, sin sorpresas." /><PricingCards packs={singlePrice ? [pack] : undefined} horizontalSingle={singlePrice} showDetailsLink={!singlePrice} /></div></section>
 
-  <section class="section"><div class="narrow"><SectionHeading number="FAQ" title="Antes de empezar." /><Accordion items={faq} /></div></section>
-  <ContactBlock waText={pack.waText} home={Boolean(compactContactTitle)} title={compactContactTitle} />
+  <section class="section niche-section"><div class="narrow"><SectionHeading number="FAQ" title="Antes de empezar." /><Accordion items={faq} /></div></section>
+  <ContactBlock class="niche-section" waText={pack.waText} home={Boolean(compactContactTitle)} title={compactContactTitle} />
 </BaseLayout>

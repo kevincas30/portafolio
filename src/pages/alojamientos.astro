@@ -9,6 +9,10 @@ const pack = site.packs[1];
   pack={pack}
   metaTitle="Web esencial para hoteles"
   metaDescription="Presenta las habitaciones, instalaciones y servicios de tu hotel con galería, ubicación, información práctica y contacto directo."
+  animatedHero
+  readingProblem
+  singlePrice
+  compactContactTitle="Una demo para tu hotel."
   title="Una web que muestre tu hotel y facilite el contacto directo."
   lead="Presenta tus habitaciones, instalaciones y servicios. Ayuda a tus huéspedes a encontrar la información que necesitan y a consultarte disponibilidad por WhatsApp o email."
   problem="Quien está pensando en alojarse quiere conocer las habitaciones, los servicios, la ubicación y las condiciones prácticas antes de escribirte. Tu web puede reunirlo con la identidad de tu hotel."
@@ -29,5 +33,9 @@ const pack = site.packs[1];
     { question: '¿Qué incluyen los 15 € al mes?', answer: site.monthlyIncludes },
   ]}
 >
-  <div slot="visual" class="desk-composition niche-visual"><BrowserFrame class="hero-browser" src="/proyectos/La%20rueca/la-rueca-desktop.webp" alt="Web de Alojamiento La Rueca en escritorio" /><PhoneFrame class="hero-phone" src="/proyectos/La%20rueca/la-rueca-mobile.webp" alt="Web de Alojamiento La Rueca en el móvil" /><div class="hero-note">alojamientolarueca.com<br/>proyecto real ↘</div></div>
+  <div slot="visual" class="desk-composition niche-visual niche-motion-visual" data-hero-composition aria-label="Web de Alojamiento La Rueca en ordenador y móvil">
+    <div class="hero-entry"><div class="hero-float"><BrowserFrame class="hero-browser" src="/proyectos/La%20rueca/la-rueca-desktop.webp" alt="Web de Alojamiento La Rueca en ordenador" /></div></div>
+    <div class="hero-entry"><div class="hero-float"><PhoneFrame class="hero-phone" src="/proyectos/La%20rueca/la-rueca-mobile.webp" alt="Web de Alojamiento La Rueca en el móvil" /></div></div>
+    <div class="hero-entry"><div class="hero-float"><div class="hero-note">La Rueca<br/>proyecto real ↘</div></div></div>
+  </div>
 </NichePage>

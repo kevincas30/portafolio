@@ -98,6 +98,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .container { width: min(var(--content), calc(100% - 2 * var(--gutter))); margin-inline: auto; }
 .narrow { width: min(var(--narrow), calc(100% - 2 * var(--gutter))); margin-inline: auto; }
 .section { position: relative; padding-block: clamp(5rem, 10vw, 9rem); }
+.section.niche-section { padding-block: clamp(2.75rem, 5vw, 5rem); }
+.section.niche-hero { padding-top: clamp(2.5rem, 4vw, 4rem); }
+.niche-section .section-head { margin-bottom: clamp(2rem, 4vw, 3rem); }
+.niche-section .project-list { gap: clamp(2.5rem, 5vw, 5rem); }
 .home-projects { padding-bottom: clamp(2rem, 4vw, 3rem); }
 .home-packs { padding-block: clamp(2rem, 4vw, 3rem); }
 .home-packs + #precios { padding-top: clamp(2rem, 4vw, 3rem); }
@@ -644,7 +648,7 @@ html[data-theme="dark"] [data-project-accent="true"] .case-meta { border-color: 
 .hero-phone { position: absolute; z-index: 2; left: 0; bottom: 0; width: 40%; transform: rotate(-4deg); }
 .hero-phone--solo { left: 50%; bottom: auto; top: 0; width: min(60%, 17rem); transform: translateX(-50%) rotate(-3deg); }
 .niche-visual { min-height: 36rem; }
-.restaurant-visual { isolation: isolate; }
+.niche-motion-visual { isolation: isolate; }
 .service-phone { width: min(62%, 17rem); transform: rotate(-3deg); }
 .service-visual .browser { width: min(100%, 38rem); transform: rotate(1.5deg); }
 .feature-visual { display: grid; place-items: center; min-height: 17rem; padding: 1.5rem; background: var(--mist); }
@@ -733,10 +737,10 @@ html[data-theme="dark"] .price-list li::before { color: var(--lime); }
   .hero-phone { width: 42%; }
   .hero-phone--solo { width: 62%; }
   .niche-visual { min-height: 26rem; }
-  .restaurant-visual { width: min(100%, 26rem); min-height: clamp(18rem, 74vw, 23rem); margin-inline: auto; }
-  .restaurant-visual .hero-browser { top: .5rem; right: 0; width: 82%; }
-  .restaurant-visual .hero-phone { left: 0; bottom: .25rem; width: min(36%, 8.5rem); }
-  .restaurant-visual .hero-note { right: 0; bottom: .25rem; width: 8rem; padding: .6rem; font-size: .6rem; }
+  .niche-motion-visual { width: min(100%, 26rem); min-height: clamp(18rem, 74vw, 23rem); margin-inline: auto; }
+  .niche-motion-visual .hero-browser { top: .5rem; right: 0; width: 82%; }
+  .niche-motion-visual .hero-phone { left: 0; bottom: .25rem; width: min(36%, 8.5rem); }
+  .niche-motion-visual .hero-note { right: 0; bottom: .25rem; width: 8rem; padding: .6rem; font-size: .6rem; }
   .service-phone { width: 70%; }
   .home-packs .service-phone { width: min(58%, 12rem); }
 }
