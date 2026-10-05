@@ -4,7 +4,10 @@ const path = Astro.url.pathname;
 ---
 <header class="site-header">
   <div class="container nav-wrap">
-    <a class="brand" href="/" aria-label="Diseño Creativo, inicio">Diseño <i>Creativo</i></a>
+    <a class="brand" href="/" aria-label="Diseño Creativo, inicio">
+      <img class="brand-logo brand-logo--light" src="/light.png" alt="Diseño Creativo" />
+      <img class="brand-logo brand-logo--dark" src="/dark.png" alt="Diseño Creativo" />
+    </a>
     <nav class="desktop-nav" aria-label="Navegación principal">
       {site.navigation.map((item) => <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>{item.label}</a>)}
     </nav>
@@ -17,6 +20,7 @@ const path = Astro.url.pathname;
     </div>
   </div>
   <nav class="mobile-nav" id="mobile-menu" data-open="false" aria-label="Navegación móvil">
+    <button class="mobile-nav-close" type="button" aria-label="Cerrar menú"><span aria-hidden="true">×</span></button>
     {site.navigation.map((item) => <a href={item.href}>{item.label}</a>)}
     <div class="mobile-meta">{site.area}</div>
   </nav>
@@ -47,6 +51,7 @@ const path = Astro.url.pathname;
       if (open) menu.querySelector<HTMLAnchorElement>('a')?.focus();
     });
     menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
+    menu.querySelector('.mobile-nav-close')?.addEventListener('click', () => { close(); button.focus(); });
     document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { close(); button.focus(); } });
   };
   setupTheme();

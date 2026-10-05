@@ -3,7 +3,27 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import Accordion from '../../components/Accordion.astro';
 import ContactBlock from '../../components/ContactBlock.astro';
+import FormatMarquee from '../../components/FormatMarquee.astro';
 const formats = ['Posts', 'Historias', 'Carruseles', 'Flyers', 'Reels y edición de vídeo'];
+
+const postImages = Array.from({ length: 13 }, (_, i) => ({
+  type: 'image' as const,
+  src: `/redes/posts/post-${String(i + 1).padStart(2, '0')}.jpg`,
+  alt: 'Pieza de contenido para redes en formato post',
+}));
+const postVideo = { type: 'video' as const, src: '/redes/posts/post-14.mp4', poster: '/redes/posts/post-14-poster.jpg', alt: 'Vídeo de contenido para redes en formato post' };
+const postItems = [...postImages, postVideo];
+
+const reelImages = Array.from({ length: 3 }, (_, i) => ({
+  type: 'image' as const,
+  src: `/redes/reels/reel-${String(i + 1).padStart(2, '0')}.jpg`,
+  alt: 'Historia de Instagram en formato vertical',
+}));
+const reelVideos = Array.from({ length: 7 }, (_, i) => {
+  const n = String(i + 4).padStart(2, '0');
+  return { type: 'video' as const, src: `/redes/reels/reel-${n}.mp4`, poster: `/redes/reels/reel-${n}-poster.jpg`, alt: 'Reel de vídeo vertical para redes' };
+});
+const reelItems = [...reelImages, ...reelVideos];
 const faq = [
   { question: '¿También publicáis y gestionáis las cuentas?', answer: 'No de forma automática. Nuestro servicio base cubre diseño y entrega. La publicación, planificación, moderación o respuesta de mensajes se puede valorar aparte si se necesita.' },
   { question: '¿Necesito una identidad de marca?', answer: 'Ayuda, pero no siempre es imprescindible. Podemos trabajar desde tu identidad actual o definir un pequeño sistema visual específico para el contenido.' },
@@ -13,7 +33,7 @@ const faq = [
 <BaseLayout title="Diseño para redes" description="Posts, historias, carruseles, flyers y reels con una presencia visual coherente.">
   <section class="section"><div class="container"><span class="eyebrow">Contenido visual</span><h1 class="page-title">Contenido que se reconoce como tuyo.</h1><p class="lead">Diseñamos piezas para que tu marca tenga una presencia coherente, desde una historia hasta un carrusel o un vídeo.</p><a class="button button--lime" href="/contacto?servicio=redes">Cuéntanos qué piezas necesitas <span>→</span></a></div></section>
   <section class="section section--dark"><div class="container"><SectionHeading number="01" title="Cada formato cumple una función." /><div class="feature-grid">{formats.map((format, i) => <article class="feature"><b>0{i+1}</b><h3>{format}</h3><p>{['Una idea clara en una composición que funciona en el feed.','Información rápida y vertical, pensada para verse sin esfuerzo.','Un argumento dividido en pantallas con ritmo y continuidad.','Piezas para comunicar una fecha, producto o evento concreto.','Guion visual, edición, títulos y entrega en el formato acordado.'][i]}</p></article>)}</div></div></section>
-  <section class="section"><div class="container"><SectionHeading number="02" title="Del material a una familia de piezas." intro="Adaptamos la identidad, organizamos la información, elegimos el formato y preparamos los archivos para su uso." /><p class="lead">Trabajamos con fotografías, vídeo, textos e identidad facilitados por la marca, o acordamos qué material hay que producir. La entrega puede ser puntual o recurrente.</p></div></section>
+  <section class="section section--tight format-gallery-section"><div class="container"><SectionHeading number="02" title="Así se vería tu contenido." intro="Nos adaptamos a tu imagen y estilo visual: así se organizan tus fotos y vídeos en formato post y en formato reel o historia." /></div><FormatMarquee aspect="post" direction="right" items={postItems} /><FormatMarquee aspect="reel" direction="left" items={reelItems} /></section>
   <section class="section"><div class="narrow"><SectionHeading number="FAQ" title="Antes de diseñar las piezas." /><Accordion items={faq} /></div></section>
   <ContactBlock service="redes" />
 </BaseLayout>

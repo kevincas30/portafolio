@@ -1,0 +1,92 @@
+---
+interface MarqueeItem {
+  type: 'image' | 'video';
+  src: string;
+  poster?: string;
+  alt: string;
+}
+
+interface Props {
+  aspect: 'post' | 'reel';
+  direction: 'left' | 'right';
+  items: MarqueeItem[];
+  duration?: number;
+}
+
+const { aspect, direction, items, duration = aspect === 'post' ? 36 : 42 } = Astro.props;
+const looped = [...items, ...items];
+---
+<div class="format-marquee-row">
+  <div class="format-marquee" aria-hidden="true">
+    <div class:list={['format-marquee-track', `format-marquee-track--${direction}`]} style={`--marquee-duration:${duration}s`}>
+      {looped.map((item) => (
+        <div class="format-marquee-item">
+          <div class:list={['format-marquee-frame', `format-marquee-frame--${aspect}`]}>
+            {item.type === 'image' ? (
+              <img src={item.src} alt={item.alt} loading="lazy" decoding="async" width="720" height={aspect === 'post' ? 960 : 1280} />
+            ) : (
+              <video muted loop playsinline preload="metadata" poster={item.poster} tabindex={-1} data-marquee-autoplay>
+                <source src={item.src} type="video/mp4" />
+              </video>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script>
+  let cleanupMarqueeAutoplay: (() => void) | undefined;
+
+  const setupMarqueeAutoplay = () => {
+    cleanupMarqueeAutoplay?.();
+    cleanupMarqueeAutoplay = undefined;
+
+    const videos = [...document.querySelectorAll<HTMLVideoElement>('video[data-marquee-autoplay]')];
+    if (!videos.length) return;
+
+    const visible = new Set<HTMLVideoElement>();
+    const sync = () => {
+      videos.forEach((video) => {
+        if (!document.hidden && visible.has(video)) {
+          video.muted = true;
+          void video.play().catch(() => {
+            // Autoplay can be blocked; the poster frame remains visible.
+          });
+        } else {
+          video.pause();
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const video = entry.target as HTMLVideoElement;
+        if (entry.isIntersecting) visible.add(video);
+        else visible.delete(video);
+      });
+      sync();
+    }, { threshold: 0.1 });
+
+    videos.forEach((video) => {
+      video.muted = true;
+      video.playsInline = true;
+      observer.observe(video);
+    });
+    document.addEventListener('visibilitychange', sync);
+
+    cleanupMarqueeAutoplay = () => {
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', sync);
+      videos.forEach((video) => video.pause());
+      visible.clear();
+    };
+  };
+
+  document.addEventListener('astro:before-preparation', () => {
+    cleanupMarqueeAutoplay?.();
+    cleanupMarqueeAutoplay = undefined;
+  });
+  document.addEventListener('astro:page-load', setupMarqueeAutoplay);
+</script>

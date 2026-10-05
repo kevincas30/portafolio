@@ -14,7 +14,7 @@ export const site = {
   whatsapp: import.meta.env.PUBLIC_WHATSAPP_URL || waLink(),
   whatsappDisplay: '+34 625 959 676',
   locations: ['España'],
-  area: 'Trabajamos en toda España · en remoto',
+  area: 'Trabajamos en remoto · presencial en España y México',
   socials: [] as Array<{ label: string; url: string }>,
   form: {
     enabled: false,
@@ -70,11 +70,12 @@ export const site = {
       extra: 'El pack incluye contacto directo por WhatsApp o email. Si necesitas un motor de reservas, pagos online o conexión con tu sistema actual, lo presupuestamos aparte.',
     },
   ],
-  monthlyIncludes: 'Alojamiento web, dominio, certificado SSL y cambios pequeños (precios, horarios, fotos). Sin permanencia.',
+  monthlyIncludes: 'Alojamiento web, certificado SSL y cambios pequeños (precios, horarios, fotos). Sin permanencia.',
   navigation: [
     { label: 'Restaurantes', href: '/restaurantes' },
     { label: 'Hoteles', href: '/alojamientos' },
     { label: 'Proyectos', href: '/proyectos' },
+    { label: 'Redes', href: '/servicios/diseno-para-redes' },
     { label: 'Contacto', href: '/contacto' },
   ],
 } as const;
