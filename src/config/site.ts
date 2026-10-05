@@ -75,7 +75,6 @@ export const site = {
     { label: 'Restaurantes', href: '/restaurantes' },
     { label: 'Hoteles', href: '/alojamientos' },
     { label: 'Proyectos', href: '/proyectos' },
-    { label: 'Precios', href: '/servicios#precios' },
     { label: 'Contacto', href: '/contacto' },
   ],
 } as const;
