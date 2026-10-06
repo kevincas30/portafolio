@@ -9,9 +9,11 @@ interface Props {
   service?: 'web' | 'redes';
   waText?: string;
   title?: string;
+  description?: string;
+  buttonLabel?: string;
 }
 
-const { compact = true, class: className, home = false, service = 'web', waText, title } = Astro.props;
+const { compact = true, class: className, home = false, service = 'web', waText, title, description, buttonLabel } = Astro.props;
 const isRedes = service === 'redes';
 const whatsappHref = isRedes ? waLink(redesWhatsAppText) : waText ? waLink(waText) : site.whatsapp;
 ---
@@ -26,12 +28,14 @@ const whatsappHref = isRedes ? waLink(redesWhatsAppText) : waText ? waLink(waTex
         : home
         ? <h2><span class="contact-title-line">Te preparamos</span> <span class="contact-title-line">una demo</span> <span class="contact-title-line">gratis.</span></h2>
         : <h2>Te preparamos una demo gratis.</h2>}
-      <p>{isRedes
+      <p>{description
+        ? description
+        : isRedes
         ? 'Cuéntanos qué negocio tienes y qué piezas buscas. Te proponemos un alcance y un presupuesto.'
         : 'Cuéntanos qué negocio tienes y pásanos tu web, carta o algunas fotos. Preparamos una muestra visual inicial para que veas el enfoque antes de contratar; no es una web completa.'}</p>
     </div>
     <div class="contact-actions">
-      <a class:list={["button", home && "contact-primary"]} href={whatsappHref} target="_blank" rel="noopener noreferrer">{isRedes ? 'Pedir presupuesto de contenido' : 'Escribir por WhatsApp'} <span aria-hidden="true">↗</span></a>
+      <a class:list={["button", home && "contact-primary"]} href={whatsappHref} target="_blank" rel="noopener noreferrer">{buttonLabel ?? (isRedes ? 'Pedir presupuesto de contenido' : 'Escribir por WhatsApp')} <span aria-hidden="true">↗</span></a>
       <a class:list={["arrow-link", home && "contact-email"]} href={`mailto:${site.email}`}>{site.email} <span aria-hidden="true">↗</span></a>
       {home
         ? <p class="contact-hint contact-hint--stacked"><span>{site.whatsappDisplay}</span><span>Te respondemos en menos de 48 h.</span></p>

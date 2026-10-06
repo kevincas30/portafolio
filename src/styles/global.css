@@ -573,6 +573,19 @@ html[data-theme="dark"] [data-project-accent="true"] .case-meta { border-color: 
 .section--dark .feature-grid { border-color: rgba(243, 241, 235, .14); background: rgba(243, 241, 235, .14); }
 .section--dark .feature { background: color-mix(in srgb, var(--light) 7%, var(--dark)); color: var(--light); }
 .section--dark .feature b { color: #bfc4bb; }
+
+.team-story { max-width: 42rem; margin: clamp(1.25rem, 2vw, 1.75rem) 0 0; font-size: 1.05rem; line-height: 1.6; }
+.services-note { max-width: 40rem; margin: clamp(2rem, 4vw, 3rem) 0 0; font-size: 1.05rem; color: #bfc4bb; }
+.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(2rem, 4vw, 3rem); margin-top: clamp(2rem, 4vw, 3rem); }
+.team-member { display: grid; gap: 1.25rem; }
+.team-portrait { position: relative; aspect-ratio: 3 / 4; overflow: hidden; border-radius: var(--radius-lg); background: color-mix(in srgb, var(--light) 9%, var(--dark)); border: 1px solid rgba(243, 241, 235, .14); }
+.team-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.team-portrait-placeholder { display: grid; place-items: center; width: 100%; height: 100%; }
+.team-portrait-initial { font: 650 clamp(4.5rem, 10vw, 6.5rem) var(--font-display); letter-spacing: -.04em; color: var(--lime); line-height: 1; }
+.team-portrait-asterisk { position: absolute; bottom: 1.1rem; right: 1.1rem; width: 1.6rem; height: 1.6rem; opacity: .85; }
+.team-copy h3 { margin: 0; font: 600 1.55rem/1.1 var(--font-display); color: var(--light); }
+.team-specialty { margin: .4rem 0 0; font: 700 .72rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--lime); }
+.team-bio { margin: .75rem 0 0; color: #bfc4bb; line-height: 1.6; }
 .timeline { --timeline-progress: 1; --timeline-accent: var(--lime); --timeline-text-accent: var(--timeline-accent); position: relative; display: grid; grid-template-columns: repeat(5, 1fr); }
 .project-case .timeline { --timeline-accent: var(--project-accent); --timeline-text-accent: var(--project-support-dark); }
 .timeline-track { position: absolute; top: 0; left: 1.4rem; right: calc(20% - 1.4rem); height: 2px; overflow: hidden; background: rgba(243, 241, 235, .2); }
@@ -625,6 +638,7 @@ html[data-theme="dark"] [data-project-accent="true"] .case-meta { border-color: 
   .timeline-step { padding: 0 1rem 2.75rem; border-right: 0; }
   .timeline-step::before { top: .05rem; left: -2.5rem; }
   .feature-grid { grid-template-columns: 1fr 1fr; }
+  .team-grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .footer-top { grid-template-columns: 1fr 1fr; }
   .footer-mark { grid-column: 1 / -1; }
 }

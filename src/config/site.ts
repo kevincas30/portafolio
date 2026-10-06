@@ -4,6 +4,19 @@ const whatsappNumber = '34625959676';
 export const waLink = (text = 'Hola, me gustaría ver una muestra visual para la web de mi negocio.') =>
   `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
 export const redesWhatsAppText = 'Hola, necesito contenido para redes y me gustaría consultar opciones y presupuesto.';
+export const teamWhatsAppText = 'Hola, me gustaría hablar con vosotros sobre un proyecto para mi negocio.';
+
+export interface TeamMember {
+  name: string;
+  initial: string;
+  specialty: string;
+  bio: string;
+  /** Ruta a la foto (p. ej. "/equipo/kevs.jpg"). Vacío = se muestra la composición con la inicial. */
+  photo?: string;
+  photoAlt?: string;
+  /** object-position de la foto, para encuadrar sin cortar la cara (p. ej. "center top"). */
+  photoPosition?: string;
+}
 
 export const site = {
   name: 'Diseño Creativo',
@@ -14,7 +27,7 @@ export const site = {
   whatsapp: import.meta.env.PUBLIC_WHATSAPP_URL || waLink(),
   whatsappDisplay: '+34 625 959 676',
   locations: ['España'],
-  area: 'Trabajamos en remoto · presencial en España y México',
+  area: 'Trabajamos en remoto',
   socials: [] as Array<{ label: string; url: string }>,
   form: {
     enabled: false,
@@ -22,7 +35,36 @@ export const site = {
     budgetOptions: ['Por definir', 'Quiero orientación', 'Tengo una cifra y la contaré en el mensaje'],
   },
   testimonialsEnabled: false,
-  team: [] as Array<{ name: string; role: string; bio?: string; image?: string }>,
+  /** Para añadir una foto real: poné la ruta en "photo" (p. ej. "/equipo/kevs.jpg") y un "photoAlt" descriptivo. */
+  team: [
+    {
+      name: 'Kevs',
+      initial: 'K',
+      specialty: 'Diseño web y para redes',
+      bio: 'Doy forma a cómo se presenta tu negocio: desde las pantallas de tu web hasta las piezas que compartes en redes. Cuido que la información se entienda y que todo mantenga una misma identidad.',
+      photo: '/equipos/kevs.jpg',
+      photoAlt: 'Retrato de Kevs',
+      photoPosition: 'center',
+    },
+    {
+      name: 'Gabriel',
+      initial: 'G',
+      specialty: 'Desarrollo web',
+      bio: 'Convierto el diseño en una web que puedas usar en el día a día. Me encargo de que navegar, consultar información y contactar sea sencillo, y de incorporar las funciones que necesite tu negocio.',
+      photo: '/equipos/gabriel.jpg',
+      photoAlt: 'Retrato de Gabriel',
+      photoPosition: 'center',
+    },
+    {
+      name: 'Mar',
+      initial: 'M',
+      specialty: 'Fotografía',
+      bio: 'Me encargo de mostrar lo que hace especial a tu negocio: sus productos, espacios y detalles. Creo fotografías para que tus clientes puedan conocerlo antes de visitarte.',
+      photo: '/equipos/mar.jpg',
+      photoAlt: 'Retrato de Mar',
+      photoPosition: '95% center',
+    },
+  ] as TeamMember[],
   /**
    * Precio de lanzamiento. Desactívalo (enabled: false) cuando se cubran las plazas:
    * anunciar plazas limitadas que no lo son engaña al cliente.

@@ -1,0 +1,30 @@
+---
+interface Props {
+  name: string;
+  initial: string;
+  specialty: string;
+  bio: string;
+  photo?: string;
+  photoAlt?: string;
+  photoPosition?: string;
+}
+
+const { name, initial, specialty, bio, photo, photoAlt, photoPosition = 'center' } = Astro.props;
+---
+<article class="team-member">
+  <div class="team-portrait">
+    {photo ? (
+      <img src={photo} alt={photoAlt || `Retrato de ${name}`} style={`object-position:${photoPosition}`} loading="lazy" />
+    ) : (
+      <div class="team-portrait-placeholder" aria-hidden="true">
+        <span class="team-portrait-initial">{initial}</span>
+        <img class="team-portrait-asterisk" src="/cursos%20blanco.svg" alt="" />
+      </div>
+    )}
+  </div>
+  <div class="team-copy">
+    <h3>{name}</h3>
+    <p class="team-specialty">{specialty}</p>
+    <p class="team-bio">{bio}</p>
+  </div>
+</article>
