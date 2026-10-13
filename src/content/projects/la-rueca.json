@@ -71,6 +71,7 @@
   "client": "La Rueca · Fariza, Zamora",
   "year": "2026",
   "featured": true,
+  "homeOrder": 3,
   "order": 2,
   "isDemo": false,
   "cover": "/proyectos/La%20rueca/postada-rueca.jpg",

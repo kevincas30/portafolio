@@ -1,0 +1,55 @@
+{
+  "slug": "tinas-ibiza",
+  "title": "Tina's Ibiza",
+  "summary": "Concepto de web para un negocio de jardinería en Ibiza: servicios, proyectos realizados y contacto directo.",
+  "caseStudy": {
+    "summary": "Un concepto de web para Tina's Ibiza, un negocio de jardinería y paisajismo. Pensado para mostrar los servicios y facilitar que pidan presupuesto.",
+    "services": ["Diseño web", "Desarrollo", "Catálogo de servicios", "Galería"],
+    "externalLabel": "Ver la web",
+    "challengeTitle": "Qué necesitaban",
+    "approachTitle": "Qué hicimos",
+    "processTitle": "Del esquema a la pantalla.",
+    "processSteps": [
+      { "title": "Organizar", "description": "Ordenamos los servicios, los proyectos realizados y la zona de cobertura." },
+      { "title": "Diseñar", "description": "Dimos forma a una web visual donde el trabajo realizado tiene protagonismo." },
+      { "title": "Desarrollar", "description": "Construimos las páginas y conectamos el catálogo de servicios y el contacto." },
+      { "title": "Probar", "description": "Revisamos la navegación, los enlaces y la lectura de cada sección." },
+      { "title": "Publicar", "description": "Dejamos la web lista para publicarse con su propio dominio." }
+    ],
+    "gallery": {
+      "title": "El trabajo, de cerca.",
+      "intro": "Los servicios, los proyectos realizados y el contacto pensados para Tina's Ibiza.",
+      "items": [
+        { "id": "home", "type": "video", "src": "/proyectos/Tinas%20Ibiza/tinas-galeria-video.mp4", "poster": "/proyectos/Tinas%20Ibiza/tinas-portada-proyecto-4k.jpg", "alt": "Recorrido por la web de Tina's Ibiza", "caption": "La propuesta, de un vistazo.", "fit": "cover", "position": "center", "placeholderLabel": "Vídeo horizontal · 16:9" },
+        { "id": "servicios", "type": "image", "src": "/proyectos/Tinas%20Ibiza/tinas-poster-1.jpg", "alt": "Catálogo de servicios de Tina's Ibiza", "caption": "Los servicios, organizados por tipo de trabajo.", "fit": "cover", "position": "center", "placeholderLabel": "Imagen vertical · 3:4" },
+        { "id": "proyectos", "type": "image", "src": "/proyectos/Tinas%20Ibiza/tinas-poster-2.jpg", "alt": "Galería de proyectos de Tina's Ibiza", "caption": "Antes y después de los proyectos realizados.", "fit": "cover", "position": "center", "placeholderLabel": "Imagen vertical · 3:4" },
+        { "id": "contacto", "type": "image", "src": "/proyectos/Tinas%20Ibiza/tinas-poster-3.jpg", "alt": "Contacto y presupuesto de Tina's Ibiza", "caption": "Pedir presupuesto, en un solo paso.", "fit": "cover", "position": "center", "placeholderLabel": "Imagen vertical · 3:4" }
+      ]
+    },
+    "outcomeTitle": "Los servicios, listos para mostrarse.",
+    "outcomeButtonLabel": "Ver la web"
+  },
+  "category": "Web",
+  "services": ["Diseño web", "Desarrollo", "Catálogo de servicios", "Galería"],
+  "client": "Tina's Ibiza · Servicios de jardinería",
+  "year": "2026",
+  "featured": true,
+  "homeOrder": 2,
+  "order": 4,
+  "isDemo": true,
+  "cover": "/proyectos/Tinas%20Ibiza/tinas-portada-proyecto-4k.jpg",
+  "coverAlt": "Portada del concepto de web para Tina's Ibiza",
+  "homePreviewVideo": { "src": "/proyectos/Tinas%20Ibiza/tinas-home-video.mp4", "alt": "Recorrido por la web de Tina's Ibiza", "poster": "/proyectos/Tinas%20Ibiza/tinas-home-video-portada.jpg" },
+  "challenge": "Mostrar los servicios de jardinería y paisajismo con claridad, con ejemplos del trabajo realizado y una manera sencilla de pedir presupuesto.",
+  "approach": "Diseñamos una web que presenta los servicios por tipo de trabajo, con una galería de proyectos realizados y un formulario de contacto directo para pedir presupuesto.",
+  "deliverablesTitle": "Qué incluye la web.",
+  "deliverables": [
+    { "title": "Catálogo de servicios", "description": "Los servicios organizados por tipo de trabajo, con su descripción." },
+    { "title": "Galería de proyectos", "description": "Antes y después de los proyectos realizados." },
+    { "title": "Zona de cobertura", "description": "Dónde trabaja el negocio, explicado con claridad." },
+    { "title": "Contacto y presupuesto", "description": "Un formulario sencillo para pedir presupuesto por WhatsApp o email." }
+  ],
+  "outcome": "La web reúne el catálogo de servicios, la galería de proyectos y el contacto directo para pedir presupuesto.",
+  "accentColor": "#3F7D45",
+  "templateVariant": "web"
+}

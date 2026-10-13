@@ -71,6 +71,7 @@
   "client": "Italy Pizza · Fariza, Zamora",
   "year": "2026",
   "featured": true,
+  "homeOrder": 1,
   "order": 1,
   "isDemo": false,
   "cover": "/proyectos/Italy%20pizza/portada-italy.jpg",
