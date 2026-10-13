@@ -147,7 +147,7 @@ a { color: inherit; text-decoration: none; }
 img, svg, video { display: block; max-width: 100%; }
 button, input, select, textarea { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
-:focus-visible { outline: 3px solid #547b13; outline-offset: 4px; }
+@layer base { :focus-visible { outline: 3px solid #547b13; outline-offset: 4px; } }
 .skip-link { position: fixed; z-index: 999; top: 1rem; left: 1rem; padding: .8rem 1rem; background: var(--lime); clip-path: inset(100%); transform: translateY(calc(-100% - 2rem)); transition: transform var(--fast); }
 .skip-link:focus-visible { clip-path: none; transform: translateY(0); }
 .container { width: min(var(--content), calc(100% - 2 * var(--gutter))); margin-inline: auto; }
@@ -226,7 +226,7 @@ html[data-theme="dark"] .theme-icon--moon { display: none; }
 .mobile-nav .mobile-meta { margin-top: auto; font: .75rem var(--font-mono); }
 
 html[data-theme="dark"] .typed-line { color: var(--lime-text); }
-html[data-theme="dark"] :focus-visible { outline-color: var(--lime); }
+@layer base { html[data-theme="dark"] :focus-visible { outline-color: var(--lime); } }
 .section--dark .timeline-step p { color: #bfc4bb; }
 body.menu-open .theme-toggle,
 body.menu-open .menu-toggle { color: var(--dark); }
