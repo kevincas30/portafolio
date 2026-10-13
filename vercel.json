@@ -1,6 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/admin", "destination": "https://clientes-panel-discreativo.vercel.app/admin" },
-    { "source": "/admin/:path*", "destination": "https://clientes-panel-discreativo.vercel.app/admin/:path*" }
-  ]
-}

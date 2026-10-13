@@ -70,6 +70,35 @@
   --fast: 180ms;
   --slow: 700ms;
   color-scheme: light;
+
+  /* Panel de clientes (/admin) */
+  --muted-strong: #4b5563;
+  --line-soft: #e5e7eb;
+  --line-strong: #9ca3af;
+  --surface: #ffffff;
+  --surface-soft: #fafafa;
+  --surface-muted: #f3f4f6;
+  --ink-hover: #2f322c;
+  --status-ok: #28c840;
+  --status-upcoming: #febc2e;
+  --status-overdue: #ff5f57;
+  --danger: #b83f27;
+  --danger-hover: #96301c;
+  --danger-soft: #fdece6;
+  --danger-soft-strong: #fdf2ec;
+  --danger-text: #8a3017;
+  --danger-border: #f1c9ba;
+  --danger-border-soft: #f0d4c2;
+  --accent-soft: #f2f6e3;
+  --accent-text: #5c6b2e;
+  --accent-text-strong: #4a5726;
+  --accent-border: #d9e3b8;
+  --success-soft: #e9f7ea;
+  --success-text: #1f6b2c;
+  --success-border: #bfe3c3;
+  --warning-soft: #fff6db;
+  --warning-text: #7a5b05;
+  --warning-border: #f2e1a3;
 }
 
 html[data-theme="dark"] {
@@ -81,6 +110,32 @@ html[data-theme="dark"] {
   --orange-interactive: var(--orange);
   --lime-text: var(--lime);
   color-scheme: dark;
+
+  /* Panel de clientes (/admin) */
+  --muted-strong: #d7dacf;
+  --line-soft: rgba(243, 241, 235, 0.12);
+  --line-strong: rgba(243, 241, 235, 0.4);
+  --surface: #1b1d1a;
+  --surface-soft: #1f221e;
+  --surface-muted: #242720;
+  --ink-hover: #d9d6c8;
+  --danger: #e2543a;
+  --danger-hover: #ef7256;
+  --danger-soft: #3a241d;
+  --danger-soft-strong: #32211b;
+  --danger-text: #f3b198;
+  --danger-border: rgba(226, 84, 58, 0.4);
+  --danger-border-soft: rgba(226, 84, 58, 0.28);
+  --accent-soft: #232a16;
+  --accent-text: #c9f568;
+  --accent-text-strong: #d9e3b8;
+  --accent-border: rgba(201, 245, 104, 0.3);
+  --success-soft: #16281a;
+  --success-text: #7ad48a;
+  --success-border: rgba(122, 212, 138, 0.32);
+  --warning-soft: #3a2f10;
+  --warning-text: #f7cf6b;
+  --warning-border: rgba(254, 188, 46, 0.3);
 }
 
 * { box-sizing: border-box; }
