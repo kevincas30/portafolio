@@ -21,7 +21,7 @@ export interface TeamMember {
 export const site = {
   name: 'Diseño Creativo',
   shortName: 'DC',
-  description: 'Diseñamos webs para hoteles y restaurantes que presentan sus servicios, responden dudas y facilitan el contacto.',
+  description: 'Diseñamos y desarrollamos páginas web a medida para cualquier negocio: restaurantes, hoteles, tiendas online y servicios.',
   url: import.meta.env.PUBLIC_SITE_URL || '',
   email: import.meta.env.PUBLIC_CONTACT_EMAIL || 'disenocreativo04@gmail.com',
   whatsapp: import.meta.env.PUBLIC_WHATSAPP_URL || waLink(),
@@ -111,18 +111,52 @@ export const site = {
       waText: 'Hola, tengo un hotel y me gustaría ver una demo de vuestra propuesta para mi web.',
       extra: 'El pack incluye contacto directo por WhatsApp o email. Si necesitas un motor de reservas, pagos online o conexión con tu sistema actual, lo presupuestamos aparte.',
     },
-  ],
+  ] as Pack[],
   monthlyIncludes: 'Alojamiento web, certificado SSL y cambios pequeños (precios, horarios, fotos). Sin permanencia.',
+  /** Precio genérico para cualquier rubro, usado en el home y en /servicios (no es un pack con página propia). */
+  generalPack: {
+    id: 'general',
+    href: '/contacto',
+    label: 'Cualquier negocio',
+    title: 'Una web a tu medida',
+    price: 250,
+    monthly: 15,
+    delivery: 'Plazo según el proyecto',
+    pitch: 'Para restaurantes, hoteles, tiendas online o cualquier negocio que necesite presentarse bien en internet.',
+    includes: [
+      'Diseño pensado para tu negocio, no una plantilla genérica',
+      'Web adaptada a cualquier pantalla',
+      'Contacto directo por WhatsApp o email',
+      'Tu propio dominio (.es o .com)',
+    ],
+    waText: 'Hola, me gustaría pedir presupuesto para la web de mi negocio.',
+    extra: 'Tiendas online, sistemas de reservas, pagos integrados o conexiones con otras herramientas se presupuestan según el alcance.',
+    ctaLabel: 'Pedir presupuesto',
+  } as Pack,
   navigation: [
-    { label: 'Restaurantes', href: '/restaurantes' },
-    { label: 'Hoteles', href: '/alojamientos' },
     { label: 'Proyectos', href: '/proyectos' },
+    { label: 'Servicios', href: '/servicios' },
     { label: 'Redes', href: '/servicios/diseno-para-redes' },
+    { label: 'Nosotros', href: '/nosotros' },
     { label: 'Contacto', href: '/contacto' },
   ],
 } as const;
 
 export type SiteConfig = typeof site;
-export type Pack = (typeof site.packs)[number];
+export interface Pack {
+  id: string;
+  href: string;
+  label: string;
+  title: string;
+  price: number;
+  monthly: number;
+  delivery: string;
+  pitch: string;
+  includes: readonly string[];
+  waText: string;
+  extra?: string;
+  /** Texto del botón de precio. Por defecto "Pedir demo gratis"; para proyectos a medida (ecommerce, sistemas) usar "Pedir presupuesto". */
+  ctaLabel?: string;
+}
 
 export const launchPrice = (price: number) => Math.round(price * (1 - site.launchOffer.discount / 100));

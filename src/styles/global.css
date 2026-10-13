@@ -482,7 +482,7 @@ html[data-theme="dark"] [data-hero-motion] .hero-note { background: var(--lime);
 .portfolio-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(2.5rem, 5vw, 5rem) 1.5rem; margin-top: 1.25rem; }
 .portfolio-item { min-width: 0; }
 .portfolio-item a { display: block; height: 100%; }
-.portfolio-item img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius); }
+.portfolio-item img { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: var(--radius); }
 .portfolio-item h2 { margin: .9rem 0 .25rem; font: 600 clamp(1.5rem, 2.5vw, 2.5rem)/1 var(--font-display); }
 .portfolio-item p { margin: .3rem 0; color: var(--muted); }
 .empty-state { grid-column: 1 / -1; padding: 4rem; border: 1px dashed var(--line); text-align: center; }
@@ -698,7 +698,13 @@ html[data-theme="dark"] [data-project-accent="true"] .case-meta { border-color: 
 
 /* --- Foco restaurantes y alojamientos: móvil, WhatsApp y precios --------- */
 .phone { width: 15rem; padding: .55rem; border: 1px solid var(--dark); border-radius: 2.2rem; background: var(--dark); box-shadow: 10px 10px 0 rgba(23,25,23,.12); }
-.phone img { width: 100%; aspect-ratio: 9/19; object-fit: cover; object-position: top; border-radius: 1.7rem; }
+.phone img, .phone video { width: 100%; aspect-ratio: 9/19; object-fit: cover; object-position: top; border-radius: 1.7rem; }
+.phone-video { position: relative; }
+.phone-video-sound { position: absolute; z-index: 2; right: .9rem; bottom: .9rem; display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 0; border-radius: 50%; background: rgba(23, 25, 23, .55); color: #fff; cursor: pointer; backdrop-filter: blur(2px); }
+.phone-sound-icon { width: 1.2rem; height: 1.2rem; fill: currentColor; }
+.phone-sound-icon--on { display: none; }
+.phone-video-sound[data-on="true"] .phone-sound-icon--off { display: none; }
+.phone-video-sound[data-on="true"] .phone-sound-icon--on { display: block; }
 .hero-phone { position: absolute; z-index: 2; left: 0; bottom: 0; width: 40%; transform: rotate(-4deg); }
 .hero-phone--solo { left: 50%; bottom: auto; top: 0; width: min(60%, 17rem); transform: translateX(-50%) rotate(-3deg); }
 .niche-visual { min-height: 36rem; }

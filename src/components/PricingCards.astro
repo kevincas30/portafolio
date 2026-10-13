@@ -3,6 +3,7 @@ import { site, waLink, launchPrice, type Pack } from '../config/site';
 interface Props { packs?: readonly Pack[]; horizontalSingle?: boolean; showDetailsLink?: boolean; }
 const { packs = site.packs, horizontalSingle = false, showDetailsLink = true } = Astro.props;
 const offer = site.launchOffer;
+const offersDemo = packs.some((pack) => !pack.ctaLabel);
 ---
 <div class:list={["pricing", horizontalSingle && "pricing--single"]} data-reveal>
   {offer.enabled && (
@@ -31,14 +32,14 @@ const offer = site.launchOffer;
           </div>
           {pack.extra && <div class="price-extra"><b>Incluido y presupuestado aparte</b><p>{pack.extra}</p></div>}
           <div class="button-row">
-            <a class="button button--lime price-demo" href={waLink(pack.waText)} target="_blank" rel="noopener noreferrer">Pedir demo gratis <span aria-hidden="true">↗</span></a>
+            <a class="button button--lime price-demo" href={waLink(pack.waText)} target="_blank" rel="noopener noreferrer">{pack.ctaLabel ?? 'Pedir demo gratis'} <span aria-hidden="true">↗</span></a>
             {showDetailsLink && <a class="arrow-link" href={pack.href}>Ver detalles <span aria-hidden="true">→</span></a>}
           </div>
         </div>
       </article>
     ))}
   </div>
-  <p class="pricing-note"><b>La cuota mensual incluye:</b> {site.monthlyIncludes} El pago por creación se divide en 50 % al empezar y 50 % al publicar, por Bizum o transferencia. La demo gratuita es una muestra visual inicial, no una web completa.</p>
+  <p class="pricing-note"><b>La cuota mensual incluye:</b> {site.monthlyIncludes} El pago por creación se divide en 50 % al empezar y 50 % al publicar, por Bizum o transferencia.{offersDemo && ' La demo gratuita es una muestra visual inicial, no una web completa.'}</p>
 </div>
 
 <script>

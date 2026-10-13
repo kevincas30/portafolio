@@ -70,7 +70,7 @@
   "services": ["Diseño web", "Desarrollo", "Menú digital", "Galería"],
   "client": "El Tiburón de la Costa · Ixtapa, Guerrero",
   "year": "2026",
-  "featured": true,
+  "featured": false,
   "order": 3,
   "isDemo": false,
   "cover": "/proyectos/Tiburon/portada-tiburon.jpg",

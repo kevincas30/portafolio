@@ -1,7 +1,80 @@
 ---
-interface Props { src: string; alt: string; class?: string; }
-const { src, alt, class: className = '' } = Astro.props;
+interface Props { src?: string; alt: string; class?: string; video?: { src: string; poster?: string }; }
+const { src, alt, class: className = '', video } = Astro.props;
 ---
 <div class:list={['phone', className]}>
-  <img src={src} alt={alt} width="540" height="1140" loading="lazy" />
+  {video ? (
+    <div class="phone-video" data-phone-video>
+      <video src={video.src} poster={video.poster} width="540" height="1140" muted loop playsinline preload="metadata" aria-label={alt}></video>
+      <button class="phone-video-sound" type="button" data-phone-sound aria-pressed="false" aria-label="Activar sonido">
+        <svg class="phone-sound-icon phone-sound-icon--off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z" /><path d="M16 9l5 5M21 9l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" /></svg>
+        <svg class="phone-sound-icon phone-sound-icon--on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 5V4L8 9H4Z" /><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" /></svg>
+      </button>
+    </div>
+  ) : (
+    <img src={src} alt={alt} width="540" height="1140" loading="lazy" />
+  )}
 </div>
+
+<script>
+  let cleanupPhoneVideos: (() => void) | undefined;
+
+  const setupPhoneVideos = () => {
+    cleanupPhoneVideos?.();
+    cleanupPhoneVideos = undefined;
+
+    const wrappers = [...document.querySelectorAll<HTMLElement>('[data-phone-video]')];
+    if (!wrappers.length) return;
+
+    const cleanups: (() => void)[] = [];
+    const visible = new Set<HTMLVideoElement>();
+    const sync = () => {
+      wrappers.forEach((wrapper) => {
+        const video = wrapper.querySelector('video');
+        if (!video) return;
+        if (!document.hidden && visible.has(video)) void video.play().catch(() => {});
+        else video.pause();
+      });
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const video = (entry.target as HTMLElement).querySelector('video');
+        if (!video) return;
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.4) visible.add(video);
+        else visible.delete(video);
+      });
+      sync();
+    }, { threshold: [0, 0.4, 0.6, 1] });
+
+    wrappers.forEach((wrapper) => {
+      const video = wrapper.querySelector<HTMLVideoElement>('video');
+      const button = wrapper.querySelector<HTMLButtonElement>('[data-phone-sound]');
+      if (!video || !button) return;
+      video.muted = true;
+      observer.observe(wrapper);
+      const onToggle = () => {
+        video.muted = !video.muted;
+        button.dataset.on = String(!video.muted);
+        button.setAttribute('aria-pressed', String(!video.muted));
+        button.setAttribute('aria-label', video.muted ? 'Activar sonido' : 'Silenciar');
+      };
+      button.addEventListener('click', onToggle);
+      cleanups.push(() => button.removeEventListener('click', onToggle));
+    });
+
+    document.addEventListener('visibilitychange', sync);
+    cleanupPhoneVideos = () => {
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', sync);
+      cleanups.forEach((cleanup) => cleanup());
+      wrappers.forEach((wrapper) => wrapper.querySelector('video')?.pause());
+    };
+  };
+
+  document.addEventListener('astro:before-preparation', () => {
+    cleanupPhoneVideos?.();
+    cleanupPhoneVideos = undefined;
+  });
+  document.addEventListener('astro:page-load', setupPhoneVideos);
+</script>

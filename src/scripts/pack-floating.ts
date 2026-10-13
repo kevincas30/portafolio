@@ -18,7 +18,8 @@ export function setupPackFloating(section: HTMLElement): () => void {
     const angles = mobile ? { x: 10, y: 18 } : { x: 8, y: 20 };
     layers.forEach((layer) => {
       const tilt = layer.querySelector<HTMLElement>('[data-pack-tilt]');
-      if (!tilt) return;
+      // Skip the 3D rotation for video panels: it breaks click targets on their controls.
+      if (!tilt || layer.querySelector('video')) return;
       const direction = layer.querySelector('.phone') ? 1 : -1;
       gsap.fromTo(tilt, {
         rotationX: angles.x,

@@ -19,9 +19,7 @@ const next = sorted[(currentIndex + 1) % sorted.length];
 const d = project.data;
 const branding = projectBranding[d.slug];
 const caseStudy = d.caseStudy;
-const similarService = d.slug === 'alojamiento-la-rueca'
-  ? { href: '/alojamientos', label: '¿Tienes un hotel? Consulta cómo adaptar esta idea.' }
-  : { href: '/restaurantes', label: '¿Tienes un restaurante? Consulta una web similar.' };
+const similarService = { href: '/contacto', label: '¿Tienes un proyecto parecido? Cuéntanos.' };
 ---
 <BaseLayout title={d.title} description={caseStudy.summary} image={d.cover}>
   <article class="project-case" data-project-accent="true" data-project-slug={d.slug} style={`--project-accent:${branding?.primary || d.accentColor || '#c9f568'};--project-accent-hover:${branding?.hover || d.accentColor || '#c9f568'};--project-accent-contrast:${branding?.contrast || '#171917'};--project-accent-hover-contrast:${branding?.hoverContrast || '#171917'};--project-support:${branding?.support || d.accentColor || '#171917'};--project-support-dark:${branding?.darkSupport || branding?.primary || d.accentColor || '#c9f568'}`}>

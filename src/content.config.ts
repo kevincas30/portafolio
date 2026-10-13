@@ -48,6 +48,8 @@ const projects = defineCollection({
     client: z.string(),
     year: z.string(),
     featured: z.boolean().default(false),
+    /** Posición en la selección curada del home (solo se usa si featured=true). */
+    homeOrder: z.number().optional(),
     order: z.number(),
     isDemo: z.boolean().default(true),
     cover: z.string(),
