@@ -135,7 +135,6 @@ export const site = {
   } as Pack,
   navigation: [
     { label: 'Proyectos', href: '/proyectos' },
-    { label: 'Servicios', href: '/servicios' },
     { label: 'Redes', href: '/servicios/diseno-para-redes' },
     { label: 'Nosotros', href: '/nosotros' },
     { label: 'Contacto', href: '/contacto' },

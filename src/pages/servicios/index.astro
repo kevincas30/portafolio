@@ -3,10 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import BrowserFrame from '../../components/BrowserFrame.astro';
 import PhoneFrame from '../../components/PhoneFrame.astro';
-import PricingCards from '../../components/PricingCards.astro';
 import Accordion from '../../components/Accordion.astro';
 import ContactBlock from '../../components/ContactBlock.astro';
-import { site } from '../../config/site';
 const faq = [
   { question: '¿Qué pasa si mi proyecto es más grande?', answer: 'Lo presupuestamos según el alcance: más páginas, funciones o integraciones (tienda online, reservas, pagos) se valoran aparte.' },
   { question: '¿La demo gratis me compromete a algo?', answer: 'No. Es una muestra visual inicial para valorar el enfoque antes de contratar, no una web completa terminada.' },
@@ -22,7 +20,6 @@ const faq = [
     <div class="feature-visual"><BrowserFrame src="/proyectos/La%20rueca/la-rueca-desktop.webp" alt="Web de Alojamiento La Rueca" /></div>
     <article class="feature feature--wide"><b>¿YA TIENES CLARO TU RUBRO?</b><h2 class="section-title">Packs con precio cerrado</h2><p>Si tienes un restaurante o un hotel, tenemos un pack pensado específicamente para tu caso.</p><div class="button-row"><a class="arrow-link" href="/restaurantes">Ver pack de restaurantes <span>→</span></a><a class="arrow-link" href="/alojamientos">Ver pack de hoteles <span>→</span></a></div></article>
   </div></div></section>
-  <section class="section" id="precios"><div class="container"><SectionHeading number="Precios" title="Lo que cuesta, sin letra pequeña." intro="Un precio de partida, el mismo para cualquier rubro. El presupuesto final depende del tamaño de tu web y de las funciones que necesites; te lo cerramos antes de empezar." /><PricingCards packs={[site.generalPack]} horizontalSingle showDetailsLink={false} /></div></section>
   <section class="section section--dark"><div class="container"><SectionHeading number="Extra" title="También diseñamos tu contenido para redes." intro="Posts, historias, carruseles y flyers con la misma imagen que tu web. Se presupuesta aparte." /><a class="button button--lime" href="/servicios/diseno-para-redes">Ver diseño para redes <span>→</span></a></div></section>
   <section class="section"><div class="narrow"><SectionHeading number="FAQ" title="Preguntas antes de empezar." /><Accordion items={faq} /></div></section>
   <ContactBlock />

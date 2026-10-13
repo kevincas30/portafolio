@@ -5,7 +5,6 @@ import BrowserFrame from '../components/BrowserFrame.astro';
 import PhoneFrame from '../components/PhoneFrame.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import PricingCards from '../components/PricingCards.astro';
 import ProcessBoard from '../components/ProcessBoard.astro';
 import Accordion from '../components/Accordion.astro';
 import ContactBlock from '../components/ContactBlock.astro';
@@ -71,9 +70,7 @@ const faq = [
     </div>
   </section>
 
-  <section class="section home-closing-section" id="precios"><div class="container"><SectionHeading number="03" title="Lo que cuesta, sin letra pequeña." intro="Un precio de partida, el mismo para cualquier rubro. El presupuesto final depende del tamaño de tu web y de las funciones que necesites; te lo cerramos antes de empezar, sin sorpresas." /><PricingCards packs={[site.generalPack]} horizontalSingle showDetailsLink={false} /></div></section>
-
-  <section class="section section--dark home-closing-section"><div class="container"><SectionHeading number="04" title="Primero lo ves. Después decides." intro="La demo gratuita es una muestra visual inicial para valorar el enfoque antes de contratar." /><ProcessBoard steps={steps} /></div></section>
+  <section class="section section--dark home-closing-section"><div class="container"><SectionHeading number="03" title="Primero lo ves. Después decides." intro="La demo gratuita es una muestra visual inicial para valorar el enfoque antes de contratar." /><ProcessBoard steps={steps} /></div></section>
 
   <section class="section home-closing-section"><div class="narrow"><SectionHeading number="FAQ" title="Lo que nos suelen preguntar." /><Accordion items={faq} /></div></section>
 
