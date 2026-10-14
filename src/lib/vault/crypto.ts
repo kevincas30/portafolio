@@ -2,7 +2,7 @@
 // Puro WebCrypto (globalThis.crypto): corre en el navegador y en Node/vitest.
 import { base64ToBytes, bytesToBase64, utf8Decode, utf8Encode } from "./encoding";
 
-export type VaultCryptoErrorCode = "DECRYPT_FAILED" | "INVALID_INPUT";
+export type VaultCryptoErrorCode = "DECRYPT_FAILED" | "INVALID_INPUT" | "UNSUPPORTED_VERSION";
 
 export class VaultCryptoError extends Error {
   readonly code: VaultCryptoErrorCode;
