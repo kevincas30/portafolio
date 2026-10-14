@@ -57,7 +57,7 @@ export function SubscriptionCard({ subscription, onEdit, onDelete, onRegisterPay
         <button
           type="button"
           onClick={() => onRegisterPayment(subscription)}
-          className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[var(--ink)] px-4 text-xs font-extrabold text-[var(--paper)] transition hover:bg-[var(--ink-hover)] active:scale-[0.99]"
+          className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[var(--line)] px-3 text-xs font-extrabold text-[var(--ink)] transition hover:bg-[var(--surface-muted)] active:scale-[0.99]"
         >
           <CircleDollarSign aria-hidden="true" className="size-3.5" />
           Registrar pago
