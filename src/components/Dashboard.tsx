@@ -5,8 +5,8 @@ import { ClientsPage } from "@/components/clients/ClientsPage";
 import { PasswordsPage } from "@/components/passwords/PasswordsPage";
 import { SectionSwitcher, type AppSection } from "@/components/SectionSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { VaultUnlock } from "@/components/passwords/VaultUnlock";
-import { useVault } from "@/hooks/useVault";
+import { PanelLogin } from "@/components/passwords/PanelLogin";
+import { usePanelSession, type PanelSession } from "@/hooks/usePanelSession";
 
 const sectionTitles: Record<AppSection, string> = {
   clients: "Clientes · Panel",
@@ -14,24 +14,24 @@ const sectionTitles: Record<AppSection, string> = {
 };
 
 export function Dashboard() {
-  const vault = useVault();
+  const panel = usePanelSession();
 
   useEffect(() => {
-    if (vault.status !== "unlocked") document.title = "Acceso privado · Panel";
-  }, [vault.status]);
+    if (panel.status !== "unlocked") document.title = "Acceso privado · Panel";
+  }, [panel.status]);
 
-  if (vault.status !== "unlocked" || !vault.key) {
+  if (panel.status !== "unlocked") {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-[720px] items-center px-4 py-6 sm:px-6">
-        <div className="w-full"><VaultUnlock status={vault.status} error={vault.error} onSetup={vault.setup} onUnlock={vault.unlock} /></div>
+        <div className="w-full"><PanelLogin status={panel.status} error={panel.error} onSetup={panel.setup} onUnlock={panel.unlock} /></div>
       </main>
     );
   }
 
-  return <UnlockedDashboard vault={vault} />;
+  return <UnlockedDashboard onLock={panel.lock} />;
 }
 
-function UnlockedDashboard({ vault }: { vault: ReturnType<typeof useVault> }) {
+function UnlockedDashboard({ onLock }: { onLock: PanelSession["lock"] }) {
   const [activeSection, setActiveSection] = useState<AppSection>("clients");
 
   useEffect(() => {
@@ -46,7 +46,7 @@ function UnlockedDashboard({ vault }: { vault: ReturnType<typeof useVault> }) {
           <div className="flex items-center gap-2">
             <span className="hidden items-center gap-1.5 text-xs text-[var(--muted)] sm:flex"><LockKeyhole className="size-3.5" aria-hidden="true" /> Acceso privado</span>
             <ThemeToggle />
-            <button type="button" onClick={vault.lock} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--line)] px-4 text-sm text-[var(--ink)] transition hover:bg-[var(--accent-soft)]"><LockKeyhole className="size-4" aria-hidden="true" /> <span className="hidden sm:inline">Bloquear panel</span></button>
+            <button type="button" onClick={onLock} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--line)] px-4 text-sm text-[var(--ink)] transition hover:bg-[var(--accent-soft)]"><LockKeyhole className="size-4" aria-hidden="true" /> <span className="hidden sm:inline">Bloquear panel</span></button>
           </div>
         </div>
 
@@ -56,7 +56,7 @@ function UnlockedDashboard({ vault }: { vault: ReturnType<typeof useVault> }) {
           <ClientsPage active={activeSection === "clients"} />
         </div>
         <div className={activeSection === "passwords" ? "block" : "hidden"}>
-          <PasswordsPage vault={vault} />
+          <PasswordsPage />
         </div>
       </div>
     </main>

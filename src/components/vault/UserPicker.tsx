@@ -1,4 +1,4 @@
-import { KeyRound, LoaderCircle, Plus, UserRound, Users } from "lucide-react";
+import { LoaderCircle, Plus, UserRound, Users } from "lucide-react";
 import { ErrorNote, secondaryButtonClass, VaultCard } from "@/components/vault/VaultCard";
 import type { VaultUserSummary } from "@/lib/user-vault-api";
 
@@ -9,11 +9,9 @@ interface UserPickerProps {
   onSelect: (user: VaultUserSummary) => void;
   onCreate: () => void;
   onRetry: () => void;
-  /** Acceso a las cuentas anteriores (contraseña maestra) mientras conviven ambas rutas. */
-  onUseLegacy?: () => void;
 }
 
-export function UserPicker({ users, state, error, onSelect, onCreate, onRetry, onUseLegacy }: UserPickerProps) {
+export function UserPicker({ users, state, error, onSelect, onCreate, onRetry }: UserPickerProps) {
   return (
     <VaultCard icon={Users} eyebrow="Contraseñas" title="¿Quién eres?">
       {state === "loading" && (
@@ -51,11 +49,6 @@ export function UserPicker({ users, state, error, onSelect, onCreate, onRetry, o
           <button type="button" onClick={onCreate} className={`${secondaryButtonClass} mt-4`}>
             <Plus aria-hidden="true" className="size-4" /> Nuevo usuario
           </button>
-          {onUseLegacy && (
-            <button type="button" onClick={onUseLegacy} className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl text-sm font-bold text-[var(--muted-strong)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--ink)]">
-              <KeyRound aria-hidden="true" className="size-4" /> Cuentas anteriores (contraseña maestra)
-            </button>
-          )}
         </>
       )}
     </VaultCard>

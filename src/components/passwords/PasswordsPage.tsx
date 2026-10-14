@@ -1,23 +1,17 @@
 import { useState } from "react";
-import { Users } from "lucide-react";
-import { LegacyPasswords } from "@/components/passwords/LegacyPasswords";
-import { headerButtonClass } from "@/components/passwords/PasswordsHeader";
 import { UserVaultPasswords } from "@/components/passwords/UserVaultPasswords";
 import { PasskeyEnroll } from "@/components/vault/PasskeyEnroll";
 import { UnlockScreen } from "@/components/vault/UnlockScreen";
 import { UserPicker } from "@/components/vault/UserPicker";
 import { useUserVault, type ActiveVaultUser } from "@/hooks/useUserVault";
-import type { VaultAccess } from "@/hooks/useVault";
 
 type View =
   | { kind: "picker" }
   | { kind: "enroll"; initialName?: string }
-  | { kind: "unlock"; user: ActiveVaultUser }
-  // Cuentas anteriores (sin usuario) hasta que se migren en la fase 3.
-  | { kind: "legacy" };
+  | { kind: "unlock"; user: ActiveVaultUser };
 
-// `vault` es la puerta del panel (contraseña maestra). Debajo conviven la ruta legacy y la boveda por usuario.
-export function PasswordsPage({ vault }: { vault: VaultAccess }) {
+// El panel ya esta abierto (contraseña maestra, en Dashboard). Aqui solo vive la boveda por usuario.
+export function PasswordsPage() {
   const userVault = useUserVault();
   const [view, setView] = useState<View>({ kind: "picker" });
 
@@ -50,20 +44,6 @@ export function PasswordsPage({ vault }: { vault: VaultAccess }) {
     return <UserVaultPasswords userVault={userVault} onSwitchUser={switchUser} />;
   }
 
-  if (view.kind === "legacy") {
-    return (
-      <LegacyPasswords
-        vault={vault}
-        headerActions={
-          <button type="button" onClick={() => setView({ kind: "picker" })} className={headerButtonClass}>
-            <Users aria-hidden="true" className="size-4" />
-            Cambiar de usuario
-          </button>
-        }
-      />
-    );
-  }
-
   if (view.kind === "unlock") {
     return (
       <UnlockScreen
@@ -84,7 +64,6 @@ export function PasswordsPage({ vault }: { vault: VaultAccess }) {
       onCreate={() => setView({ kind: "enroll" })}
       onSelect={(user) =>
         setView(user.status === "pending" ? { kind: "enroll", initialName: user.name } : { kind: "unlock", user: { id: user.id, name: user.name } })}
-      onUseLegacy={() => setView({ kind: "legacy" })}
     />
   );
 }
