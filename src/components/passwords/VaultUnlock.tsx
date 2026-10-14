@@ -89,7 +89,7 @@ export function VaultUnlock({ status, error, onSetup, onUnlock }: VaultUnlockPro
 
         <label className="block">
           <span className="mb-2 block text-xs font-extrabold uppercase tracking-[0.12em] text-[var(--ink)]">Contraseña maestra</span>
-          <span className="flex items-center rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-3 focus-within:border-[var(--line-strong)] focus-within:ring-3 focus-within:ring-[#c9f568]/35">
+          <span className="flex items-center rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-3 transition focus-within:border-[#c9f568] focus-within:ring-3 focus-within:ring-[#c9f568]/35">
             <KeyRound aria-hidden="true" className="size-5 shrink-0 text-[var(--muted)]" />
             <input
               type={visible ? "text" : "password"}
@@ -113,7 +113,7 @@ export function VaultUnlock({ status, error, onSetup, onUnlock }: VaultUnlockPro
               value={confirmation}
               onChange={(event) => setConfirmation(event.target.value)}
               autoComplete="new-password"
-              className="min-h-13 w-full rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-4 text-sm font-bold text-[var(--ink)] outline-none focus-visible:outline-none transition focus:border-[var(--line-strong)] focus:ring-3 focus:ring-[#c9f568]/35"
+              className="min-h-13 w-full rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-4 text-sm font-bold text-[var(--ink)] outline-none focus-visible:outline-none transition focus:border-[#c9f568] focus:ring-3 focus:ring-[#c9f568]/35"
             />
           </label>
         )}
