@@ -4,7 +4,7 @@ import { storeChallenge } from "@/lib/server/challenges";
 import { fail, ok, readBody } from "@/lib/server/http";
 import { consumeAttempt } from "@/lib/server/rate-limit";
 import { findUser } from "@/lib/server/vault-users";
-import { resolveVaultSession, VAULT_COOKIE } from "@/lib/server/vault-session";
+import { isFreshUnlock, resolveVaultSessionInfo, VAULT_COOKIE } from "@/lib/server/vault-session";
 import { getWebAuthnConfig } from "@/lib/server/webauthn-config";
 import { SESSION_COOKIE } from "@/lib/site-session";
 import { getTurso } from "@/lib/turso";
@@ -12,7 +12,8 @@ import { getTurso } from "@/lib/turso";
 export const prerender = false;
 
 // Usuario nuevo (pending): basta la sesion de panel que ya exige el middleware.
-// Usuario activo (step_up): ademas exige SU sesion de boveda (PA-8).
+// Usuario activo (step_up): ademas exige SU sesion de boveda (PA-8), nacida de un desbloqueo reciente.
+// Una cookie de boveda robada pero "vieja" no alcanza para colar una passkey propia.
 export const POST: APIRoute = async ({ request, cookies }) => {
   const body = await readBody(request);
   const user = await findUser(body?.userId).catch(() => null);
@@ -20,8 +21,11 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
   try {
     if (user.status === "active") {
-      const sessionUser = await resolveVaultSession(cookies.get(VAULT_COOKIE)?.value, cookies.get(SESSION_COOKIE)?.value);
-      if (sessionUser !== user.id) return fail("Desbloquea tu bóveda para añadir una passkey.", 403);
+      const session = await resolveVaultSessionInfo(cookies.get(VAULT_COOKIE)?.value, cookies.get(SESSION_COOKIE)?.value);
+      if (session?.userId !== user.id) return fail("Desbloquea tu bóveda para añadir una passkey.", 403);
+      if (!isFreshUnlock(session.createdAt, Date.now())) {
+        return fail("Por seguridad, vuelve a desbloquear tu bóveda para añadir una passkey.", 403);
+      }
     }
 
     const limit = await consumeAttempt(`webauthn:${user.id}`);
