@@ -175,7 +175,7 @@ export function CredentialForm({ credential, googleCredentials, groupNames, onSa
     if ((draft.loginMethod === "email_code" || draft.loginMethod === "magic_link") && !draft.email.trim()) {
       return setError("Indica el correo que recibe el acceso.");
     }
-    if (draft.loginMethod === "password" && !draft.password && !credential?.encryptedPassword) {
+    if (draft.loginMethod === "password" && !draft.password && !credential?.encryptedPassword && !credential?.password) {
       return setError("Indica la contraseña de esta cuenta.");
     }
     if (draft.loginMethod === "other" && !draft.accessInstructions.trim()) {

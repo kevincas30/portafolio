@@ -1,9 +1,13 @@
 import { defineMiddleware } from "astro:middleware";
 import { hasSiteSession, SESSION_COOKIE } from "@/lib/site-session";
 import { ADMIN_BASE } from "@/lib/base-path";
+import { resolveVaultSession, VAULT_COOKIE, vaultCookieOptions } from "@/lib/server/vault-session";
 
 const ADMIN_API_PREFIX = `${ADMIN_BASE}/api/`;
 const PUBLIC_API_PATHS = new Set([`${ADMIN_BASE}/api/vault`, `${ADMIN_BASE}/api/site-session`]);
+const VAULT_API_PREFIX = `${ADMIN_API_PREFIX}user-vault/`;
+// Bloquear la boveda solo necesita la sesion del panel (tiene que funcionar aunque la de boveda haya vencido).
+const VAULT_SESSION_PATH = `${VAULT_API_PREFIX}session`;
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
 function jsonError(error: string, status: number): Response {
@@ -31,7 +35,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (!path.startsWith(ADMIN_API_PREFIX) || PUBLIC_API_PATHS.has(path)) return next();
 
   try {
-    if (await hasSiteSession(context.cookies.get(SESSION_COOKIE)?.value)) {
+    const panelToken = context.cookies.get(SESSION_COOKIE)?.value;
+    if (await hasSiteSession(panelToken)) {
+      if (path.startsWith(VAULT_API_PREFIX) && path !== VAULT_SESSION_PATH) {
+        const vaultToken = context.cookies.get(VAULT_COOKIE)?.value;
+        const userId = await resolveVaultSession(vaultToken, panelToken);
+        if (!userId) return jsonError("Desbloquea tu bóveda para continuar.", 401);
+        context.locals.userId = userId;
+        context.cookies.set(VAULT_COOKIE, vaultToken!, vaultCookieOptions);
+      }
       const response = await next();
       response.headers.set("Cache-Control", "private, no-store");
       return response;

@@ -7,7 +7,7 @@ export const SESSION_COOKIE = "clientes-panel-session";
 export const SESSION_SECONDS = 30 * 60;
 export const VAULT_VERIFIER = "clientes-panel-vault:v1";
 const deriveKey = promisify(pbkdf2);
-const tokenHash = (token: string) => createHash("sha256").update(token).digest("hex");
+export const tokenHash = (token: string) => createHash("sha256").update(token).digest("hex");
 
 export async function verifyMasterPassword(password: string, configuration: VaultConfiguration): Promise<boolean> {
   try {
@@ -46,5 +46,9 @@ export async function renewSiteSession(token: string): Promise<void> {
 export async function deleteSiteSession(token: string | undefined): Promise<void> {
   if (!token) return;
   const database = await getTurso();
-  await database.execute({ sql: "DELETE FROM site_sessions WHERE token_hash = ?", args: [tokenHash(token)] });
+  // Cerrar el panel tambien cierra las sesiones de boveda atadas a ese token (VS-6).
+  await database.batch([
+    { sql: "DELETE FROM site_sessions WHERE token_hash = ?", args: [tokenHash(token)] },
+    { sql: "DELETE FROM vault_sessions WHERE panel_token_hash = ?", args: [tokenHash(token)] },
+  ], "write");
 }
