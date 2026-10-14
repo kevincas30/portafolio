@@ -814,3 +814,12 @@ body.menu-open .wa-float { display: none; }
   .service-phone { width: 70%; }
   .home-packs .service-phone { width: min(58%, 12rem); }
 }
+
+/* Recibos de pago: solo existen al imprimir ("Guardar como PDF") y ocultan el resto de la pagina. */
+.receipt-print { display: none; }
+@media print {
+  @page { size: A4; margin: 18mm; }
+  body { background: #fff !important; }
+  body > *:not(.receipt-print) { display: none !important; }
+  .receipt-print { display: block; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}

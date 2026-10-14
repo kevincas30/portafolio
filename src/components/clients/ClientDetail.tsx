@@ -1,5 +1,6 @@
 import { ArrowLeft, ExternalLink, Globe2, Pencil, Plus, Trash2, Wallet } from "lucide-react";
 import { PaymentCalendar } from "@/components/clients/PaymentCalendar";
+import { PaymentReceipts } from "@/components/clients/PaymentReceipts";
 import { SubscriptionCard } from "@/components/clients/SubscriptionCard";
 import { clientTotalPaid, formatAmount } from "@/lib/client-status";
 import { safeHref } from "@/lib/url";
@@ -145,6 +146,7 @@ export function ClientDetail({
               <PaymentCalendar key={subscription.id} subscription={subscription} />
             ))}
           </div>
+          <PaymentReceipts client={client} />
         </aside>
       )}
       </div>
