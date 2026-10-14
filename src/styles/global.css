@@ -147,6 +147,11 @@ a { color: inherit; text-decoration: none; }
 img, svg, video { display: block; max-width: 100%; }
 button, input, select, textarea { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
+/* Tailwind v4 dejó el cursor de los botones en "default": lo devolvemos para todo lo clickeable. */
+@layer base {
+  button:not(:disabled), [role="button"], select:not(:disabled), summary, label:has(> input[type="checkbox"], > input[type="radio"]), input:is([type="checkbox"], [type="radio"], [type="file"], [type="submit"], [type="button"]):not(:disabled) { cursor: pointer; }
+  button:disabled, select:disabled, input:disabled { cursor: not-allowed; }
+}
 @layer base { :focus-visible { outline: 3px solid #547b13; outline-offset: 4px; } }
 .skip-link { position: fixed; z-index: 999; top: 1rem; left: 1rem; padding: .8rem 1rem; background: var(--lime); clip-path: inset(100%); transform: translateY(calc(-100% - 2rem)); transition: transform var(--fast); }
 .skip-link:focus-visible { clip-path: none; transform: translateY(0); }
