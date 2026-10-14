@@ -76,21 +76,17 @@ function DetailValue({ label, value, copyMessage, onToast }: DetailValueProps) {
 interface DetailPasswordProps {
   label: string;
   credential: Credential;
-  vaultKey: CryptoKey | null;
   onToast: (message: string) => void;
 }
 
-function DetailPassword({ label, credential, vaultKey, onToast }: DetailPasswordProps) {
+function DetailPassword({ label, credential, onToast }: DetailPasswordProps) {
   return (
     <div className="rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-soft)] px-3.5 py-3 sm:px-4">
       <p className="text-[11px] font-extrabold uppercase tracking-[0.1em] text-[var(--muted)]">{label}</p>
       <div className="mt-0.5">
         <PasswordField
           key={`${credential.id}-${credential.updatedAt}`}
-          encryptedPassword={credential.encryptedPassword}
-          passwordIv={credential.passwordIv}
           password={credential.password}
-          vaultKey={vaultKey}
           label={label}
           onToast={onToast}
           fullWidth
@@ -118,7 +114,6 @@ interface CredentialDetailProps {
   credential: Credential;
   credentialMap: Map<string, Credential>;
   groupColor?: string;
-  vaultKey: CryptoKey | null;
   onBack: () => void;
   onOpenCredential: (credentialId: string) => void;
   onEdit: (credential: Credential) => void;
@@ -131,7 +126,6 @@ export function CredentialDetail({
   credential,
   credentialMap,
   groupColor,
-  vaultKey,
   onBack,
   onOpenCredential,
   onEdit,
@@ -236,14 +230,14 @@ export function CredentialDetail({
                 <>
                   <DetailValue label="Correo" value={credential.email} copyMessage="Correo copiado" onToast={onToast} />
                   <DetailValue label="Usuario" value={credential.username} copyMessage="Usuario copiado" onToast={onToast} />
-                  {ownPassword && <DetailPassword label="Contraseña" credential={ownPassword} vaultKey={vaultKey} onToast={onToast} />}
+                  {ownPassword && <DetailPassword label="Contraseña" credential={ownPassword} onToast={onToast} />}
                 </>
               )}
 
               {credential.loginMethod === "google" && loginCredential && (
                 <>
                   <DetailValue label="Cuenta Gmail" value={loginCredential.email || loginCredential.username} copyMessage="Cuenta Gmail copiada" onToast={onToast} />
-                  <DetailPassword label="Contraseña de Gmail" credential={loginCredential} vaultKey={vaultKey} onToast={onToast} />
+                  <DetailPassword label="Contraseña de Gmail" credential={loginCredential} onToast={onToast} />
                 </>
               )}
 
@@ -254,7 +248,7 @@ export function CredentialDetail({
               {(credential.loginMethod === "email_code" || credential.loginMethod === "magic_link") && emailCredential && (
                 <>
                 <DetailValue label="Correo" value={emailCredential.email || emailCredential.username} copyMessage="Correo copiado" onToast={onToast} />
-                <DetailPassword label="Contraseña del correo" credential={emailCredential} vaultKey={vaultKey} onToast={onToast} />
+                <DetailPassword label="Contraseña del correo" credential={emailCredential} onToast={onToast} />
                 </>
               )}
             </div>

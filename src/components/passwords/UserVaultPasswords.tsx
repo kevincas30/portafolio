@@ -27,7 +27,6 @@ export function UserVaultPasswords({ userVault, onSwitchUser }: UserVaultPasswor
       <PasswordsView
         credentialsState={credentialsState}
         groupsState={groupsState}
-        vaultKey={null}
         onLock={userVault.lock}
         owner={userVault.active.name}
         footerText="Bóveda cifrada · Bloqueo tras 15 minutos de inactividad."

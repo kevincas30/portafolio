@@ -24,8 +24,6 @@ function normalizeSearch(value: string): string {
 interface PasswordsViewProps {
   credentialsState: CredentialsController;
   groupsState: GroupsController;
-  /** Clave legacy para descifrar passwords; null en la boveda por usuario (ya vienen en memoria). */
-  vaultKey: CryptoKey | null;
   onLock: () => void;
   /** Nombre del dueno de la boveda, si aplica. */
   owner?: string;
@@ -34,8 +32,8 @@ interface PasswordsViewProps {
   footerText: string;
 }
 
-// Vista de contrasenas independiente de la fuente de datos: la alimentan la ruta legacy o la boveda por usuario.
-export function PasswordsView({ credentialsState, groupsState, vaultKey, onLock, owner, headerActions, footerText }: PasswordsViewProps) {
+// Vista de contrasenas independiente de la fuente de datos: la alimenta la boveda por usuario.
+export function PasswordsView({ credentialsState, groupsState, onLock, owner, headerActions, footerText }: PasswordsViewProps) {
   const [search, setSearch] = useState("");
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -227,7 +225,6 @@ export function PasswordsView({ credentialsState, groupsState, vaultKey, onLock,
           credential={selectedCredential}
           credentialMap={credentialMap}
           groupColor={groups.find((group) => normalizeSearch(group.name) === normalizeSearch(selectedCredential.groupName))?.color}
-          vaultKey={vaultKey}
           onBack={() => setSelectedCredentialId(null)}
           onOpenCredential={openCredential}
           onEdit={openEdit}
