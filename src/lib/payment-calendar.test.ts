@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { monthCells, periodStates, yearCells } from "@/lib/payment-calendar";
+import { monthCells, paymentCoverage, periodStates, yearCells } from "@/lib/payment-calendar";
 import type { Payment } from "@/types/client";
 
-function payment(periods: number): Payment {
-  return { id: "p", subscriptionId: "s", amount: 15, paidAt: "2026-10-13", periods, note: "", createdAt: "" };
+function payment(periods: number, id = "p"): Payment {
+  return { id, subscriptionId: "s", amount: 15, paidAt: "2026-10-13", periods, note: "", createdAt: "" };
 }
 
 const month = (year: number, monthNumber: number) => year * 12 + monthNumber - 1;
@@ -92,5 +92,22 @@ describe("yearCells (anual)", () => {
       "2026-10-15",
     );
     expect(cells.map((cell) => cell.state)).toEqual(["overdue", "overdue", "overdue", "due"]);
+  });
+});
+
+describe("paymentCoverage", () => {
+  it("reparte los periodos hacia atras desde el vencimiento, del pago mas nuevo al mas viejo", () => {
+    const coverage = paymentCoverage({
+      nextDueDate: "2027-04-11",
+      billingInterval: "monthly",
+      payments: [payment(6, "nuevo"), payment(1, "viejo")],
+    });
+    expect(coverage.get("nuevo")).toEqual({ from: "2026-10-11", until: "2027-04-11" });
+    expect(coverage.get("viejo")).toEqual({ from: "2026-09-11", until: "2026-10-11" });
+  });
+
+  it("en un servicio anual cubre años enteros", () => {
+    const coverage = paymentCoverage({ nextDueDate: "2027-10-12", billingInterval: "yearly", payments: [payment(1)] });
+    expect(coverage.get("p")).toEqual({ from: "2026-10-12", until: "2027-10-12" });
   });
 });

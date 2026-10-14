@@ -83,6 +83,33 @@ export function yearCells(source: CalendarSource, todayKey = getTodayKey(), maxY
   return cells.slice(-maxYears);
 }
 
+export interface PaymentCoverage {
+  /** Primer dia cubierto. */
+  from: string;
+  /** Dia en que vence el periodo siguiente (no incluido). */
+  until: string;
+}
+
+/**
+ * Periodo que cubre cada pago. Los pagos llegan del mas nuevo al mas viejo (como los devuelve la API):
+ * el mas nuevo cubre los ultimos periodos antes de nextDueDate, y asi hacia atras.
+ */
+export function paymentCoverage(source: Pick<Subscription, "nextDueDate" | "billingInterval" | "payments">): Map<string, PaymentCoverage> {
+  const step = intervalMonths(source.billingInterval);
+  const due = parseKey(source.nextDueDate);
+  const coverage = new Map<string, PaymentCoverage>();
+  let covered = 0;
+  for (const payment of source.payments) {
+    const periods = Math.max(0, payment.periods);
+    coverage.set(payment.id, {
+      from: periodStartKey(due.month - (covered + periods) * step, due.day),
+      until: periodStartKey(due.month - covered * step, due.day),
+    });
+    covered += periods;
+  }
+  return coverage;
+}
+
 /** Anio inicial del calendario mensual: el actual. */
 export function currentYear(todayKey = getTodayKey()): number {
   return Math.floor(parseKey(todayKey).month / 12);
