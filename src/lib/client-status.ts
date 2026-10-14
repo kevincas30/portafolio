@@ -67,6 +67,19 @@ export function totalPaidAcrossClients(clients: Client[]): number {
   return clients.reduce((total, client) => total + clientTotalPaid(client), 0);
 }
 
+const amountFormatter = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", minimumFractionDigits: 0, maximumFractionDigits: 2 });
+
 export function formatAmount(value: number): string {
-  return `$${new Intl.NumberFormat("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(value)}`;
+  return amountFormatter.format(value);
+}
+
+/** Splits the amount so the number and the € sign can be styled separately. */
+export function formatAmountParts(value: number): { number: string; currency: string } {
+  const parts = amountFormatter.formatToParts(value);
+  const currency = parts.find((part) => part.type === "currency")?.value ?? "€";
+  const number = parts
+    .filter((part) => part.type !== "currency" && part.type !== "literal")
+    .map((part) => part.value)
+    .join("");
+  return { number, currency };
 }
