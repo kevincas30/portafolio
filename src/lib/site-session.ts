@@ -46,5 +46,9 @@ export async function renewSiteSession(token: string): Promise<void> {
 export async function deleteSiteSession(token: string | undefined): Promise<void> {
   if (!token) return;
   const database = await getTurso();
-  await database.execute({ sql: "DELETE FROM site_sessions WHERE token_hash = ?", args: [tokenHash(token)] });
+  // Cerrar el panel tambien cierra las sesiones de boveda atadas a ese token (VS-6).
+  await database.batch([
+    { sql: "DELETE FROM site_sessions WHERE token_hash = ?", args: [tokenHash(token)] },
+    { sql: "DELETE FROM vault_sessions WHERE panel_token_hash = ?", args: [tokenHash(token)] },
+  ], "write");
 }
