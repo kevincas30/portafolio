@@ -371,6 +371,8 @@ html[data-theme="dark"] [data-hero-motion] .hero-note { background: var(--lime);
 .browser-bar i { width: .55rem; height: .55rem; border-radius: 50%; background: var(--lime); opacity: .7; }
 .browser img { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
 .hero-browser { position: absolute; width: min(100%, 34rem); top: 2rem; right: 0; transform: rotate(2.5deg); }
+/* Mockup frames are often rotated: rasterize on their own layer so edges are antialiased instead of dotted. */
+.browser, .phone { backface-visibility: hidden; outline: 1px solid transparent; }
 .hero-note { position: absolute; z-index: 2; right: -1rem; bottom: 2rem; width: 13rem; padding: 1rem; background: var(--lime); color: var(--dark); border: 1px solid var(--dark); transform: rotate(-4deg); font: .75rem/1.5 var(--font-mono); }
 .hero-piece { position: absolute; left: 0; bottom: 0; width: 38%; aspect-ratio: 4/5; padding: 1rem; background: #ff786f; color: var(--dark); border: 1px solid var(--dark); transform: rotate(-6deg); }
 .hero-piece strong { display: block; font: 650 clamp(1.4rem, 3vw, 2.5rem)/.95 var(--font-display); }
