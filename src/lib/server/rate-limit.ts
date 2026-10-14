@@ -11,7 +11,7 @@ export interface RateLimitResult {
 
 /**
  * Cuenta un intento y dice si cabe en la ventana. El UPSERT es atomico: reinicia el contador
- * si la ventana vencio y lo incrementa si no. Claves: `panel:{ip}`, `recovery:{userId}`, `webauthn:{userId}`.
+ * si la ventana vencio y lo incrementa si no. Claves: `panel:{ip}`, `panel:global`, `recovery:{userId}`, `webauthn:{userId}`.
  */
 export async function consumeAttempt(
   key: string,

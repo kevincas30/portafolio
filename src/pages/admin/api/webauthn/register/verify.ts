@@ -22,6 +22,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   const pending = user.status === "pending";
 
   try {
+    // El step_up exige un desbloqueo reciente al emitir el challenge (options); aca basta la sesion del usuario.
     if (!pending) {
       const sessionUser = await resolveVaultSession(cookies.get(VAULT_COOKIE)?.value, panelToken);
       if (sessionUser !== user.id) return fail("Desbloquea tu bóveda para añadir una passkey.", 403);

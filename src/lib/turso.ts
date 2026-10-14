@@ -136,7 +136,8 @@ export async function getTurso(): Promise<Client> {
           token_hash TEXT PRIMARY KEY,
           user_id TEXT NOT NULL REFERENCES vault_users(id),
           panel_token_hash TEXT NOT NULL,
-          expires_at INTEGER NOT NULL
+          expires_at INTEGER NOT NULL,
+          created_at INTEGER NOT NULL DEFAULT 0
         )`,
       `CREATE TABLE IF NOT EXISTS webauthn_challenges (
           id TEXT PRIMARY KEY,
@@ -176,6 +177,12 @@ export async function getTurso(): Promise<Client> {
     const hasPeriods = paymentColumns.rows.some((row) => String(row.name) === "periods");
     if (!hasPeriods) {
       await client.execute("ALTER TABLE payments ADD COLUMN periods INTEGER NOT NULL DEFAULT 1");
+    }
+
+    // Momento del desbloqueo: las sesiones previas quedan en 0 (nunca cuentan como recientes).
+    const sessionColumns = await client.execute("PRAGMA table_info(vault_sessions)");
+    if (!sessionColumns.rows.some((row) => String(row.name) === "created_at")) {
+      await client.execute("ALTER TABLE vault_sessions ADD COLUMN created_at INTEGER NOT NULL DEFAULT 0");
     }
 
     // Boveda por usuario: columnas nuevas en credentials (las legacy no se tocan).

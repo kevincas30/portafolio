@@ -6,6 +6,10 @@ import { consumeAttempt, resetAttempts } from "@/lib/server/rate-limit";
 
 export const prerender = false;
 
+// Intentos de login por ventana de 15 min sumando todas las IPs.
+const GLOBAL_KEY = "panel:global";
+const GLOBAL_LIMIT = 100;
+
 const cookieOptions = { httpOnly: true, sameSite: "strict" as const, secure: import.meta.env.PROD, path: "/", maxAge: SESSION_SECONDS };
 
 function sameOrigin(request: Request): boolean {
@@ -36,8 +40,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     const key = `panel:${address}`;
     const limit = await consumeAttempt(key);
-    if (!limit.allowed) {
-      return json({ error: "Demasiados intentos. Espera unos minutos antes de volver a entrar." }, { status: 429, headers: { ...noStore, "Retry-After": String(limit.retryAfterSeconds) } });
+    // Tope global: un ataque repartido entre muchas IPs tambien se frena (no se reinicia al entrar bien).
+    const global = limit.allowed ? await consumeAttempt(GLOBAL_KEY, GLOBAL_LIMIT) : limit;
+    if (!global.allowed) {
+      return json({ error: "Demasiados intentos. Espera unos minutos antes de volver a entrar." }, { status: 429, headers: { ...noStore, "Retry-After": String(global.retryAfterSeconds) } });
     }
     if (!await verifyPanelLogin(body.password)) {
       return json({ error: "La contraseña maestra no es correcta." }, { status: 401, headers: noStore });
