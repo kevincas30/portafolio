@@ -1,12 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { withBase } from "@/lib/base-path";
-import { createVaultConfiguration, unlockVault } from "@/lib/credential-crypto";
-import { getVaultConfiguration, saveVaultConfiguration } from "@/lib/credential-api";
-import type { VaultConfiguration } from "@/types/credential";
 
-export type VaultStatus = "loading" | "setup" | "locked" | "unlocked" | "error";
+export type PanelStatus = "loading" | "setup" | "locked" | "unlocked" | "error";
 
 const AUTO_LOCK_MS = 30 * 60 * 1000;
+
+async function requestError(response: Response, fallback: string): Promise<Error> {
+  try {
+    const body = (await response.json()) as { error?: string };
+    return new Error(body.error ?? fallback);
+  } catch {
+    return new Error(fallback);
+  }
+}
 
 async function startSiteSession(password: string) {
   const response = await fetch(withBase("/api/site-session"), {
@@ -15,27 +21,28 @@ async function startSiteSession(password: string) {
     body: JSON.stringify({ password }),
     cache: "no-store",
   });
-  if (!response.ok) {
-    const body = await response.json();
-    throw new Error(body.error ?? "No se pudo abrir el panel.");
-  }
+  if (!response.ok) throw await requestError(response, "No se pudo abrir el panel.");
 }
 
-export function useVault() {
-  const [status, setStatus] = useState<VaultStatus>("loading");
-  const [configuration, setConfiguration] = useState<VaultConfiguration | null>(null);
-  const [key, setKey] = useState<CryptoKey | null>(null);
+// Puerta del panel: la contraseña maestra solo se verifica en el servidor. No deriva ni guarda ninguna clave.
+export function usePanelSession() {
+  const [status, setStatus] = useState<PanelStatus>("loading");
+  const [configured, setConfigured] = useState(false);
   const [error, setError] = useState("");
   const lastActivity = useRef(0);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    void getVaultConfiguration()
-      .then((storedConfiguration) => {
+    void fetch(withBase("/api/vault"), { cache: "no-store", signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw await requestError(response, "No se pudo abrir el panel.");
+        return (await response.json()) as { configured?: boolean };
+      })
+      .then((body) => {
         if (controller.signal.aborted) return;
-        setConfiguration(storedConfiguration);
-        setStatus(storedConfiguration ? "locked" : "setup");
+        setConfigured(body.configured === true);
+        setStatus(body.configured === true ? "locked" : "setup");
       })
       .catch((reason: unknown) => {
         if (controller.signal.aborted) return;
@@ -47,13 +54,12 @@ export function useVault() {
   }, []);
 
   const lock = useCallback(() => {
-    setKey(null);
-    setStatus(configuration ? "locked" : "setup");
+    setStatus(configured ? "locked" : "setup");
     void fetch(withBase("/api/site-session"), { method: "DELETE", cache: "no-store" }).catch(() => {});
-  }, [configuration]);
+  }, [configured]);
 
   useEffect(() => {
-    if (!key) return;
+    if (status !== "unlocked") return;
 
     const registerActivity = () => {
       lastActivity.current = Date.now();
@@ -82,38 +88,30 @@ export function useVault() {
       window.removeEventListener("scroll", registerActivity);
       window.removeEventListener("touchstart", registerActivity);
     };
-  }, [key, lock]);
+  }, [status, lock]);
 
-  const setup = useCallback(async (masterPassword: string) => {
+  const setup = useCallback(async (password: string) => {
     setError("");
-    const created = await createVaultConfiguration(masterPassword);
-    await saveVaultConfiguration(created.configuration);
-    setConfiguration(created.configuration);
-    setStatus("locked");
-    await startSiteSession(masterPassword);
-    setKey(created.key);
+    const response = await fetch(withBase("/api/vault"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
+    if (!response.ok) throw await requestError(response, "No se pudo crear la contraseña.");
+    setConfigured(true);
+    await startSiteSession(password);
     lastActivity.current = Date.now();
     setStatus("unlocked");
   }, []);
 
-  const unlock = useCallback(async (masterPassword: string) => {
-    if (!configuration) throw new Error("El panel todavía no está configurado.");
+  const unlock = useCallback(async (password: string) => {
     setError("");
-    const unlockedKey = await unlockVault(masterPassword, configuration);
-    await startSiteSession(masterPassword);
-    setKey(unlockedKey);
+    await startSiteSession(password);
     lastActivity.current = Date.now();
     setStatus("unlocked");
-  }, [configuration]);
+  }, []);
 
-  return {
-    status,
-    key,
-    error,
-    setup,
-    unlock,
-    lock,
-  };
+  return { status, error, setup, unlock, lock };
 }
 
-export type VaultAccess = ReturnType<typeof useVault>;
+export type PanelSession = ReturnType<typeof usePanelSession>;

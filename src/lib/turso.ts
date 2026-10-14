@@ -101,11 +101,76 @@ export async function getTurso(): Promise<Client> {
           note TEXT NOT NULL DEFAULT '',
           created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )`,
+      `CREATE TABLE IF NOT EXISTS vault_users (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+          status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'active')),
+          recovery_auth_hash TEXT,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )`,
+      `CREATE TABLE IF NOT EXISTS webauthn_credentials (
+          credential_id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL REFERENCES vault_users(id),
+          public_key TEXT NOT NULL,
+          counter INTEGER NOT NULL DEFAULT 0,
+          transports TEXT NOT NULL DEFAULT '',
+          prf_capable INTEGER NOT NULL DEFAULT 0,
+          label TEXT NOT NULL DEFAULT '',
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          last_used_at TEXT
+        )`,
+      `CREATE TABLE IF NOT EXISTS vault_key_wrappers (
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL REFERENCES vault_users(id),
+          kind TEXT NOT NULL CHECK (kind IN ('passkey', 'recovery')),
+          webauthn_credential_id TEXT UNIQUE REFERENCES webauthn_credentials(credential_id),
+          version INTEGER NOT NULL DEFAULT 1,
+          kdf TEXT NOT NULL CHECK (kdf IN ('hkdf-sha256', 'pbkdf2-sha256')),
+          kdf_salt TEXT NOT NULL,
+          kdf_iters INTEGER,
+          iv TEXT NOT NULL,
+          wrapped_dek TEXT NOT NULL,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )`,
+      `CREATE TABLE IF NOT EXISTS vault_sessions (
+          token_hash TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL REFERENCES vault_users(id),
+          panel_token_hash TEXT NOT NULL,
+          expires_at INTEGER NOT NULL,
+          created_at INTEGER NOT NULL DEFAULT 0
+        )`,
+      `CREATE TABLE IF NOT EXISTS webauthn_challenges (
+          id TEXT PRIMARY KEY,
+          user_id TEXT,
+          purpose TEXT NOT NULL CHECK (purpose IN ('register', 'authenticate', 'step_up')),
+          challenge TEXT NOT NULL,
+          expires_at INTEGER NOT NULL
+        )`,
+      `CREATE TABLE IF NOT EXISTS login_attempts (
+          key TEXT PRIMARY KEY,
+          count INTEGER NOT NULL DEFAULT 0,
+          window_expires_at INTEGER NOT NULL
+        )`,
+      `CREATE TABLE IF NOT EXISTS panel_auth (
+          id INTEGER PRIMARY KEY CHECK (id = 1),
+          password_hash TEXT NOT NULL,
+          updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )`,
+      `CREATE TABLE IF NOT EXISTS vault_user_settings (
+          user_id TEXT PRIMARY KEY REFERENCES vault_users(id),
+          payload TEXT NOT NULL,
+          payload_iv TEXT NOT NULL,
+          payload_version INTEGER NOT NULL DEFAULT 1,
+          updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )`,
       "CREATE INDEX IF NOT EXISTS credentials_name_idx ON credentials(name)",
       "CREATE INDEX IF NOT EXISTS credentials_group_name_idx ON credentials(group_name)",
       "CREATE INDEX IF NOT EXISTS payments_subscription_id_idx ON payments(subscription_id)",
       "CREATE INDEX IF NOT EXISTS subscriptions_client_id_idx ON subscriptions(client_id)",
       "CREATE INDEX IF NOT EXISTS subscriptions_next_due_date_idx ON subscriptions(next_due_date)",
+      "CREATE INDEX IF NOT EXISTS webauthn_credentials_user_id_idx ON webauthn_credentials(user_id)",
+      "CREATE INDEX IF NOT EXISTS vault_key_wrappers_user_id_idx ON vault_key_wrappers(user_id)",
+      "CREATE INDEX IF NOT EXISTS vault_sessions_expires_at_idx ON vault_sessions(expires_at)",
     ], "write");
 
     const paymentColumns = await client.execute("PRAGMA table_info(payments)");
@@ -113,6 +178,28 @@ export async function getTurso(): Promise<Client> {
     if (!hasPeriods) {
       await client.execute("ALTER TABLE payments ADD COLUMN periods INTEGER NOT NULL DEFAULT 1");
     }
+
+    // Momento del desbloqueo: las sesiones previas quedan en 0 (nunca cuentan como recientes).
+    const sessionColumns = await client.execute("PRAGMA table_info(vault_sessions)");
+    if (!sessionColumns.rows.some((row) => String(row.name) === "created_at")) {
+      await client.execute("ALTER TABLE vault_sessions ADD COLUMN created_at INTEGER NOT NULL DEFAULT 0");
+    }
+
+    // Boveda por usuario: columnas nuevas en credentials (las legacy no se tocan).
+    const credentialColumns = await client.execute("PRAGMA table_info(credentials)");
+    const existing = new Set(credentialColumns.rows.map((row) => String(row.name)));
+    const additions: Array<[string, string]> = [
+      ["user_id", "TEXT"],
+      ["payload", "TEXT"],
+      ["payload_iv", "TEXT"],
+      ["payload_version", "INTEGER"],
+    ];
+    for (const [column, type] of additions) {
+      if (!existing.has(column)) {
+        await client.execute(`ALTER TABLE credentials ADD COLUMN ${column} ${type}`);
+      }
+    }
+    await client.execute("CREATE INDEX IF NOT EXISTS credentials_user_id_idx ON credentials(user_id)");
   })();
 
   await schemaPromise;

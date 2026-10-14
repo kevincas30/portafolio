@@ -1,32 +1,25 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { CopyButton } from "@/components/passwords/CopyButton";
-import { decryptPassword } from "@/lib/credential-crypto";
 
 interface PasswordFieldProps {
-  encryptedPassword: string | null;
-  passwordIv: string | null;
-  vaultKey: CryptoKey | null;
+  /** Password ya descifrada en memoria (boveda por usuario). */
+  password?: string;
   label?: string;
   onToast: (message: string) => void;
   fullWidth?: boolean;
 }
 
 export function PasswordField({
-  encryptedPassword,
-  passwordIv,
-  vaultKey,
+  password,
   label = "Contraseña",
   onToast,
   fullWidth = false,
 }: PasswordFieldProps) {
   const [visiblePassword, setVisiblePassword] = useState<string | null>(null);
-  const hasPassword = Boolean(encryptedPassword && passwordIv);
+  const hasPassword = Boolean(password);
 
-  const decrypt = async () => {
-    if (!encryptedPassword || !passwordIv) return "";
-    return decryptPassword(encryptedPassword, passwordIv, vaultKey);
-  };
+  const readPassword = async () => password ?? "";
 
   const toggleVisibility = async () => {
     if (visiblePassword !== null) {
@@ -35,7 +28,7 @@ export function PasswordField({
     }
 
     try {
-      setVisiblePassword(await decrypt());
+      setVisiblePassword(await readPassword());
     } catch {
       onToast("No se pudo leer la contraseña");
     }
@@ -61,7 +54,7 @@ export function PasswordField({
           {visiblePassword === null ? <Eye aria-hidden="true" className="size-3.5" /> : <EyeOff aria-hidden="true" className="size-3.5" />}
         </button>
         <CopyButton
-          getValue={decrypt}
+          getValue={readPassword}
           message="Contraseña copiada"
           onToast={onToast}
           disabled={!hasPassword}

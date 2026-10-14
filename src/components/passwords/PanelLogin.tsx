@@ -2,16 +2,16 @@ import { useState, type FormEvent } from "react";
 import { Eye, EyeOff, KeyRound, LoaderCircle, LockKeyhole, ShieldCheck } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import type { VaultStatus } from "@/hooks/useVault";
+import type { PanelStatus } from "@/hooks/usePanelSession";
 
-interface VaultUnlockProps {
-  status: VaultStatus;
+interface PanelLoginProps {
+  status: PanelStatus;
   error: string;
   onSetup: (password: string) => Promise<void>;
   onUnlock: (password: string) => Promise<void>;
 }
 
-export function VaultUnlock({ status, error, onSetup, onUnlock }: VaultUnlockProps) {
+export function PanelLogin({ status, error, onSetup, onUnlock }: PanelLoginProps) {
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [visible, setVisible] = useState(false);
@@ -82,8 +82,8 @@ export function VaultUnlock({ status, error, onSetup, onUnlock }: VaultUnlockPro
           <ShieldCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-[var(--ink)]" />
           <p className="text-sm font-medium leading-6">
             {isSetup
-              ? "Una sola clave para entrar al panel y cifrar las contraseñas guardadas. Guárdala en un lugar seguro: no se puede recuperar si la olvidas."
-              : "Introduce tu contraseña maestra para entrar. Tendrás tus clientes, pagos y contraseñas a mano."}
+              ? "Esta contraseña solo protege la entrada al panel. Guárdala en un lugar seguro: no se puede recuperar si la olvidas."
+              : "Introduce tu contraseña maestra para entrar. Tendrás tus clientes y pagos a mano; las contraseñas guardadas se abren después con tu passkey."}
           </p>
         </div>
 
