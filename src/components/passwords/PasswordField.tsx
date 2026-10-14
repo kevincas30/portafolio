@@ -6,6 +6,8 @@ import { decryptPassword } from "@/lib/credential-crypto";
 interface PasswordFieldProps {
   encryptedPassword: string | null;
   passwordIv: string | null;
+  /** Boveda por usuario: password ya descifrada en memoria. Si viene, no se usa la ruta legacy. */
+  password?: string;
   vaultKey: CryptoKey | null;
   label?: string;
   onToast: (message: string) => void;
@@ -15,15 +17,17 @@ interface PasswordFieldProps {
 export function PasswordField({
   encryptedPassword,
   passwordIv,
+  password,
   vaultKey,
   label = "Contraseña",
   onToast,
   fullWidth = false,
 }: PasswordFieldProps) {
   const [visiblePassword, setVisiblePassword] = useState<string | null>(null);
-  const hasPassword = Boolean(encryptedPassword && passwordIv);
+  const hasPassword = password !== undefined ? password !== "" : Boolean(encryptedPassword && passwordIv);
 
   const decrypt = async () => {
+    if (password !== undefined) return password;
     if (!encryptedPassword || !passwordIv) return "";
     return decryptPassword(encryptedPassword, passwordIv, vaultKey);
   };

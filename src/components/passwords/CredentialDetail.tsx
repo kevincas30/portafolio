@@ -89,6 +89,7 @@ function DetailPassword({ label, credential, vaultKey, onToast }: DetailPassword
           key={`${credential.id}-${credential.updatedAt}`}
           encryptedPassword={credential.encryptedPassword}
           passwordIv={credential.passwordIv}
+          password={credential.password}
           vaultKey={vaultKey}
           label={label}
           onToast={onToast}
