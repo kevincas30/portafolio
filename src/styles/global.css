@@ -143,7 +143,8 @@ html { background: var(--paper); color: var(--ink); scroll-behavior: auto; }
 body { margin: 0; min-width: 320px; overflow-x: clip; font-family: var(--font-body); font-size: 1rem; line-height: 1.55; background: var(--paper); }
 body.menu-open { overflow: hidden; }
 ::selection { background: var(--lime); color: var(--dark); }
-a { color: inherit; text-decoration: none; }
+/* En @layer base: fuera de una capa le ganaria a las utilidades de Tailwind (text-*) y los links tomarian el color del fondo. */
+@layer base { a { color: inherit; text-decoration: none; } }
 img, svg, video { display: block; max-width: 100%; }
 button, input, select, textarea { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
