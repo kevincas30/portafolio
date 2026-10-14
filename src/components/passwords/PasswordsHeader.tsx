@@ -1,24 +1,35 @@
+import type { ReactNode } from "react";
 import { FileUp, Lock, Plus } from "lucide-react";
+
+export const headerButtonClass = "inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full border border-white/25 bg-white/12 px-3.5 text-xs font-bold backdrop-blur-sm transition hover:bg-white/20 active:scale-[0.98] sm:text-sm";
 
 interface PasswordsHeaderProps {
   onCreate: () => void;
   onImport: () => void;
   onLock: () => void;
+  /** Dueno de la boveda por usuario; se muestra sobre el titulo. */
+  owner?: string;
+  /** Botones extra (cambiar de usuario, anadir passkey...). */
+  extraActions?: ReactNode;
 }
 
-export function PasswordsHeader({ onCreate, onImport, onLock }: PasswordsHeaderProps) {
+export function PasswordsHeader({ onCreate, onImport, onLock, owner, extraActions }: PasswordsHeaderProps) {
   return (
     <header className="relative isolate overflow-hidden rounded-[22px] bg-[linear-gradient(135deg,#2e3127_0%,#171917_55%,#0e0f0c_100%)] px-5 py-4 text-white shadow-[0_14px_38px_rgba(23,25,23,0.28)] sm:px-7 sm:py-5 lg:px-8">
       <div className="absolute -right-12 -top-20 -z-10 size-52 rounded-full border-[34px] border-[#c9f568]/10" />
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="font-display text-[clamp(1.35rem,4.5vw,2rem)] font-bold leading-tight tracking-[-0.03em]">Tus accesos en un solo lugar</h1>
+        <div>
+          {owner && <p className="mb-1 text-xs font-bold text-white/70">Bóveda de {owner}</p>}
+          <h1 className="font-display text-[clamp(1.35rem,4.5vw,2rem)] font-bold leading-tight tracking-[-0.03em]">Tus accesos en un solo lugar</h1>
+        </div>
 
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={onLock} className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full border border-white/25 bg-white/12 px-3.5 text-xs font-bold backdrop-blur-sm transition hover:bg-white/20 active:scale-[0.98] sm:text-sm">
+          {extraActions}
+          <button type="button" onClick={onLock} className={headerButtonClass}>
             <Lock aria-hidden="true" className="size-4" />
             Bloquear
           </button>
-          <button type="button" onClick={onImport} className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full border border-white/25 bg-white/12 px-3.5 text-xs font-bold backdrop-blur-sm transition hover:bg-white/20 active:scale-[0.98] sm:text-sm">
+          <button type="button" onClick={onImport} className={headerButtonClass}>
             <FileUp aria-hidden="true" className="size-4" />
             Importar
           </button>
