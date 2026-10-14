@@ -91,7 +91,7 @@ function rowToCredential(row: Record<string, unknown>): Credential {
 async function findCredential(id: string) {
   const database = await getTurso();
   const result = await database.execute({
-    sql: "SELECT * FROM credentials WHERE id = ?",
+    sql: "SELECT * FROM credentials WHERE id = ? AND user_id IS NULL",
     args: [id],
   });
   return result.rows[0] ? rowToCredential(result.rows[0] as Record<string, unknown>) : null;
@@ -164,7 +164,7 @@ async function validateRelations(payload: CredentialPayload): Promise<string | n
 export const GET: APIRoute = async () => {
   try {
     const database = await getTurso();
-    const result = await database.execute("SELECT * FROM credentials ORDER BY favorite DESC, name COLLATE NOCASE");
+    const result = await database.execute("SELECT * FROM credentials WHERE user_id IS NULL ORDER BY favorite DESC, name COLLATE NOCASE");
     return json({
       credentials: result.rows.map((row) => rowToCredential(row as Record<string, unknown>)),
     }, { headers: noStore });
@@ -259,7 +259,7 @@ export const PUT: APIRoute = async ({ request }) => {
         name = ?, platform = ?, category = ?, group_name = ?, url = ?, provider = ?, login_method = ?, email = ?, username = ?,
         encrypted_password = ?, password_iv = ?, login_credential_id = ?, email_credential_id = ?,
         access_instructions = ?, notes = ?, favorite = ?, updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?`,
+        WHERE id = ? AND user_id IS NULL`,
       args: [
         normalizedPayload.name.trim(), normalizedPayload.platform.trim(), normalizedPayload.category.trim(), normalizedPayload.groupName.trim(), normalizedPayload.url.trim(),
         normalizedPayload.provider, normalizedPayload.loginMethod, normalizedPayload.email.trim(), normalizedPayload.username.trim(), normalizedPayload.encryptedPassword,
@@ -303,7 +303,7 @@ export const DELETE: APIRoute = async ({ request }) => {
     await database.batch([
       { sql: "UPDATE credentials SET login_credential_id = NULL, updated_at = CURRENT_TIMESTAMP WHERE login_credential_id = ?", args: [body.id] },
       { sql: "UPDATE credentials SET email_credential_id = NULL, updated_at = CURRENT_TIMESTAMP WHERE email_credential_id = ?", args: [body.id] },
-      { sql: "DELETE FROM credentials WHERE id = ?", args: [body.id] },
+      { sql: "DELETE FROM credentials WHERE id = ? AND user_id IS NULL", args: [body.id] },
     ], "write");
     return json({ ok: true });
   } catch (error) {
