@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { json, noStore } from "@/lib/api-response";
-import { getTurso, TursoConfigurationError } from "@/lib/turso";
+import { TursoConfigurationError } from "@/lib/turso";
 import { isPanelConfigured, setupPanelPassword } from "@/lib/server/panel-auth";
 
 export const prerender = false;
@@ -15,20 +15,8 @@ function databaseError(error: unknown) {
 
 export const GET: APIRoute = async () => {
   try {
-    const database = await getTurso();
-    const result = await database.execute(`
-      SELECT salt, verifier_ciphertext, verifier_iv, kdf_iterations
-      FROM vault_settings WHERE id = 1
-    `);
-    const row = result.rows[0];
-    const configuration = row ? {
-      salt: String(row.salt),
-      verifierCiphertext: String(row.verifier_ciphertext),
-      verifierIv: String(row.verifier_iv),
-      kdfIterations: Number(row.kdf_iterations),
-    } : null;
-    // `configuration` (salt/verifier legacy) se elimina en 4.6, cuando panel_auth ya exista.
-    return json({ configured: await isPanelConfigured(), configuration }, { headers: noStore });
+    // Solo expone si hay contrasena: nunca salt, verifier ni parametros de derivacion.
+    return json({ configured: await isPanelConfigured() }, { headers: noStore });
   } catch (error) {
     return databaseError(error);
   }

@@ -1,5 +1,7 @@
 // Contrasena del panel: hash scrypt en `panel_auth`. Mientras exista el verifier legacy en `vault_settings`
-// (se retira en 4.6) se acepta como respaldo y, al primer login correcto, se migra a scrypt.
+// se acepta como respaldo y, al primer login correcto, se migra a scrypt.
+// TODO(4.11): este respaldo (isPanelConfigured legacy + verifyPanelLogin legacy + verifyMasterPassword) se
+// elimina SOLO despues de la limpieza manual 4.8 (que borra vault_settings). No quitarlo antes: riesgo de lockout.
 import { verifyMasterPassword } from "@/lib/site-session";
 import { getTurso } from "@/lib/turso";
 import { hashPanelPassword, verifyPanelPassword } from "@/lib/server/panel-password";
