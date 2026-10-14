@@ -99,6 +99,9 @@
   --warning-soft: #fff6db;
   --warning-text: #7a5b05;
   --warning-border: #f2e1a3;
+  --charge-soft: #ffeedd;
+  --charge-text: #9a4a07;
+  --charge-border: #f5c9a0;
 }
 
 html[data-theme="dark"] {
@@ -136,6 +139,9 @@ html[data-theme="dark"] {
   --warning-soft: #3a2f10;
   --warning-text: #f7cf6b;
   --warning-border: rgba(254, 188, 46, 0.3);
+  --charge-soft: #3a2614;
+  --charge-text: #ffb26b;
+  --charge-border: rgba(255, 140, 50, 0.38);
 }
 
 * { box-sizing: border-box; }
