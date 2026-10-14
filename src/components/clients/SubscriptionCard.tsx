@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ChevronDown, CircleDollarSign, Globe2, Pencil, Trash2, Wrench } from "lucide-react";
-import { PaymentCalendar } from "@/components/clients/PaymentCalendar";
 import { PaymentHistory } from "@/components/clients/PaymentHistory";
 import { StatusBadge } from "@/components/clients/StatusBadge";
 import { billingIntervalLabels, subscriptionTypeLabel } from "@/config/subscription-types";
@@ -53,8 +52,6 @@ export function SubscriptionCard({ subscription, onEdit, onDelete, onRegisterPay
           </button>
         </div>
       </div>
-
-      <PaymentCalendar subscription={subscription} />
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <button

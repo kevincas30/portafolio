@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { currentYear, monthCells, yearCells, type CalendarCell, type PeriodState } from "@/lib/payment-calendar";
+import { subscriptionTypeLabel } from "@/config/subscription-types";
 import type { Subscription } from "@/types/client";
 
 const stateClasses: Record<PeriodState, string> = {
@@ -42,9 +43,11 @@ function Cell({ cell, text, description }: { cell: CalendarCell; text: string; d
 export function PaymentCalendar({ subscription }: { subscription: Subscription }) {
   const [year, setYear] = useState(() => currentYear());
   const monthly = subscription.billingInterval === "monthly";
+  const title = `${subscriptionTypeLabel(subscription.type)}${subscription.label ? ` · ${subscription.label}` : ""}`;
 
   return (
-    <section aria-label="Calendario de pagos" className="mt-3 rounded-xl border border-[var(--line-soft)] bg-[var(--surface)] p-3">
+    <section aria-label={`Calendario de pagos: ${title}`} className="rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-soft)] p-4">
+      <p className="mb-3 truncate text-sm font-extrabold text-[var(--ink)]">{title}</p>
       {monthly ? (
         <>
           <div className="mb-2 flex items-center justify-between">
