@@ -16,6 +16,7 @@ import { PasswordField } from "@/components/passwords/PasswordField";
 import { PlatformLogo } from "@/components/passwords/PlatformLogo";
 import { getCredentialGroupAppearance } from "@/config/credential-groups";
 import { GMAIL_INBOX_URL, inferCredentialProvider } from "@/config/credential-platforms";
+import { safeHref } from "@/lib/url";
 import type { Credential, LoginMethod } from "@/types/credential";
 
 const methodContent: Record<LoginMethod, { label: string; description: string; icon: typeof KeyRound }> = {
@@ -146,9 +147,11 @@ export function CredentialDetail({
     ? credentialMap.get(credential.emailCredentialId) ?? null
     : null;
   const isGoogleProvider = credential.provider === "google";
-  const openUrl = isGoogleProvider || inferCredentialProvider(credential.platform, credential.url) === "google"
-    ? GMAIL_INBOX_URL
-    : credential.url;
+  const openUrl = safeHref(
+    isGoogleProvider || inferCredentialProvider(credential.platform, credential.url) === "google"
+      ? GMAIL_INBOX_URL
+      : credential.url,
+  );
   const headerCategory = credential.groupName || credential.category;
   const groupAppearance = getCredentialGroupAppearance(headerCategory, groupColor);
   const relatedCredentials = isGoogleProvider

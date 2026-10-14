@@ -9,3 +9,17 @@ export function normalizeUrl(value: string): string {
     return "";
   }
 }
+
+/**
+ * Returns the URL only if it is http(s), for use in href. Blocks javascript:, data:, etc.
+ * The server validates too, but encrypted fields can't be checked there.
+ */
+export function safeHref(value: string | null | undefined): string | undefined {
+  if (!value) return undefined;
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:" ? url.href : undefined;
+  } catch {
+    return undefined;
+  }
+}
