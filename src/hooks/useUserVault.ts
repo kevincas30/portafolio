@@ -73,6 +73,12 @@ export function useUserVault() {
     enrollment.current = null;
   }, []);
 
+  // Si el panel se bloquea con un alta a medias, los bytes crudos de la DEK no quedan en memoria.
+  useEffect(() => () => {
+    enrollment.current?.dek.fill(0);
+    enrollment.current = null;
+  }, []);
+
   /** Borra la DEK de memoria y cierra la sesion de boveda en el servidor (la fila, no solo la cookie). */
   const lock = useCallback(() => {
     discardEnrollment();
