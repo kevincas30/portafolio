@@ -1,4 +1,6 @@
 import { ArrowLeft, ExternalLink, Globe2, Pencil, Plus, Trash2, Wallet } from "lucide-react";
+import { PaymentCalendar } from "@/components/clients/PaymentCalendar";
+import { PaymentReceipts } from "@/components/clients/PaymentReceipts";
 import { SubscriptionCard } from "@/components/clients/SubscriptionCard";
 import { clientTotalPaid, formatAmount } from "@/lib/client-status";
 import { safeHref } from "@/lib/url";
@@ -30,7 +32,7 @@ export function ClientDetail({
   const totalPaid = clientTotalPaid(client);
 
   return (
-    <div className="mx-auto w-full max-w-[760px] space-y-3 sm:space-y-4">
+    <div className="mx-auto w-full max-w-[760px] space-y-3 sm:space-y-4 xl:relative xl:left-1/2 xl:w-[calc(100vw-4rem)] xl:max-w-[1600px] xl:-translate-x-1/2">
       <button
         type="button"
         onClick={onBack}
@@ -40,6 +42,7 @@ export function ClientDetail({
         Regresar
       </button>
 
+      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,760px)_minmax(0,1fr)]">
       <article className="overflow-hidden rounded-[24px] border border-[var(--line)] bg-[var(--surface)] shadow-[0_12px_38px_rgba(23,25,23,0.06)]">
         <header className="border-b border-[var(--line-soft)] px-4 py-4 sm:px-6 sm:py-5">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
@@ -134,6 +137,19 @@ export function ClientDetail({
           </section>
         </div>
       </article>
+
+      {client.subscriptions.length > 0 && (
+        <aside aria-labelledby="calendar-title" className="overflow-hidden rounded-[24px] border border-[var(--line)] bg-[var(--surface)] px-4 py-5 shadow-[0_12px_38px_rgba(23,25,23,0.06)] sm:px-6 sm:py-6 xl:sticky xl:top-6">
+          <h2 id="calendar-title" className="text-base font-extrabold tracking-[-0.02em] text-[var(--ink)]">Calendario de pagos</h2>
+          <div className="mt-3 space-y-3">
+            {client.subscriptions.map((subscription) => (
+              <PaymentCalendar key={subscription.id} subscription={subscription} />
+            ))}
+          </div>
+          <PaymentReceipts client={client} />
+        </aside>
+      )}
+      </div>
     </div>
   );
 }
