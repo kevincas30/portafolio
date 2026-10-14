@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "routes": [
+    {
+      "src": "^(?:/.*)?/\\.(?!well-known(?:/|$))[^/]*(?:/.*)?$",
+      "status": 404,
+      "dest": "/404.html"
+    }
+  ]
+}
