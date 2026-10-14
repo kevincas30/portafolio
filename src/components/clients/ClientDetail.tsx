@@ -1,6 +1,7 @@
 import { ArrowLeft, ExternalLink, Globe2, Pencil, Plus, Trash2, Wallet } from "lucide-react";
 import { SubscriptionCard } from "@/components/clients/SubscriptionCard";
 import { clientTotalPaid, formatAmount } from "@/lib/client-status";
+import { safeHref } from "@/lib/url";
 import type { Client, Subscription } from "@/types/client";
 
 interface ClientDetailProps {
@@ -78,9 +79,9 @@ export function ClientDetail({
             <section aria-labelledby="client-info-title">
               <h2 id="client-info-title" className="text-base font-extrabold tracking-[-0.02em] text-[var(--ink)]">Información</h2>
               <div className="mt-3 space-y-2">
-                {client.websiteUrl && (
+                {safeHref(client.websiteUrl) && (
                   <a
-                    href={client.websiteUrl}
+                    href={safeHref(client.websiteUrl)}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center justify-between rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-soft)] px-3.5 py-3 transition hover:border-[var(--line-strong)] sm:px-4"
