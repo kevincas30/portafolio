@@ -11,11 +11,11 @@ function bytesToBase64(bytes: Uint8Array): string {
   for (let index = 0; index < bytes.length; index += 1) {
     binary += String.fromCharCode(bytes[index]);
   }
-  return window.btoa(binary);
+  return globalThis.btoa(binary);
 }
 
 function base64ToBytes(value: string): Uint8Array<ArrayBuffer> {
-  const binary = window.atob(value);
+  const binary = globalThis.atob(value);
   const bytes = new Uint8Array(binary.length);
   for (let index = 0; index < binary.length; index += 1) {
     bytes[index] = binary.charCodeAt(index);
@@ -28,7 +28,7 @@ async function deriveVaultKey(
   salt: Uint8Array<ArrayBuffer>,
   iterations: number,
 ): Promise<CryptoKey> {
-  const material = await window.crypto.subtle.importKey(
+  const material = await globalThis.crypto.subtle.importKey(
     "raw",
     encoder.encode(masterPassword),
     "PBKDF2",
@@ -36,7 +36,7 @@ async function deriveVaultKey(
     ["deriveKey"],
   );
 
-  return window.crypto.subtle.deriveKey(
+  return globalThis.crypto.subtle.deriveKey(
     { name: "PBKDF2", hash: "SHA-256", salt, iterations },
     material,
     { name: "AES-GCM", length: 256 },
@@ -46,8 +46,8 @@ async function deriveVaultKey(
 }
 
 async function encryptText(value: string, key: CryptoKey) {
-  const iv = window.crypto.getRandomValues(new Uint8Array(12));
-  const encrypted = await window.crypto.subtle.encrypt(
+  const iv = globalThis.crypto.getRandomValues(new Uint8Array(12));
+  const encrypted = await globalThis.crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
     key,
     encoder.encode(value),
@@ -63,7 +63,7 @@ export async function createVaultConfiguration(masterPassword: string): Promise<
   configuration: VaultConfiguration;
   key: CryptoKey;
 }> {
-  const salt = window.crypto.getRandomValues(new Uint8Array(16));
+  const salt = globalThis.crypto.getRandomValues(new Uint8Array(16));
   const key = await deriveVaultKey(masterPassword, salt, KDF_ITERATIONS);
   const verifier = await encryptText(VAULT_VERIFIER, key);
 
@@ -89,7 +89,7 @@ export async function unlockVault(
   );
 
   try {
-    const decrypted = await window.crypto.subtle.decrypt(
+    const decrypted = await globalThis.crypto.subtle.decrypt(
       { name: "AES-GCM", iv: base64ToBytes(configuration.verifierIv) },
       key,
       base64ToBytes(configuration.verifierCiphertext),
@@ -115,7 +115,7 @@ export async function decryptPassword(
 ): Promise<string> {
   if (passwordIv === PLAINTEXT_PASSWORD_IV) return encryptedPassword;
   if (!key) throw new Error("Esta contraseña todavía necesita migrarse.");
-  const decrypted = await window.crypto.subtle.decrypt(
+  const decrypted = await globalThis.crypto.subtle.decrypt(
     { name: "AES-GCM", iv: base64ToBytes(passwordIv) },
     key,
     base64ToBytes(encryptedPassword),
