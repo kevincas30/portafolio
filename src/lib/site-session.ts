@@ -7,7 +7,7 @@ export const SESSION_COOKIE = "clientes-panel-session";
 export const SESSION_SECONDS = 30 * 60;
 export const VAULT_VERIFIER = "clientes-panel-vault:v1";
 const deriveKey = promisify(pbkdf2);
-const tokenHash = (token: string) => createHash("sha256").update(token).digest("hex");
+export const tokenHash = (token: string) => createHash("sha256").update(token).digest("hex");
 
 export async function verifyMasterPassword(password: string, configuration: VaultConfiguration): Promise<boolean> {
   try {
