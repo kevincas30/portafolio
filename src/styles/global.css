@@ -145,8 +145,11 @@ body.menu-open { overflow: hidden; }
 ::selection { background: var(--lime); color: var(--dark); }
 /* En @layer base: fuera de una capa le ganaria a las utilidades de Tailwind (text-*) y los links tomarian el color del fondo. */
 @layer base { a { color: inherit; text-decoration: none; } }
-img, svg, video { display: block; max-width: 100%; }
-button, input, select, textarea { font: inherit; }
+/* Tambien en @layer base: "font" incluye el tamano y fuera de capa pisaba text-xs/font-* de cada boton. */
+@layer base {
+  img, svg, video { display: block; max-width: 100%; }
+  button, input, select, textarea { font: inherit; }
+}
 button, a { -webkit-tap-highlight-color: transparent; }
 /* Tailwind v4 dejó el cursor de los botones en "default": lo devolvemos para todo lo clickeable. */
 @layer base {
