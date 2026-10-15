@@ -11,6 +11,7 @@ function draftFromClient(client?: Client): ClientDraft {
     businessName: client?.businessName ?? "",
     websiteUrl: client?.websiteUrl ?? "",
     notes: client?.notes ?? "",
+    owners: client?.owners ?? [],
   };
 }
 

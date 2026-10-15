@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { json, noStore } from "@/lib/api-response";
+import { ownersFromColumn, ownersToColumn, parseOwners } from "@/lib/client-owner";
 import { getTurso, TursoConfigurationError } from "@/lib/turso";
 import type { Client, ClientPayload, Payment, Subscription } from "@/types/client";
 
@@ -35,7 +36,9 @@ function isClientPayload(value: unknown): value is ClientPayload {
     stringWithin(item.clientName, 200) && item.clientName.trim().length > 0 &&
     stringWithin(item.businessName, 200) &&
     stringWithin(item.websiteUrl, 2048) && validUrl(item.websiteUrl) &&
-    stringWithin(item.notes, 4000)
+    stringWithin(item.notes, 4000) &&
+    // Opcional: una pestana con el panel viejo no lo manda y el PUT conserva los responsables actuales.
+    (item.owners === undefined || parseOwners(item.owners) !== null)
   );
 }
 
@@ -46,6 +49,7 @@ function rowToClient(row: Record<string, unknown>): Omit<Client, "subscriptions"
     businessName: String(row.business_name),
     websiteUrl: String(row.website_url),
     notes: String(row.notes),
+    owners: ownersFromColumn(row.owners),
     createdAt: String(row.created_at),
     updatedAt: String(row.updated_at),
   };
@@ -128,14 +132,15 @@ async function parsePayload(request: Request) {
 export const POST: APIRoute = async ({ request }) => {
   const payload = await parsePayload(request);
   if (!payload) return json({ error: "Datos de cliente no válidos." }, { status: 400 });
+  const owners = parseOwners(payload.owners ?? []) ?? [];
 
   try {
     const database = await getTurso();
     await database.execute({
-      sql: "INSERT INTO clients (id, client_name, business_name, website_url, notes) VALUES (?, ?, ?, ?, ?)",
-      args: [payload.id, payload.clientName.trim(), payload.businessName.trim(), payload.websiteUrl.trim(), payload.notes.trim()],
+      sql: "INSERT INTO clients (id, client_name, business_name, website_url, notes, owners) VALUES (?, ?, ?, ?, ?, ?)",
+      args: [payload.id, payload.clientName.trim(), payload.businessName.trim(), payload.websiteUrl.trim(), payload.notes.trim(), ownersToColumn(owners)],
     });
-    return json({ client: { ...rowToClient({ id: payload.id, client_name: payload.clientName.trim(), business_name: payload.businessName.trim(), website_url: payload.websiteUrl.trim(), notes: payload.notes.trim(), created_at: new Date().toISOString(), updated_at: new Date().toISOString() }), subscriptions: [] } }, { status: 201 });
+    return json({ client: { ...rowToClient({ id: payload.id, client_name: payload.clientName.trim(), business_name: payload.businessName.trim(), website_url: payload.websiteUrl.trim(), notes: payload.notes.trim(), owners: ownersToColumn(owners), created_at: new Date().toISOString(), updated_at: new Date().toISOString() }), subscriptions: [] } }, { status: 201 });
   } catch (error) {
     return databaseError(error);
   }
@@ -148,8 +153,13 @@ export const PUT: APIRoute = async ({ request }) => {
   try {
     const database = await getTurso();
     await database.execute({
-      sql: `UPDATE clients SET client_name = ?, business_name = ?, website_url = ?, notes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
-      args: [payload.clientName.trim(), payload.businessName.trim(), payload.websiteUrl.trim(), payload.notes.trim(), payload.id],
+      // COALESCE: si no llegan responsables (panel viejo) se conservan los que habia.
+      sql: `UPDATE clients SET client_name = ?, business_name = ?, website_url = ?, notes = ?, owners = COALESCE(?, owners), updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+      args: [
+        payload.clientName.trim(), payload.businessName.trim(), payload.websiteUrl.trim(), payload.notes.trim(),
+        payload.owners === undefined ? null : ownersToColumn(parseOwners(payload.owners) ?? []),
+        payload.id,
+      ],
     });
     const [clientResult, subscriptionsResult] = await Promise.all([
       database.execute({ sql: "SELECT * FROM clients WHERE id = ?", args: [payload.id] }),
