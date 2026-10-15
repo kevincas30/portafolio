@@ -81,8 +81,8 @@ describe("yearCells (anual)", () => {
       "2026-10-15",
     );
     expect(cells).toEqual([
-      { month: month(2026, 10), state: "paid" },
-      { month: month(2027, 10), state: "due" },
+      { month: month(2026, 10), state: "paid", start: "2026-10-12" },
+      { month: month(2027, 10), state: "due", start: "2027-10-12" },
     ]);
   });
 
@@ -92,6 +92,16 @@ describe("yearCells (anual)", () => {
       "2026-10-15",
     );
     expect(cells.map((cell) => cell.state)).toEqual(["overdue", "overdue", "overdue", "due"]);
+  });
+});
+
+describe("start (fecha de cobro)", () => {
+  it("un vencimiento del 29 de febrero cae el 28 en un anio no bisiesto", () => {
+    const cells = yearCells(
+      { nextDueDate: "2028-02-29", billingInterval: "yearly", active: true, payments: [payment(1)] },
+      "2027-06-01",
+    );
+    expect(cells.map((cell) => cell.start)).toEqual(["2027-02-28", "2028-02-29"]);
   });
 });
 
