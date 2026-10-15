@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { LoaderCircle, X } from "lucide-react";
+import { MemberAvatar } from "@/components/clients/OwnerAvatars";
+import { teamMembers } from "@/lib/client-owner";
 import type { Client, ClientDraft } from "@/types/client";
 
 const inputClass = "min-h-12 w-full rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-4 text-sm font-bold text-[var(--ink)] outline-none transition placeholder:font-medium placeholder:text-[var(--muted)] focus:border-[var(--line-strong)] focus:ring-3 focus:ring-[#c9f568]/35";
@@ -28,6 +30,14 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
 
   const setField = <Key extends keyof ClientDraft>(key: Key, value: ClientDraft[Key]) => {
     setDraft((current) => ({ ...current, [key]: value }));
+  };
+
+  const toggleOwner = (id: string) => {
+    setDraft((current) => {
+      const owners = current.owners.includes(id) ? current.owners.filter((owner) => owner !== id) : [...current.owners, id];
+      // Se guarda en el orden del equipo, igual que lo normaliza la API.
+      return { ...current, owners: teamMembers().map((member) => member.id).filter((memberId) => owners.includes(memberId)) };
+    });
   };
 
   const submit = async (event: FormEvent) => {
@@ -74,6 +84,32 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
               <input value={draft.websiteUrl} onChange={(event) => setField("websiteUrl", event.target.value)} placeholder="misitio.com" className={inputClass} />
             </label>
           </div>
+
+          <fieldset>
+            <legend className={labelClass}>
+              Responsable <span className="normal-case tracking-normal text-[var(--muted)]">(elige varios si es compartido)</span>
+            </legend>
+            <div className="flex flex-wrap gap-2">
+              {teamMembers().map((member) => {
+                const selected = draft.owners.includes(member.id);
+                return (
+                  <button
+                    key={member.id}
+                    type="button"
+                    onClick={() => toggleOwner(member.id)}
+                    aria-pressed={selected}
+                    className={`inline-flex min-h-10 items-center gap-2 rounded-full border py-1 pl-1 pr-3.5 text-sm font-bold transition ${selected ? "border-[var(--ink)] bg-[var(--accent-soft)] text-[var(--ink)]" : "border-[var(--line)] text-[var(--muted-strong)] hover:bg-[var(--surface-muted)]"}`}
+                  >
+                    <MemberAvatar member={member} size="md" />
+                    {member.name}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-2 text-xs font-semibold text-[var(--muted)]">
+              {draft.owners.length === 0 ? "Sin asignar." : draft.owners.length === 1 ? "Cliente de una sola persona." : "Cliente compartido."}
+            </p>
+          </fieldset>
 
           <label className="block">
             <span className={labelClass}>Notas</span>
