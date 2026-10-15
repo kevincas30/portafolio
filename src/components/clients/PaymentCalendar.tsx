@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { currentYear, monthCells, yearCells, type CalendarCell, type PeriodState } from "@/lib/payment-calendar";
 import { subscriptionTypeLabel } from "@/config/subscription-types";
+import { addDays, addInterval, formatMediumDate, formatShortDateWithYear } from "@/lib/dates";
 import type { Subscription } from "@/types/client";
 
 const stateClasses: Record<PeriodState, string> = {
@@ -40,6 +41,53 @@ function Cell({ cell, text, description }: { cell: CalendarCell; text: string; d
   );
 }
 
+/** Que pasa con el periodo anual de ese casillero, con su fecha de cobro. */
+function chargeDetail(cell: CalendarCell): string {
+  switch (cell.state) {
+    case "paid":
+      return `Pagado: cubre del ${formatShortDateWithYear(cell.start)} al ${formatShortDateWithYear(addDays(addInterval(cell.start, "yearly"), -1))}.`;
+    case "overdue":
+      return `Venció el ${formatMediumDate(cell.start)} y está sin pagar.`;
+    case "due":
+      return `Se cobra el ${formatMediumDate(cell.start)}.`;
+    default:
+      return `Se cobraría el ${formatMediumDate(cell.start)}.`;
+  }
+}
+
+function YearCells({ cells }: { cells: CalendarCell[] }) {
+  // Arranca mostrando el anio a cobrar (o el ultimo) para que la fecha se vea sin tocar nada.
+  const [selected, setSelected] = useState(() => (cells.find((cell) => cell.state === "due") ?? cells.at(-1))?.month ?? null);
+  const active = cells.find((cell) => cell.month === selected);
+
+  return (
+    <>
+      <ul className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
+        {cells.map((cell) => {
+          const label = String(Math.floor(cell.month / 12));
+          const isSelected = cell.month === selected;
+          return (
+            <li key={cell.month}>
+              <button
+                type="button"
+                onClick={() => setSelected(cell.month)}
+                aria-pressed={isSelected}
+                title={`${label}: ${stateLabels[cell.state]}`}
+                className={`grid min-h-9 w-full place-items-center rounded-lg border px-1 text-[11px] font-extrabold transition ${stateClasses[cell.state]} ${isSelected ? "ring-2 ring-[var(--ink)] ring-offset-1 ring-offset-[var(--surface-soft)]" : "hover:brightness-95"}`}
+              >
+                {label}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      {active && (
+        <p aria-live="polite" className="mt-2.5 text-xs font-bold text-[var(--ink)]">{chargeDetail(active)}</p>
+      )}
+    </>
+  );
+}
+
 export function PaymentCalendar({ subscription }: { subscription: Subscription }) {
   const [year, setYear] = useState(() => currentYear());
   const monthly = subscription.billingInterval === "monthly";
@@ -66,12 +114,7 @@ export function PaymentCalendar({ subscription }: { subscription: Subscription }
           </ul>
         </>
       ) : (
-        <ul className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
-          {yearCells(subscription).map((cell) => {
-            const label = String(Math.floor(cell.month / 12));
-            return <Cell key={cell.month} cell={cell} text={label} description={label} />;
-          })}
-        </ul>
+        <YearCells cells={yearCells(subscription)} />
       )}
 
       <ul className="mt-2.5 flex flex-wrap gap-x-3 gap-y-1">
