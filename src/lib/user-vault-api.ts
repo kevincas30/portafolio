@@ -113,3 +113,24 @@ export const applyVaultBatch = (batch: VaultBatch) => request<{ ok: true }>("use
 export const getVaultSettings = (signal?: AbortSignal) =>
   request<{ settings: SealedSettings | null }>("user-vault/settings", { signal }).then((r) => r.settings);
 export const putVaultSettings = (settings: SealedSettings) => request<{ ok: true }>("user-vault/settings", send("PUT", settings));
+
+export interface SealedFinanceEntry {
+  id: string;
+  payload: string;
+  payloadIv: string;
+}
+
+export interface StoredFinanceEntry extends SealedFinanceEntry {
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FinanceBatch {
+  upserts: SealedFinanceEntry[];
+  deletes: string[];
+  settings?: SealedSettings;
+}
+
+export const getVaultFinances = (signal?: AbortSignal) =>
+  request<{ entries: StoredFinanceEntry[]; settings: SealedSettings | null }>("user-vault/finances", { signal });
+export const applyFinanceBatch = (batch: FinanceBatch) => request<{ ok: true }>("user-vault/finances", send("POST", batch));
