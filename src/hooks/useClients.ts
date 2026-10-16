@@ -5,6 +5,7 @@ import {
   deleteClient as deleteClientRequest,
   deletePayment as deletePaymentRequest,
   deleteSubscription as deleteSubscriptionRequest,
+  fetchClientLogo,
   getClients,
   registerPayment as registerPaymentRequest,
   updateClient as updateClientRequest,
@@ -69,6 +70,11 @@ export function useClients(enabled: boolean) {
     return client;
   }, []);
 
+  const refreshLogo = useCallback(async (id: string) => {
+    const logo = await fetchClientLogo(id);
+    setClients((current) => current.map((item) => item.id === id ? { ...item, logo } : item));
+  }, []);
+
   const remove = useCallback(async (id: string) => {
     await deleteClientRequest(id);
     setClients((current) => current.filter((item) => item.id !== id));
@@ -108,7 +114,7 @@ export function useClients(enabled: boolean) {
 
   return {
     clients, loading, ready, error, refresh,
-    create, update, remove,
+    create, update, remove, refreshLogo,
     createSubscription, updateSubscription, removeSubscription,
     registerPayment, removePayment,
   };

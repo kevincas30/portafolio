@@ -33,6 +33,8 @@ export interface Client {
   notes: string;
   /** Ids del equipo responsables del cliente (vacio = sin asignar, 2+ = compartido). */
   owners: string[];
+  /** Logo sacado de la web del cliente, como data: URL ('' = sin logo). Lo gestiona el servidor. */
+  logo: string;
   createdAt: string;
   updatedAt: string;
   subscriptions: Subscription[];
