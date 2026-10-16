@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Users } from "lucide-react";
 import { FinancesView } from "@/components/finances/FinancesView";
 import { headerButtonClass } from "@/components/passwords/PasswordsHeader";
@@ -6,17 +7,25 @@ import { useVaultFinances } from "@/hooks/useVaultFinances";
 import type { UserVaultAccess } from "@/hooks/useUserVault";
 
 // Gastos e ingresos personales: viven en la boveda del usuario, igual que sus contrasenas.
-export function FinancesPage({ userVault }: { userVault: UserVaultAccess }) {
+export function FinancesPage({ userVault, active }: { userVault: UserVaultAccess; active: boolean }) {
   return (
     <VaultGate userVault={userVault} section="Gastos">
-      {(switchUser) => <UserVaultFinances userVault={userVault} onSwitchUser={switchUser} />}
+      {(switchUser) => <UserVaultFinances userVault={userVault} active={active} onSwitchUser={switchUser} />}
     </VaultGate>
   );
 }
 
-function UserVaultFinances({ userVault, onSwitchUser }: { userVault: UserVaultAccess; onSwitchUser: () => void }) {
+function UserVaultFinances({ userVault, active, onSwitchUser }: { userVault: UserVaultAccess; active: boolean; onSwitchUser: () => void }) {
   const session = userVault.active && userVault.dek ? { userId: userVault.active.id, dek: userVault.dek } : null;
   const finances = useVaultFinances(session, userVault.handleSessionError);
+
+  // Al volver a la pestaña desde Clientes se importan los pagos que se acaban de registrar.
+  const { ready, refresh } = finances;
+  const wasActive = useRef(active);
+  useEffect(() => {
+    if (active && !wasActive.current && ready) void refresh();
+    wasActive.current = active;
+  }, [active, ready, refresh]);
 
   if (!session || !userVault.active) return null;
 
