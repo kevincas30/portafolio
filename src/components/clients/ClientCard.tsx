@@ -1,4 +1,5 @@
 import { ChevronRight, Globe2 } from "lucide-react";
+import { OwnerAvatars } from "@/components/clients/OwnerAvatars";
 import { StatusBadge } from "@/components/clients/StatusBadge";
 import { subscriptionTypeLabel } from "@/config/subscription-types";
 import { computeClientAggregateStatus } from "@/lib/client-status";
@@ -37,6 +38,7 @@ export function ClientCard({ client, onOpen }: ClientCardProps) {
         </span>
       </span>
 
+      <OwnerAvatars owners={client.owners} />
       <StatusBadge status={statusInfo.status} label={statusInfo.label} />
 
       <ChevronRight

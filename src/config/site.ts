@@ -7,6 +7,8 @@ export const redesWhatsAppText = 'Hola, necesito contenido para redes y me gusta
 export const teamWhatsAppText = 'Hola, me gustaría hablar con vosotros sobre un proyecto para mi negocio.';
 
 export interface TeamMember {
+  /** Identificador estable (se guarda en la base como responsable de un cliente): no cambiarlo. */
+  id: string;
   name: string;
   initial: string;
   specialty: string;
@@ -38,6 +40,7 @@ export const site = {
   /** Para añadir una foto real: poné la ruta en "photo" (p. ej. "/equipo/kevs.jpg") y un "photoAlt" descriptivo. */
   team: [
     {
+      id: 'kevs',
       name: 'Kevs',
       initial: 'K',
       specialty: 'Diseño web y para redes',
@@ -47,6 +50,7 @@ export const site = {
       photoPosition: 'center',
     },
     {
+      id: 'gabriel',
       name: 'Gabriel',
       initial: 'G',
       specialty: 'Desarrollo web',
@@ -56,6 +60,7 @@ export const site = {
       photoPosition: 'center',
     },
     {
+      id: 'mar',
       name: 'Mar',
       initial: 'M',
       specialty: 'Fotografía',
