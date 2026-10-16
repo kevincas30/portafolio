@@ -194,12 +194,13 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
             {rules.map((rule) => {
               const category = lookup.get(rule.categoryId);
               const subscription = rule.subscriptionId ? subscriptions.get(rule.subscriptionId) : undefined;
+              // En los enlazados, el monto grande es el ultimo pago anotado (lo que entro), no el precio del servicio.
+              const last = subscription ? lastPayment(subscription) : null;
               let detail: string;
               if (!rule.active) detail = "En pausa";
               else if (rule.subscriptionId) {
-                const last = subscription ? lastPayment(subscription) : null;
                 detail = subscription
-                  ? `Al registrar el pago · ${billingIntervalLabels[subscription.billingInterval].toLowerCase()} · próximo cobro: ${formatMediumDate(subscription.nextDueDate)}${last ? ` · último: ${formatAmount(Math.round(last.amount * 100))}, cubre ${coverageLabel(last.periods, subscription.billingInterval)}` : ""}`
+                  ? `Al registrar el pago · precio ${formatAmount(Math.round(subscription.amount * 100))}/${subscription.billingInterval === "monthly" ? "mes" : "año"} · próximo cobro: ${formatMediumDate(subscription.nextDueDate)}`
                   : "Al registrar el pago · el servicio ya no está en tus clientes";
               } else detail = `Día ${rule.day} · próximo: ${formatMediumDate(nextRecurringDate(rule))}`;
               return (
@@ -212,9 +213,20 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
                     </span>
                     <span className="block text-xs font-semibold text-[var(--muted)]">{detail}</span>
                   </span>
-                  <span className={`text-sm font-extrabold tabular-nums ${rule.kind === "income" ? "text-[var(--success-text)]" : "text-[var(--ink)]"}`}>
-                    {rule.kind === "income" ? "+" : "−"}{formatAmount(subscription ? Math.round(subscription.amount * 100) : rule.amount)}
-                  </span>
+                  {rule.subscriptionId ? (
+                    <span className="text-right">
+                      <span className={`block text-sm font-extrabold tabular-nums ${last ? "text-[var(--success-text)]" : "text-[var(--muted)]"}`}>
+                        {last ? `+${formatAmount(Math.round(last.amount * 100))}` : "—"}
+                      </span>
+                      <span className="block text-[11px] font-bold text-[var(--muted)]">
+                        {last && subscription ? `último pago · ${coverageLabel(last.periods, subscription.billingInterval)}` : "sin pagos"}
+                      </span>
+                    </span>
+                  ) : (
+                    <span className={`text-sm font-extrabold tabular-nums ${rule.kind === "income" ? "text-[var(--success-text)]" : "text-[var(--ink)]"}`}>
+                      {rule.kind === "income" ? "+" : "−"}{formatAmount(rule.amount)}
+                    </span>
+                  )}
                   <span className="flex gap-1">
                     <button type="button" disabled={submitting} onClick={() => void run(rules.map((item) => (item.id === rule.id ? (rule.active ? { ...rule, active: false } : resumeRule(rule, getTodayKey())) : item)))} aria-label={rule.active ? "Pausar" : "Reanudar"} title={rule.active ? "Pausar" : "Reanudar"} className="grid size-9 place-items-center rounded-xl text-[var(--muted-strong)] transition hover:bg-[var(--surface-muted)]">
                       {rule.active ? <Pause aria-hidden="true" className="size-4" /> : <Play aria-hidden="true" className="size-4" />}
