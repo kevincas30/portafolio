@@ -163,6 +163,23 @@ export async function getTurso(): Promise<Client> {
           payload_version INTEGER NOT NULL DEFAULT 1,
           updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )`,
+      // Finanzas personales: cada fila es un blob cifrado con la DEK del usuario.
+      `CREATE TABLE IF NOT EXISTS finance_entries (
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL REFERENCES vault_users(id),
+          payload TEXT NOT NULL,
+          payload_iv TEXT NOT NULL,
+          payload_version INTEGER NOT NULL DEFAULT 1,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )`,
+      `CREATE TABLE IF NOT EXISTS finance_settings (
+          user_id TEXT PRIMARY KEY REFERENCES vault_users(id),
+          payload TEXT NOT NULL,
+          payload_iv TEXT NOT NULL,
+          payload_version INTEGER NOT NULL DEFAULT 1,
+          updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )`,
       "CREATE INDEX IF NOT EXISTS credentials_name_idx ON credentials(name)",
       "CREATE INDEX IF NOT EXISTS credentials_group_name_idx ON credentials(group_name)",
       "CREATE INDEX IF NOT EXISTS payments_subscription_id_idx ON payments(subscription_id)",
@@ -171,6 +188,7 @@ export async function getTurso(): Promise<Client> {
       "CREATE INDEX IF NOT EXISTS webauthn_credentials_user_id_idx ON webauthn_credentials(user_id)",
       "CREATE INDEX IF NOT EXISTS vault_key_wrappers_user_id_idx ON vault_key_wrappers(user_id)",
       "CREATE INDEX IF NOT EXISTS vault_sessions_expires_at_idx ON vault_sessions(expires_at)",
+      "CREATE INDEX IF NOT EXISTS finance_entries_user_id_idx ON finance_entries(user_id)",
     ], "write");
 
     const paymentColumns = await client.execute("PRAGMA table_info(payments)");

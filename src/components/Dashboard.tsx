@@ -2,15 +2,18 @@ import { useEffect, useState } from "react";
 import { LockKeyhole } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { ClientsPage } from "@/components/clients/ClientsPage";
+import { FinancesPage } from "@/components/finances/FinancesPage";
 import { PasswordsPage } from "@/components/passwords/PasswordsPage";
 import { SectionSwitcher, type AppSection } from "@/components/SectionSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PanelLogin } from "@/components/passwords/PanelLogin";
 import { usePanelSession, type PanelSession } from "@/hooks/usePanelSession";
+import { useUserVault } from "@/hooks/useUserVault";
 
 const sectionTitles: Record<AppSection, string> = {
   clients: "Clientes · Panel",
   passwords: "Contraseñas · Panel",
+  finances: "Gastos · Panel",
 };
 
 export function Dashboard() {
@@ -33,6 +36,8 @@ export function Dashboard() {
 
 function UnlockedDashboard({ onLock }: { onLock: PanelSession["lock"] }) {
   const [activeSection, setActiveSection] = useState<AppSection>("clients");
+  // Una sola boveda para todo el panel: la usan Contraseñas y Gastos.
+  const userVault = useUserVault();
 
   useEffect(() => {
     document.title = sectionTitles[activeSection];
@@ -56,7 +61,10 @@ function UnlockedDashboard({ onLock }: { onLock: PanelSession["lock"] }) {
           <ClientsPage active={activeSection === "clients"} />
         </div>
         <div className={activeSection === "passwords" ? "block" : "hidden"}>
-          <PasswordsPage />
+          <PasswordsPage userVault={userVault} />
+        </div>
+        <div className={activeSection === "finances" ? "block" : "hidden"}>
+          <FinancesPage userVault={userVault} />
         </div>
       </div>
     </main>

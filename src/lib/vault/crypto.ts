@@ -30,6 +30,8 @@ export const aad = {
   dek: (userId: string, wrapperId: string) => `dek:v1:${userId}:${wrapperId}`,
   credential: (userId: string, credentialId: string) => `cred:v1:${userId}:${credentialId}`,
   settings: (userId: string) => `settings:v1:${userId}`,
+  financeEntry: (userId: string, entryId: string) => `fin:v1:${userId}:${entryId}`,
+  financeSettings: (userId: string) => `fin-settings:v1:${userId}`,
 };
 
 function subtle(): SubtleCrypto {

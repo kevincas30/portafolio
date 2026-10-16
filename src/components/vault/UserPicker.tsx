@@ -3,6 +3,8 @@ import { ErrorNote, secondaryButtonClass, VaultCard } from "@/components/vault/V
 import type { VaultUserSummary } from "@/lib/user-vault-api";
 
 interface UserPickerProps {
+  /** Seccion desde la que se pide la boveda (Contraseñas, Gastos...). */
+  eyebrow: string;
   users: VaultUserSummary[];
   state: "loading" | "ready" | "error";
   error: string;
@@ -11,9 +13,9 @@ interface UserPickerProps {
   onRetry: () => void;
 }
 
-export function UserPicker({ users, state, error, onSelect, onCreate, onRetry }: UserPickerProps) {
+export function UserPicker({ eyebrow, users, state, error, onSelect, onCreate, onRetry }: UserPickerProps) {
   return (
-    <VaultCard icon={Users} eyebrow="Contraseñas" title="¿Quién eres?">
+    <VaultCard icon={Users} eyebrow={eyebrow} title="¿Quién eres?">
       {state === "loading" && (
         <div className="grid place-items-center py-6 text-[var(--ink)]">
           <LoaderCircle aria-hidden="true" className="size-6 animate-spin" />
