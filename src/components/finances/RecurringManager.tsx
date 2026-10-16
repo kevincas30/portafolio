@@ -4,11 +4,11 @@ import { MemberAvatar } from "@/components/clients/OwnerAvatars";
 import { CategoryDot, FinanceDialog, inputClass, KindToggle, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/finances/FinanceDialog";
 import { billingIntervalLabels } from "@/config/subscription-types";
 import { teamMembers } from "@/lib/client-owner";
-import { coverageLabel, lastPayment, myServices } from "@/lib/finance/client-income";
+import { coverageLabel, importClientPayments, lastPayment, myServices } from "@/lib/finance/client-income";
 import { UNCATEGORIZED_COLOR } from "@/lib/finance/defaults";
 import { amountToInput, formatAmount, parseAmount } from "@/lib/finance/money";
 import { monthOf } from "@/lib/finance/months";
-import { monthlyFixedExpense, nextRecurringDate, resumeRule } from "@/lib/finance/recurring";
+import { monthlyFixedExpense, nextRecurringDate, resumeRule, runRecurring, type PendingEntry } from "@/lib/finance/recurring";
 import { formatMediumDate, formatShortDateWithYear, getTodayKey } from "@/lib/dates";
 import type { Client } from "@/types/client";
 import type { EntryKind, FinanceCategory, FinanceSettings, RecurringRule } from "@/types/finance";
@@ -151,6 +151,35 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
   const editingLinked = editing !== null && editing !== "new" && Boolean(editing.subscriptionId);
   const selectedSubscription = subscriptions.get(draft.subscriptionId);
 
+  // Lo que se va a anotar al tocar Crear, calculado con las mismas funciones que despues lo anotan.
+  const preview = ((): { entries: PendingEntry[]; next: string } | null => {
+    if (editing !== "new") return null;
+    let counter = 0;
+    const previewId = () => `preview-${++counter}`;
+    if (isLinked) {
+      if (!selectedSubscription) return null;
+      const rule: RecurringRule = {
+        id: "preview", kind: "income", amount: Math.round(selectedSubscription.amount * 100), categoryId: draft.categoryId,
+        note: draft.note.trim(), day: 1, startMonth: monthOf(getTodayKey()), generatedThrough: null, active: true,
+        subscriptionId: selectedSubscription.id, importedPaymentIds: [],
+      };
+      const unit = selectedSubscription.billingInterval === "monthly" ? "mes" : "año";
+      return {
+        entries: importClientPayments([rule], clients, memberId, previewId).entries,
+        next: `Después: cada pago que registres en Clientes. Próximo cobro esperado el ${formatMediumDate(selectedSubscription.nextDueDate)} (precio ${formatAmount(rule.amount)}/${unit}).`,
+      };
+    }
+    const amount = parseAmount(draft.amount);
+    const day = Number(draft.day);
+    if (amount === null || !Number.isInteger(day) || day < 1 || day > 31 || !/^\d{4}-\d{2}$/.test(draft.startMonth)) return null;
+    const rule: RecurringRule = {
+      id: "preview", kind: draft.kind, amount, categoryId: draft.categoryId, note: draft.note.trim(), day,
+      startMonth: draft.startMonth, generatedThrough: null, active: true,
+    };
+    const run = runRecurring([rule], getTodayKey(), previewId);
+    return { entries: run.entries, next: `Después: ${draft.kind === "income" ? "+" : "−"}${formatAmount(amount)} cada mes, el próximo el ${formatMediumDate(nextRecurringDate(run.rules[0]))}.` };
+  })();
+
   return (
     <FinanceDialog eyebrow="Gastos" title="Gastos e ingresos fijos" onClose={onClose} size="lg">
       <div className="space-y-5 px-5 py-6 sm:px-7 sm:py-7">
@@ -289,8 +318,9 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
                                     </span>
                                   )}
                                 </span>
-                                <span className="text-sm font-extrabold tabular-nums text-[var(--success-text)]">
-                                  {formatAmount(Math.round(option.subscription.amount * 100))}/{option.subscription.billingInterval === "monthly" ? "mes" : "año"}
+                                <span className="shrink-0 text-right text-xs font-bold text-[var(--muted-strong)]">
+                                  <span className="block text-[10px] font-extrabold uppercase tracking-[0.12em] text-[var(--muted)]">Precio</span>
+                                  <span className="tabular-nums">{formatAmount(Math.round(option.subscription.amount * 100))}/{option.subscription.billingInterval === "monthly" ? "mes" : "año"}</span>
                                 </span>
                               </button>
                             </li>
@@ -353,11 +383,7 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
               </fieldset>
             )}
 
-            {editing === "new" && (
-              <p className="text-xs font-semibold text-[var(--muted-strong)]">
-                {isLinked ? "Al crearlo se importan también los pagos que ya están registrados." : "Si el día ya pasó en el mes de inicio, se anota enseguida."}
-              </p>
-            )}
+            {preview && <EntryPreview entries={preview.entries} category={lookup.get(draft.categoryId)} next={preview.next} />}
             {error && <p role="alert" className="rounded-xl bg-[var(--danger-soft)] px-3 py-2 text-sm font-bold text-[var(--danger-text)]">{error}</p>}
             <div className="grid grid-cols-2 gap-3">
               <button type="button" onClick={close} disabled={submitting} className={secondaryButtonClass}>Cancelar</button>
@@ -377,5 +403,46 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
         )}
       </div>
     </FinanceDialog>
+  );
+}
+
+const MAX_PREVIEW_ROWS = 6;
+
+/** Previsualizacion de los movimientos que se anotan al crear el fijo. */
+function EntryPreview({ entries, category, next }: { entries: PendingEntry[]; category?: FinanceCategory; next: string }) {
+  const total = entries.reduce((sum, entry) => sum + entry.amount, 0);
+  const kind = entries[0]?.kind;
+  const sign = kind === "income" ? "+" : "−";
+  const tone = kind === "income" ? "text-[var(--success-text)]" : "text-[var(--ink)]";
+  return (
+    <section aria-label="Lo que se va a anotar" className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4">
+      <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[var(--muted-strong)]">
+        {entries.length === 0 ? "Al crearlo no se anota nada todavía" : entries.length === 1 ? "Al crearlo se anota" : `Al crearlo se anotan ${entries.length} movimientos`}
+      </p>
+      {entries.length > 0 && (
+        <ul className="space-y-2">
+          {entries.slice(0, MAX_PREVIEW_ROWS).map((entry) => (
+            <li key={entry.id} className="flex items-center gap-3 rounded-xl bg-[var(--surface)] px-3 py-2.5">
+              <CategoryDot color={category?.color ?? UNCATEGORIZED_COLOR} className="size-3" />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-bold text-[var(--ink)]">{entry.note || category?.name || "Sin nombre"}</span>
+                <span className="block text-xs font-semibold text-[var(--muted)]">{formatShortDateWithYear(entry.date)} · {category?.name ?? "Sin categoría"}</span>
+              </span>
+              <span className={`shrink-0 text-lg font-extrabold tabular-nums ${tone}`}>{sign}{formatAmount(entry.amount)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {entries.length > MAX_PREVIEW_ROWS && (
+        <p className="mt-2 text-xs font-bold text-[var(--muted-strong)]">y {entries.length - MAX_PREVIEW_ROWS} más…</p>
+      )}
+      {entries.length > 1 && (
+        <p className="mt-3 flex justify-between border-t border-[var(--line)] pt-3 text-sm font-extrabold text-[var(--ink)]">
+          <span>Total</span>
+          <span className={`tabular-nums ${tone}`}>{sign}{formatAmount(total)}</span>
+        </p>
+      )}
+      <p className="mt-3 text-xs font-semibold leading-5 text-[var(--muted-strong)]">{next}</p>
+    </section>
   );
 }
