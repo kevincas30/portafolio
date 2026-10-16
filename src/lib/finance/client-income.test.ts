@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { importClientPayments, myServices } from "@/lib/finance/client-income";
+import { coverageLabel, importClientPayments, lastPayment, myServices } from "@/lib/finance/client-income";
 import { runRecurring } from "@/lib/finance/recurring";
 import type { Client, Payment, Subscription } from "@/types/client";
 import type { RecurringRule } from "@/types/finance";
@@ -69,5 +69,20 @@ describe("importClientPayments", () => {
 
   it("los enlazados no se anotan por fecha en runRecurring", () => {
     expect(runRecurring([linked("mant")], "2026-10-15", ids()).entries).toEqual([]);
+  });
+});
+
+describe("lastPayment y coverageLabel", () => {
+  it("devuelve el pago mas reciente o null", () => {
+    const sub = subscription("m", { payments: [payment("viejo", 15, "2026-05-01"), payment("nuevo", 90, "2026-10-13", 6)] });
+    expect(lastPayment(sub)?.id).toBe("nuevo");
+    expect(lastPayment(subscription("vacio"))).toBeNull();
+  });
+
+  it("nombra lo que cubre segun la periodicidad", () => {
+    expect(coverageLabel(6, "monthly")).toBe("6 meses");
+    expect(coverageLabel(1, "monthly")).toBe("1 mes");
+    expect(coverageLabel(1, "yearly")).toBe("1 año");
+    expect(coverageLabel(2, "yearly")).toBe("2 años");
   });
 });

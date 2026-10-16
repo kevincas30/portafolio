@@ -70,3 +70,17 @@ export function importClientPayments(rules: RecurringRule[], clients: Client[], 
   });
   return { entries, rules: updated };
 }
+
+/** Ultimo pago registrado de un servicio (el mas reciente por fecha). */
+export function lastPayment(subscription: Subscription): Subscription["payments"][number] | null {
+  return subscription.payments.reduce<Subscription["payments"][number] | null>(
+    (latest, payment) => (!latest || payment.paidAt > latest.paidAt || (payment.paidAt === latest.paidAt && payment.createdAt > latest.createdAt) ? payment : latest),
+    null,
+  );
+}
+
+/** "6 meses", "1 año": lo que cubre un pago segun la periodicidad del servicio. */
+export function coverageLabel(periods: number, interval: Subscription["billingInterval"]): string {
+  if (interval === "yearly") return periods === 1 ? "1 año" : `${periods} años`;
+  return periods === 1 ? "1 mes" : `${periods} meses`;
+}

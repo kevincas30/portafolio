@@ -4,12 +4,12 @@ import { MemberAvatar } from "@/components/clients/OwnerAvatars";
 import { CategoryDot, FinanceDialog, inputClass, KindToggle, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/finances/FinanceDialog";
 import { billingIntervalLabels } from "@/config/subscription-types";
 import { teamMembers } from "@/lib/client-owner";
-import { myServices } from "@/lib/finance/client-income";
+import { coverageLabel, lastPayment, myServices } from "@/lib/finance/client-income";
 import { UNCATEGORIZED_COLOR } from "@/lib/finance/defaults";
 import { amountToInput, formatAmount, parseAmount } from "@/lib/finance/money";
 import { monthOf } from "@/lib/finance/months";
 import { monthlyFixedExpense, nextRecurringDate, resumeRule } from "@/lib/finance/recurring";
-import { formatMediumDate, getTodayKey } from "@/lib/dates";
+import { formatMediumDate, formatShortDateWithYear, getTodayKey } from "@/lib/dates";
 import type { Client } from "@/types/client";
 import type { EntryKind, FinanceCategory, FinanceSettings, RecurringRule } from "@/types/finance";
 
@@ -168,8 +168,9 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
               let detail: string;
               if (!rule.active) detail = "En pausa";
               else if (rule.subscriptionId) {
+                const last = subscription ? lastPayment(subscription) : null;
                 detail = subscription
-                  ? `Al registrar el pago · ${billingIntervalLabels[subscription.billingInterval].toLowerCase()} · próximo cobro: ${formatMediumDate(subscription.nextDueDate)}`
+                  ? `Al registrar el pago · ${billingIntervalLabels[subscription.billingInterval].toLowerCase()} · próximo cobro: ${formatMediumDate(subscription.nextDueDate)}${last ? ` · último: ${formatAmount(Math.round(last.amount * 100))}, cubre ${coverageLabel(last.periods, subscription.billingInterval)}` : ""}`
                   : "Al registrar el pago · el servicio ya no está en tus clientes";
               } else detail = `Día ${rule.day} · próximo: ${formatMediumDate(nextRecurringDate(rule))}`;
               return (
@@ -272,6 +273,7 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
                         {services.map((option) => {
                           const selected = draft.subscriptionId === option.subscription.id;
                           const count = option.subscription.payments.length;
+                          const last = lastPayment(option.subscription);
                           return (
                             <li key={option.subscription.id}>
                               <button type="button" role="radio" aria-checked={selected} onClick={() => chooseService(option.subscription.id)} className={`flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${selected ? "border-[var(--ink)] bg-[var(--accent-soft)]" : "border-[var(--line)] hover:bg-[var(--surface-muted)]"}`}>
@@ -281,6 +283,11 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
                                     {billingIntervalLabels[option.subscription.billingInterval]} · próximo cobro: {formatMediumDate(option.subscription.nextDueDate)}
                                     {count > 0 && ` · ${count} ${count === 1 ? "pago registrado" : "pagos registrados"}`}
                                   </span>
+                                  {last && (
+                                    <span className="mt-1 block text-xs font-extrabold text-[var(--ink)]">
+                                      Último pago: {formatAmount(Math.round(last.amount * 100))} el {formatShortDateWithYear(last.paidAt.slice(0, 10))} · cubre {coverageLabel(last.periods, option.subscription.billingInterval)}
+                                    </span>
+                                  )}
                                 </span>
                                 <span className="text-sm font-extrabold tabular-nums text-[var(--success-text)]">
                                   {formatAmount(Math.round(option.subscription.amount * 100))}/{option.subscription.billingInterval === "monthly" ? "mes" : "año"}
