@@ -49,6 +49,13 @@ export interface RecurringRule {
   /** Ultimo mes ya anotado. null = todavia ninguno. */
   generatedThrough: MonthKey | null;
   active: boolean;
+  /**
+   * Servicio de un cliente (Clientes) enlazado: el ingreso no se anota por fecha sino cuando se
+   * registra el pago, con su monto y su dia reales. null/ausente = fijo normal por dia del mes.
+   */
+  subscriptionId?: string | null;
+  /** Pagos del servicio ya anotados: borrar el movimiento no lo vuelve a importar. */
+  importedPaymentIds?: string[];
 }
 
 export type RecurringDraft = Pick<RecurringRule, "kind" | "amount" | "categoryId" | "note" | "day" | "startMonth">;
@@ -56,6 +63,8 @@ export type RecurringDraft = Pick<RecurringRule, "kind" | "amount" | "categoryId
 export interface FinanceSettings {
   categories: FinanceCategory[];
   recurring: RecurringRule[];
+  /** Id del equipo (src/config/site.ts) de quien usa la boveda: sus clientes se pueden enlazar. */
+  teamMemberId: string | null;
   /** Un gasto suelto de hasta este monto (centimos), en una categoria marcada como hormiga, es gasto hormiga. */
   antThreshold: number;
 }

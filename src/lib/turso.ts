@@ -197,6 +197,17 @@ export async function getTurso(): Promise<Client> {
       await client.execute("ALTER TABLE payments ADD COLUMN periods INTEGER NOT NULL DEFAULT 1");
     }
 
+    // Responsables del cliente: ids del equipo separados por coma ('' = sin asignar).
+    const clientColumns = await client.execute("PRAGMA table_info(clients)");
+    if (!clientColumns.rows.some((row) => String(row.name) === "owners")) {
+      await client.execute("ALTER TABLE clients ADD COLUMN owners TEXT NOT NULL DEFAULT ''");
+    }
+
+    // Logo del cliente (data: URL sacada de su web).
+    if (!clientColumns.rows.some((row) => String(row.name) === "logo")) {
+      await client.execute("ALTER TABLE clients ADD COLUMN logo TEXT NOT NULL DEFAULT ''");
+    }
+
     // Momento del desbloqueo: las sesiones previas quedan en 0 (nunca cuentan como recientes).
     const sessionColumns = await client.execute("PRAGMA table_info(vault_sessions)");
     if (!sessionColumns.rows.some((row) => String(row.name) === "created_at")) {

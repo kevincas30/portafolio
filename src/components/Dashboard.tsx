@@ -64,7 +64,7 @@ function UnlockedDashboard({ onLock }: { onLock: PanelSession["lock"] }) {
           <PasswordsPage userVault={userVault} />
         </div>
         <div className={activeSection === "finances" ? "block" : "hidden"}>
-          <FinancesPage userVault={userVault} />
+          <FinancesPage userVault={userVault} active={activeSection === "finances"} />
         </div>
       </div>
     </main>

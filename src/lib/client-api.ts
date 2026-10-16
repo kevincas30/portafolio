@@ -36,6 +36,17 @@ export async function updateClient(payload: ClientPayload): Promise<Client> {
   return ((await response.json()) as { client: Client }).client;
 }
 
+/** Pide al servidor que busque y guarde el logo de la web del cliente. */
+export async function fetchClientLogo(id: string): Promise<string> {
+  const response = await fetch(withBase("/api/client-logo"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id }),
+  });
+  if (!response.ok) throw await responseError(response);
+  return ((await response.json()) as { logo: string }).logo;
+}
+
 export async function deleteClient(id: string): Promise<void> {
   const response = await fetch(withBase("/api/clients"), {
     method: "DELETE",

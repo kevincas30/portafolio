@@ -31,6 +31,10 @@ export interface Client {
   businessName: string;
   websiteUrl: string;
   notes: string;
+  /** Ids del equipo responsables del cliente (vacio = sin asignar, 2+ = compartido). */
+  owners: string[];
+  /** Logo sacado de la web del cliente, como data: URL ('' = sin logo). Lo gestiona el servidor. */
+  logo: string;
   createdAt: string;
   updatedAt: string;
   subscriptions: Subscription[];
@@ -41,6 +45,7 @@ export interface ClientDraft {
   businessName: string;
   websiteUrl: string;
   notes: string;
+  owners: string[];
 }
 
 export interface ClientPayload extends ClientDraft {

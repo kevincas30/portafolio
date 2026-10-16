@@ -1,4 +1,6 @@
-import { ChevronRight, Globe2 } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { ClientLogo } from "@/components/clients/ClientLogo";
+import { OwnerAvatars } from "@/components/clients/OwnerAvatars";
 import { StatusBadge } from "@/components/clients/StatusBadge";
 import { subscriptionTypeLabel } from "@/config/subscription-types";
 import { computeClientAggregateStatus } from "@/lib/client-status";
@@ -22,9 +24,7 @@ export function ClientCard({ client, onOpen }: ClientCardProps) {
       aria-label={`Ver detalles de ${client.clientName}`}
       className="group flex w-full items-center gap-3 rounded-[18px] border border-[var(--line)] bg-[var(--surface)] px-3.5 py-3 text-left shadow-[0_4px_16px_rgba(23,25,23,0.04)] transition hover:border-[var(--line-strong)] hover:bg-[var(--surface-soft)] hover:shadow-[0_7px_20px_rgba(23,25,23,0.06)] active:scale-[0.995] sm:px-4"
     >
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent-text)]">
-        <Globe2 aria-hidden="true" className="size-5" />
-      </span>
+      <ClientLogo client={client} />
 
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-2">
@@ -37,6 +37,7 @@ export function ClientCard({ client, onOpen }: ClientCardProps) {
         </span>
       </span>
 
+      <OwnerAvatars owners={client.owners} />
       <StatusBadge status={statusInfo.status} label={statusInfo.label} />
 
       <ChevronRight

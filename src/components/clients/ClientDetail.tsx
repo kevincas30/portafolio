@@ -1,4 +1,7 @@
-import { ArrowLeft, ExternalLink, Globe2, Pencil, Plus, Trash2, Wallet } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, ExternalLink, ImageDown, LoaderCircle, Pencil, Plus, Trash2, Wallet } from "lucide-react";
+import { ClientLogo } from "@/components/clients/ClientLogo";
+import { OwnerAvatars } from "@/components/clients/OwnerAvatars";
 import { PaymentCalendar } from "@/components/clients/PaymentCalendar";
 import { PaymentReceipts } from "@/components/clients/PaymentReceipts";
 import { SubscriptionCard } from "@/components/clients/SubscriptionCard";
@@ -16,6 +19,7 @@ interface ClientDetailProps {
   onDeleteSubscription: (subscription: Subscription) => void;
   onRegisterPayment: (subscription: Subscription) => void;
   onDeletePayment: (paymentId: string) => Promise<void>;
+  onRefreshLogo: (clientId: string) => Promise<void>;
 }
 
 export function ClientDetail({
@@ -28,8 +32,20 @@ export function ClientDetail({
   onDeleteSubscription,
   onRegisterPayment,
   onDeletePayment,
+  onRefreshLogo,
 }: ClientDetailProps) {
   const totalPaid = clientTotalPaid(client);
+  const [logoState, setLogoState] = useState<{ busy: boolean; error: string }>({ busy: false, error: "" });
+
+  const refreshLogo = async () => {
+    setLogoState({ busy: true, error: "" });
+    try {
+      await onRefreshLogo(client.id);
+      setLogoState({ busy: false, error: "" });
+    } catch (reason) {
+      setLogoState({ busy: false, error: reason instanceof Error ? reason.message : "No se pudo obtener el logo." });
+    }
+  };
 
   return (
     <div className="mx-auto w-full max-w-[760px] space-y-3 sm:space-y-4 xl:relative xl:left-1/2 xl:w-[calc(100vw-4rem)] xl:max-w-[1600px] xl:-translate-x-1/2">
@@ -47,9 +63,7 @@ export function ClientDetail({
         <header className="border-b border-[var(--line-soft)] px-4 py-4 sm:px-6 sm:py-5">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
             <div className="flex min-w-0 flex-[1_1_240px] items-center gap-3">
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent-text)]">
-                <Globe2 aria-hidden="true" className="size-5" />
-              </span>
+              <ClientLogo client={client} />
               <h1 className="min-w-0 break-words text-lg font-extrabold tracking-[-0.03em] text-[var(--ink)] sm:text-xl">
                 {client.businessName || client.clientName}
                 <span className="font-semibold text-[var(--muted)]"> · {client.clientName}</span>
@@ -57,6 +71,7 @@ export function ClientDetail({
             </div>
 
             <div className="ml-auto flex max-w-full items-center gap-1.5">
+              <span className="mr-2"><OwnerAvatars owners={client.owners} size="md" showLabel /></span>
               <button type="button" onClick={() => onEdit(client)} aria-label={`Editar ${client.clientName}`} title="Editar" className="grid size-9 place-items-center rounded-full text-[var(--muted)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--ink)]">
                 <Pencil aria-hidden="true" className="size-4" />
               </button>
@@ -95,6 +110,20 @@ export function ClientDetail({
                     </span>
                     <ExternalLink aria-hidden="true" className="size-4 shrink-0 text-[var(--muted)]" />
                   </a>
+                )}
+                {safeHref(client.websiteUrl) && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => void refreshLogo()}
+                      disabled={logoState.busy}
+                      className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[var(--line)] px-3 text-xs font-extrabold text-[var(--ink)] transition hover:bg-[var(--surface-muted)] disabled:opacity-60"
+                    >
+                      {logoState.busy ? <LoaderCircle aria-hidden="true" className="size-3.5 animate-spin" /> : <ImageDown aria-hidden="true" className="size-3.5" />}
+                      {client.logo ? "Actualizar logo desde la web" : "Obtener logo de la web"}
+                    </button>
+                    {logoState.error && <span role="alert" className="text-xs font-bold text-[var(--danger-text)]">{logoState.error}</span>}
+                  </div>
                 )}
                 {client.notes && (
                   <p className="whitespace-pre-wrap rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-soft)] px-4 py-3 text-sm font-medium leading-6 text-[var(--muted-strong)]">{client.notes}</p>

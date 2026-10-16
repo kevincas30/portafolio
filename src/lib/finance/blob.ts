@@ -64,6 +64,7 @@ export async function decodeFinanceSettings(sealed: Sealed, dek: CryptoKey, user
         }))
       : defaults.categories,
     recurring: Array.isArray(raw.recurring) ? (raw.recurring as FinanceSettings["recurring"]) : [],
+    teamMemberId: typeof raw.teamMemberId === "string" ? raw.teamMemberId : null,
     antThreshold: legacy && threshold === LEGACY_ANT_THRESHOLD ? DEFAULT_ANT_THRESHOLD : threshold,
   };
 }

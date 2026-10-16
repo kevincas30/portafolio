@@ -2,9 +2,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { applyFinanceBatch, getVaultFinances, type FinanceBatch, type SealedFinanceEntry } from "@/lib/user-vault-api";
 import { decodeEntryBlob, decodeFinanceSettings, encodeEntryBlob, encodeFinanceSettings } from "@/lib/finance/blob";
 import { defaultFinanceSettings } from "@/lib/finance/defaults";
+import { importClientPayments } from "@/lib/finance/client-income";
 import { runRecurring, type PendingEntry } from "@/lib/finance/recurring";
+import { getClients } from "@/lib/client-api";
 import { getTodayKey } from "@/lib/dates";
 import type { VaultSession } from "@/hooks/useVaultCredentials";
+import type { Client } from "@/types/client";
 import type { FinanceEntry, FinanceEntryDraft, FinanceSettings, RecurringRule } from "@/types/finance";
 
 const newId = () => globalThis.crypto.randomUUID();
@@ -26,12 +29,14 @@ export interface FinancesController {
   loading: boolean;
   ready: boolean;
   error: string;
+  /** Clientes (solo lectura) para enlazar sus servicios como ingresos fijos. */
+  clients: Client[];
   refresh: () => Promise<void>;
   saveEntry: (draft: FinanceEntryDraft, existing?: FinanceEntry) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   saveSettings: (settings: FinanceSettings) => Promise<void>;
-  /** Guarda la lista de gastos fijos y anota enseguida lo que ya les toca. Devuelve cuantos anoto. */
-  saveRecurringRules: (rules: RecurringRule[]) => Promise<number>;
+  /** Guarda la lista de fijos (y, si cambia, quien soy en el equipo) y anota enseguida lo que ya les toca. Devuelve cuantos anoto. */
+  saveRecurringRules: (rules: RecurringRule[], patch?: Pick<FinanceSettings, "teamMemberId">) => Promise<number>;
 }
 
 // Finanzas de la boveda desbloqueada: se descifra todo en el navegador y se guarda en batches atomicos.
@@ -47,6 +52,9 @@ export function useVaultFinances(session: VaultSession | null, onSessionError: (
   useEffect(() => { sessionRef.current = session; }, [session]);
   const settingsRef = useRef(settings);
   useEffect(() => { settingsRef.current = settings; }, [settings]);
+  const [clients, setClients] = useState<Client[]>([]);
+  const clientsRef = useRef(clients);
+  useEffect(() => { clientsRef.current = clients; }, [clients]);
 
   const requireSession = (): VaultSession => {
     if (!sessionRef.current) throw new Error("Desbloquea tu bóveda antes de guardar.");
@@ -67,13 +75,18 @@ export function useVaultFinances(session: VaultSession | null, onSessionError: (
     return { payload: sealed.data, payloadIv: sealed.iv };
   };
 
-  /** Anota lo que deben los gastos fijos y guarda filas + ajustes juntos. Devuelve cuantos anoto. */
-  const applyRecurring = useCallback(async (current: VaultSession, base: FinanceSettings): Promise<{ settings: FinanceSettings; created: FinanceEntry[] }> => {
-    const run = runRecurring(base.recurring, getTodayKey(), newId);
-    const next = { ...base, recurring: run.rules };
-    const upserts = await Promise.all(run.entries.map((entry) => sealEntry(current, entry)));
+  /**
+   * Anota lo que deben los fijos por fecha y los pagos nuevos de los servicios enlazados.
+   * Filas y ajustes (generatedThrough, importedPaymentIds) viajan juntos: o se guarda todo o nada.
+   */
+  const applyRecurring = useCallback(async (current: VaultSession, base: FinanceSettings, clientList: Client[]): Promise<{ settings: FinanceSettings; created: FinanceEntry[] }> => {
+    const byDate = runRecurring(base.recurring, getTodayKey(), newId);
+    const fromClients = importClientPayments(byDate.rules, clientList, base.teamMemberId, newId);
+    const pending = [...byDate.entries, ...fromClients.entries];
+    const next = { ...base, recurring: fromClients.rules };
+    const upserts = await Promise.all(pending.map((entry) => sealEntry(current, entry)));
     await commit({ upserts, deletes: [], settings: await sealSettings(current, next) });
-    return { settings: next, created: run.entries.map((entry) => stamp(entry)) };
+    return { settings: next, created: pending.map((entry) => stamp(entry)) };
   }, [commit]);
 
   const refresh = useCallback(async (signal?: AbortSignal) => {
@@ -81,7 +94,8 @@ export function useVaultFinances(session: VaultSession | null, onSessionError: (
     if (!current) return;
     setLoading(true);
     try {
-      const data = await getVaultFinances(signal);
+      // Clientes no es imprescindible: si falla, las finanzas cargan igual (sin importar pagos).
+      const [data, clientList] = await Promise.all([getVaultFinances(signal), getClients(signal).catch(() => null)]);
       const decoded = await Promise.allSettled(data.entries.map(async (row) => {
         const blob = await decodeEntryBlob({ data: row.payload, iv: row.payloadIv }, current.dek, current.userId, row.id);
         return { id: row.id, ...blob, createdAt: row.createdAt, updatedAt: row.updatedAt };
@@ -94,15 +108,19 @@ export function useVaultFinances(session: VaultSession | null, onSessionError: (
       let loaded = decoded.flatMap((item) => (item.status === "fulfilled" ? [item.value] : []));
       const failed = decoded.filter((item) => item.status === "rejected").length;
 
-      // Gastos fijos que vencieron desde la ultima vez que se abrio la boveda.
-      if (runRecurring(loadedSettings.recurring, getTodayKey(), newId).entries.length > 0) {
-        const result = await applyRecurring(current, loadedSettings);
+      // Fijos que vencieron y pagos de clientes registrados desde la ultima vez.
+      const knownClients = clientList ?? [];
+      const pendingByDate = runRecurring(loadedSettings.recurring, getTodayKey(), newId).entries.length;
+      const pendingClients = clientList ? importClientPayments(loadedSettings.recurring, clientList, loadedSettings.teamMemberId, newId).entries.length : 0;
+      if (pendingByDate + pendingClients > 0) {
+        const result = await applyRecurring(current, loadedSettings, knownClients);
         loadedSettings = result.settings;
         loaded = [...loaded, ...result.created];
       }
 
       setEntries(loaded);
       setSettings(loadedSettings);
+      if (clientList) setClients(clientList);
       setError(failed ? `No se pudieron descifrar ${failed} ${failed === 1 ? "movimiento" : "movimientos"}.` : "");
       setReady(true);
     } catch (reason) {
@@ -118,6 +136,7 @@ export function useVaultFinances(session: VaultSession | null, onSessionError: (
     if (!userId || !dek) {
       const timeoutId = window.setTimeout(() => {
         setEntries([]);
+        setClients([]);
         setSettings(defaultFinanceSettings());
         setReady(false);
       }, 0);
@@ -154,13 +173,13 @@ export function useVaultFinances(session: VaultSession | null, onSessionError: (
     setSettings(next);
   }, [commit]);
 
-  const saveRecurringRules = useCallback(async (recurring: RecurringRule[]) => {
+  const saveRecurringRules = useCallback(async (recurring: RecurringRule[], patch?: Pick<FinanceSettings, "teamMemberId">) => {
     const current = requireSession();
-    const result = await applyRecurring(current, { ...settingsRef.current, recurring });
+    const result = await applyRecurring(current, { ...settingsRef.current, ...patch, recurring }, clientsRef.current);
     setSettings(result.settings);
     setEntries((list) => [...list, ...result.created]);
     return result.created.length;
   }, [applyRecurring]);
 
-  return { entries, settings, loading, ready, error, refresh, saveEntry, deleteEntry, saveSettings, saveRecurringRules };
+  return { entries, settings, loading, ready, error, clients, refresh, saveEntry, deleteEntry, saveSettings, saveRecurringRules };
 }

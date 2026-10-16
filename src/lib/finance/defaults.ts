@@ -40,6 +40,7 @@ export function defaultFinanceSettings(): FinanceSettings {
       income("otros-ingresos", "Otros", UNCATEGORIZED_COLOR),
     ],
     recurring: [],
+    teamMemberId: null,
     antThreshold: DEFAULT_ANT_THRESHOLD,
   };
 }

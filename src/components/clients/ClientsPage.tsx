@@ -11,6 +11,7 @@ import { SubscriptionForm } from "@/components/clients/SubscriptionForm";
 import { Toast } from "@/components/passwords/Toast";
 import { computeClientAggregateStatus, totalPaidAcrossClients } from "@/lib/client-status";
 import { useClients } from "@/hooks/useClients";
+import { ownerDescription } from "@/lib/client-owner";
 import type { Client, ClientDraft, PaymentDraft, Subscription, SubscriptionDraft } from "@/types/client";
 
 function normalizeSearch(value: string): string {
@@ -51,7 +52,7 @@ export function ClientsPage({ active }: { active: boolean }) {
     const query = normalizeSearch(search);
     const matches = query
       ? clientsState.clients.filter((client) =>
-          normalizeSearch([client.clientName, client.businessName, client.notes].join(" ")).includes(query))
+          normalizeSearch([client.clientName, client.businessName, client.notes, ownerDescription(client.owners)].join(" ")).includes(query))
       : clientsState.clients;
 
     return [...matches].sort((first, second) => {
@@ -90,13 +91,10 @@ export function ClientsPage({ active }: { active: boolean }) {
   }, []);
 
   const saveClient = async (draft: ClientDraft) => {
-    if (editingClient) {
-      await clientsState.update(editingClient.id, draft);
-      showToast("Cliente actualizado");
-    } else {
-      await clientsState.create(draft);
-      showToast("Cliente creado");
-    }
+    const saved = editingClient ? await clientsState.update(editingClient.id, draft) : await clientsState.create(draft);
+    showToast(editingClient ? "Cliente actualizado" : "Cliente creado");
+    // Web nueva o sin logo: se busca en segundo plano; si falla, queda el boton de la ficha.
+    if (saved.websiteUrl && !saved.logo) void clientsState.refreshLogo(saved.id).catch(() => {});
     setFormOpen(false);
     setEditingClient(null);
   };
@@ -163,6 +161,7 @@ export function ClientsPage({ active }: { active: boolean }) {
           onDeleteSubscription={setDeletingSubscription}
           onRegisterPayment={setPayingSubscription}
           onDeletePayment={deletePayment}
+          onRefreshLogo={clientsState.refreshLogo}
         />
 
         {formOpen && (
