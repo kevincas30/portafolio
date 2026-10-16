@@ -223,7 +223,7 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
                       </span>
                     </span>
                   ) : (
-                    <span className={`text-sm font-extrabold tabular-nums ${rule.kind === "income" ? "text-[var(--success-text)]" : "text-[var(--ink)]"}`}>
+                    <span className={`text-sm font-extrabold tabular-nums ${rule.kind === "income" ? "text-[var(--success-text)]" : "text-[var(--danger-text)]"}`}>
                       {rule.kind === "income" ? "+" : "−"}{formatAmount(rule.amount)}
                     </span>
                   )}
@@ -425,7 +425,7 @@ function EntryPreview({ entries, category, next }: { entries: PendingEntry[]; ca
   const total = entries.reduce((sum, entry) => sum + entry.amount, 0);
   const kind = entries[0]?.kind;
   const sign = kind === "income" ? "+" : "−";
-  const tone = kind === "income" ? "text-[var(--success-text)]" : "text-[var(--ink)]";
+  const tone = kind === "income" ? "text-[var(--success-text)]" : "text-[var(--danger-text)]";
   return (
     <section aria-label="Lo que se va a anotar" className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4">
       <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[var(--muted-strong)]">

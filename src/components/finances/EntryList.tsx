@@ -32,7 +32,7 @@ export function EntryList({ entries, categories, antRules, onSelect, emptyText }
           <section key={date}>
             <h3 className="mb-2 flex items-baseline justify-between px-1 text-xs font-extrabold uppercase tracking-[0.1em] text-[var(--muted-strong)]">
               <span className="first-letter:uppercase">{formatLongDate(date)}</span>
-              <span className="tabular-nums normal-case tracking-normal">{net >= 0 ? "+" : "−"}{formatAmount(Math.abs(net))}</span>
+              <span className={`tabular-nums normal-case tracking-normal ${net >= 0 ? "text-[var(--success-text)]" : "text-[var(--danger-text)]"}`}>{net >= 0 ? "+" : "−"}{formatAmount(Math.abs(net))}</span>
             </h3>
             <ul className="divide-y divide-[var(--line-soft)] overflow-hidden rounded-[20px] border border-[var(--line-soft)] bg-[var(--surface)]">
               {items.map((entry) => {
@@ -50,7 +50,7 @@ export function EntryList({ entries, categories, antRules, onSelect, emptyText }
                           {ant && <span className="inline-flex items-center gap-1 text-[var(--charge-text)]"><Bug aria-hidden="true" className="size-3" /> Hormiga</span>}
                         </span>
                       </span>
-                      <span className={`shrink-0 text-sm font-extrabold tabular-nums ${entry.kind === "income" ? "text-[var(--success-text)]" : "text-[var(--ink)]"}`}>
+                      <span className={`shrink-0 text-sm font-extrabold tabular-nums ${entry.kind === "income" ? "text-[var(--success-text)]" : "text-[var(--danger-text)]"}`}>
                         {entry.kind === "income" ? "+" : "−"}{formatAmount(entry.amount)}
                       </span>
                     </button>
