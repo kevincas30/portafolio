@@ -11,6 +11,7 @@ import { SubscriptionForm } from "@/components/clients/SubscriptionForm";
 import { Toast } from "@/components/passwords/Toast";
 import { computeClientAggregateStatus, totalPaidAcrossClients } from "@/lib/client-status";
 import { useClients } from "@/hooks/useClients";
+import { ownerDescription } from "@/lib/client-owner";
 import type { Client, ClientDraft, PaymentDraft, Subscription, SubscriptionDraft } from "@/types/client";
 
 function normalizeSearch(value: string): string {
@@ -51,7 +52,7 @@ export function ClientsPage({ active }: { active: boolean }) {
     const query = normalizeSearch(search);
     const matches = query
       ? clientsState.clients.filter((client) =>
-          normalizeSearch([client.clientName, client.businessName, client.notes].join(" ")).includes(query))
+          normalizeSearch([client.clientName, client.businessName, client.notes, ownerDescription(client.owners)].join(" ")).includes(query))
       : clientsState.clients;
 
     return [...matches].sort((first, second) => {

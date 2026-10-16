@@ -31,6 +31,8 @@ export interface Client {
   businessName: string;
   websiteUrl: string;
   notes: string;
+  /** Ids del equipo responsables del cliente (vacio = sin asignar, 2+ = compartido). */
+  owners: string[];
   createdAt: string;
   updatedAt: string;
   subscriptions: Subscription[];
@@ -41,6 +43,7 @@ export interface ClientDraft {
   businessName: string;
   websiteUrl: string;
   notes: string;
+  owners: string[];
 }
 
 export interface ClientPayload extends ClientDraft {

@@ -1,4 +1,5 @@
 import { ArrowLeft, ExternalLink, Globe2, Pencil, Plus, Trash2, Wallet } from "lucide-react";
+import { OwnerAvatars } from "@/components/clients/OwnerAvatars";
 import { PaymentCalendar } from "@/components/clients/PaymentCalendar";
 import { PaymentReceipts } from "@/components/clients/PaymentReceipts";
 import { SubscriptionCard } from "@/components/clients/SubscriptionCard";
@@ -57,6 +58,7 @@ export function ClientDetail({
             </div>
 
             <div className="ml-auto flex max-w-full items-center gap-1.5">
+              <span className="mr-2"><OwnerAvatars owners={client.owners} size="md" showLabel /></span>
               <button type="button" onClick={() => onEdit(client)} aria-label={`Editar ${client.clientName}`} title="Editar" className="grid size-9 place-items-center rounded-full text-[var(--muted)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--ink)]">
                 <Pencil aria-hidden="true" className="size-4" />
               </button>
