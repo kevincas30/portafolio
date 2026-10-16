@@ -16,7 +16,7 @@ function subscription(id: string, partial: Partial<Subscription> = {}): Subscrip
 }
 
 function client(owners: string[], subscriptions: Subscription[], businessName = "Tinas Ibiza"): Client {
-  return { id: "c", clientName: "Rocío & Luis", businessName, websiteUrl: "", notes: "", owners, createdAt: "", updatedAt: "", subscriptions };
+  return { id: "c", clientName: "Rocío & Luis", businessName, websiteUrl: "", notes: "", owners, logo: "", createdAt: "", updatedAt: "", subscriptions };
 }
 
 const tinas = client(["gabriel"], [
