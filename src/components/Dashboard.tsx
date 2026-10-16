@@ -7,6 +7,7 @@ import { SectionSwitcher, type AppSection } from "@/components/SectionSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PanelLogin } from "@/components/passwords/PanelLogin";
 import { usePanelSession, type PanelSession } from "@/hooks/usePanelSession";
+import { useUserVault } from "@/hooks/useUserVault";
 
 const sectionTitles: Record<AppSection, string> = {
   clients: "Clientes · Panel",
@@ -33,6 +34,8 @@ export function Dashboard() {
 
 function UnlockedDashboard({ onLock }: { onLock: PanelSession["lock"] }) {
   const [activeSection, setActiveSection] = useState<AppSection>("clients");
+  // Una sola boveda para todo el panel: la usan Contraseñas y Gastos.
+  const userVault = useUserVault();
 
   useEffect(() => {
     document.title = sectionTitles[activeSection];
@@ -56,7 +59,7 @@ function UnlockedDashboard({ onLock }: { onLock: PanelSession["lock"] }) {
           <ClientsPage active={activeSection === "clients"} />
         </div>
         <div className={activeSection === "passwords" ? "block" : "hidden"}>
-          <PasswordsPage />
+          <PasswordsPage userVault={userVault} />
         </div>
       </div>
     </main>
