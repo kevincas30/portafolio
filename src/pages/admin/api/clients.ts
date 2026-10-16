@@ -50,6 +50,7 @@ function rowToClient(row: Record<string, unknown>): Omit<Client, "subscriptions"
     websiteUrl: String(row.website_url),
     notes: String(row.notes),
     owners: ownersFromColumn(row.owners),
+    logo: typeof row.logo === "string" ? row.logo : "",
     createdAt: String(row.created_at),
     updatedAt: String(row.updated_at),
   };
@@ -154,10 +155,13 @@ export const PUT: APIRoute = async ({ request }) => {
     const database = await getTurso();
     await database.execute({
       // COALESCE: si no llegan responsables (panel viejo) se conservan los que habia.
-      sql: `UPDATE clients SET client_name = ?, business_name = ?, website_url = ?, notes = ?, owners = COALESCE(?, owners), updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+      // Si cambia la web, el logo guardado ya no corresponde (SET evalua todo sobre la fila anterior).
+      sql: `UPDATE clients SET client_name = ?, business_name = ?, website_url = ?, notes = ?, owners = COALESCE(?, owners),
+        logo = CASE WHEN website_url = ? THEN logo ELSE '' END, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
       args: [
         payload.clientName.trim(), payload.businessName.trim(), payload.websiteUrl.trim(), payload.notes.trim(),
         payload.owners === undefined ? null : ownersToColumn(parseOwners(payload.owners) ?? []),
+        payload.websiteUrl.trim(),
         payload.id,
       ],
     });
