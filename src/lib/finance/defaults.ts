@@ -1,8 +1,11 @@
 // Categorias con las que arranca una boveda sin ajustes de finanzas. Despues se editan libremente.
 import type { FinanceCategory, FinanceSettings } from "@/types/finance";
 
-/** 10 € */
-export const DEFAULT_ANT_THRESHOLD = 1000;
+/** 15 € */
+export const DEFAULT_ANT_THRESHOLD = 1500;
+
+/** Categorias por defecto que cuentan como hormiga: lo chico y evitable, no lo necesario. */
+export const DEFAULT_ANT_CATEGORIES = new Set(["comida", "cafe", "suscripciones", "ocio"]);
 
 export const UNCATEGORIZED_COLOR = "#9ca3af";
 
@@ -12,9 +15,9 @@ export const CATEGORY_COLORS = [
 ];
 
 const expense = (id: string, name: string, color: string): FinanceCategory =>
-  ({ id, name, kind: "expense", color, budget: null, archived: false });
+  ({ id, name, kind: "expense", color, budget: null, archived: false, ant: DEFAULT_ANT_CATEGORIES.has(id) });
 const income = (id: string, name: string, color: string): FinanceCategory =>
-  ({ id, name, kind: "income", color, budget: null, archived: false });
+  ({ id, name, kind: "income", color, budget: null, archived: false, ant: false });
 
 export function defaultFinanceSettings(): FinanceSettings {
   return {

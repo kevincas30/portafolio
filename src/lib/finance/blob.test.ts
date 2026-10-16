@@ -32,6 +32,25 @@ describe("blob de finanzas", () => {
     expect(await decodeFinanceSettings(await encodeFinanceSettings(settings, dek, "u1"), dek, "u1")).toEqual(settings);
 
     const partial = await encryptJson({ v: 1, categories: [] }, dek, aad.financeSettings("u1"));
-    expect(await decodeFinanceSettings(partial, dek, "u1")).toEqual({ categories: [], recurring: [], antThreshold: 1000 });
+    expect(await decodeFinanceSettings(partial, dek, "u1")).toEqual({ categories: [], recurring: [], antThreshold: 1500 });
+  });
+
+  it("marca `ant` en categorias guardadas antes de que existiera, segun las hormiga por defecto", async () => {
+    const dek = await importDek(generateDek());
+    const legacy = await encryptJson({
+      v: 1,
+      antThreshold: 1000,
+      categories: [
+        { id: "cafe", name: "Café", kind: "expense", color: "#000", budget: null, archived: false },
+        { id: "servicios", name: "Internet", kind: "expense", color: "#000", budget: null, archived: false },
+        { id: "propia", name: "Propia", kind: "expense", color: "#000", budget: null, archived: false, ant: true },
+      ],
+    }, dek, aad.financeSettings("u1"));
+    const settings = await decodeFinanceSettings(legacy, dek, "u1");
+    expect(settings.categories.map((category) => category.ant)).toEqual([true, false, true]);
+    expect(settings.antThreshold).toBe(1500);
+
+    const custom = await encryptJson({ v: 1, antThreshold: 800, categories: [{ id: "cafe", kind: "expense" }] }, dek, aad.financeSettings("u1"));
+    expect((await decodeFinanceSettings(custom, dek, "u1")).antThreshold).toBe(800);
   });
 });

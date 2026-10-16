@@ -11,7 +11,7 @@ import { headerButtonClass } from "@/components/passwords/PasswordsHeader";
 import { Toast } from "@/components/passwords/Toast";
 import { formatMonth, monthOf, monthRange, shiftMonth } from "@/lib/finance/months";
 import { monthlyFixedExpense } from "@/lib/finance/recurring";
-import { monthSummary, monthTotals } from "@/lib/finance/summary";
+import { antRules, monthSummary, monthTotals } from "@/lib/finance/summary";
 import { getTodayKey } from "@/lib/dates";
 import type { FinancesController } from "@/hooks/useVaultFinances";
 import type { EntryKind, FinanceEntry, MonthKey } from "@/types/finance";
@@ -58,6 +58,7 @@ export function FinancesView({ finances, owner, onLock, headerActions }: Finance
   const categoryMap = useMemo(() => new Map(settings.categories.map((category) => [category.id, category])), [settings.categories]);
   const summary = useMemo(() => monthSummary(entries, month, settings, today), [entries, month, settings, today]);
   const previous = useMemo(() => monthSummary(entries, shiftMonth(month, -1), settings, today), [entries, month, settings, today]);
+  const ant = useMemo(() => antRules(settings), [settings]);
   const trend = useMemo(() => monthTotals(entries, monthRange(month, 6)), [entries, month]);
   const usedCategoryIds = useMemo(
     () => new Set([...entries.map((entry) => entry.categoryId), ...settings.recurring.map((rule) => rule.categoryId)]),
@@ -176,7 +177,7 @@ export function FinancesView({ finances, owner, onLock, headerActions }: Finance
             <EntryList
               entries={visibleEntries}
               categories={categoryMap}
-              antThreshold={settings.antThreshold}
+              antRules={ant}
               onSelect={(entry) => setForm({ entry })}
               emptyText={filtered ? "Nada coincide con el filtro." : "No hay movimientos este mes. Anota el primero con «Anotar»."}
             />

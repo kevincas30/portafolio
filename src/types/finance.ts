@@ -32,6 +32,8 @@ export interface FinanceCategory {
   budget: number | null;
   /** Archivada: no aparece para anotar, pero sus movimientos viejos siguen mostrandola. */
   archived: boolean;
+  /** Sus gastos chicos cuentan como hormiga (cafe, comer fuera...). Las necesarias (super, internet) no. */
+  ant: boolean;
 }
 
 export interface RecurringRule {
@@ -54,6 +56,6 @@ export type RecurringDraft = Pick<RecurringRule, "kind" | "amount" | "categoryId
 export interface FinanceSettings {
   categories: FinanceCategory[];
   recurring: RecurringRule[];
-  /** Un gasto de hasta este monto (centimos) cuenta como gasto hormiga. */
+  /** Un gasto suelto de hasta este monto (centimos), en una categoria marcada como hormiga, es gasto hormiga. */
   antThreshold: number;
 }

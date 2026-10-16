@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { defaultFinanceSettings } from "@/lib/finance/defaults";
 import { dateInMonth, monthRange, shiftMonth } from "@/lib/finance/months";
 import { nextRecurringDate, resumeRule, runRecurring } from "@/lib/finance/recurring";
-import { budgetState, change, monthSummary, monthTotals } from "@/lib/finance/summary";
+import { antRules, budgetState, change, isAntExpense, monthSummary, monthTotals } from "@/lib/finance/summary";
 import type { FinanceEntry, FinanceSettings, RecurringRule } from "@/types/finance";
 
 let counter = 0;
@@ -78,6 +78,27 @@ describe("monthSummary", () => {
   it("una categoria borrada queda como null", () => {
     const summary = monthSummary([entry({ categoryId: "ya-no-existe" })], "2026-10", settings(), "2026-10-10");
     expect(summary.expenseByCategory[0].category).toBeNull();
+  });
+});
+
+describe("isAntExpense", () => {
+  const rules = antRules(defaultFinanceSettings());
+
+  it("tope de 15 € y solo en categorias evitables", () => {
+    expect(rules.threshold).toBe(1500);
+    expect(isAntExpense(entry({ amount: 180, categoryId: "cafe" }), rules)).toBe(true);
+    expect(isAntExpense(entry({ amount: 1500, categoryId: "comida" }), rules)).toBe(true);
+    expect(isAntExpense(entry({ amount: 1501, categoryId: "comida" }), rules)).toBe(false);
+  });
+
+  it("el internet de 10 € anotado a mano no es hormiga, ni el super chico", () => {
+    expect(isAntExpense(entry({ amount: 1000, categoryId: "servicios" }), rules)).toBe(false);
+    expect(isAntExpense(entry({ amount: 900, categoryId: "supermercado" }), rules)).toBe(false);
+  });
+
+  it("los fijos y los ingresos nunca son hormiga", () => {
+    expect(isAntExpense(entry({ amount: 299, categoryId: "suscripciones", recurringId: "r1" }), rules)).toBe(false);
+    expect(isAntExpense(entry({ kind: "income", amount: 500, categoryId: "cafe" }), rules)).toBe(false);
   });
 });
 

@@ -23,7 +23,7 @@ export interface MonthSummary {
   income: number;
   expense: number;
   balance: number;
-  /** Gastos chicos sueltos (no fijos) hasta el umbral de los ajustes. */
+  /** Gastos chicos sueltos (no fijos) de categorias hormiga, hasta el umbral de los ajustes. */
   ant: { count: number; total: number };
   /** Gasto medio por dia transcurrido del mes. */
   dailyAverage: number;
@@ -38,8 +38,21 @@ export function budgetState(ratio: number | null): BudgetState {
   return ratio > 1 ? "over" : "warn";
 }
 
-export function isAntExpense(entry: Pick<FinanceEntry, "kind" | "amount" | "recurringId">, threshold: number): boolean {
-  return entry.kind === "expense" && entry.recurringId === null && entry.amount <= threshold;
+export interface AntRules {
+  threshold: number;
+  categoryIds: Set<string>;
+}
+
+export function antRules(settings: Pick<FinanceSettings, "antThreshold" | "categories">): AntRules {
+  return {
+    threshold: settings.antThreshold,
+    categoryIds: new Set(settings.categories.filter((category) => category.kind === "expense" && category.ant).map((category) => category.id)),
+  };
+}
+
+/** Hormiga = gasto suelto (no fijo), chico y de una categoria evitable. El internet de 10 € no lo es. */
+export function isAntExpense(entry: Pick<FinanceEntry, "kind" | "amount" | "recurringId" | "categoryId">, rules: AntRules): boolean {
+  return entry.kind === "expense" && entry.recurringId === null && entry.amount <= rules.threshold && rules.categoryIds.has(entry.categoryId);
 }
 
 function byCategory(entries: FinanceEntry[], kind: EntryKind, categories: FinanceCategory[]): CategoryTotal[] {
@@ -80,10 +93,11 @@ export function monthSummary(entries: FinanceEntry[], month: MonthKey, settings:
   let income = 0;
   let expense = 0;
   const ant = { count: 0, total: 0 };
+  const rules = antRules(settings);
   for (const entry of inMonth) {
     if (entry.kind === "income") income += entry.amount;
     else expense += entry.amount;
-    if (isAntExpense(entry, settings.antThreshold)) {
+    if (isAntExpense(entry, rules)) {
       ant.count += 1;
       ant.total += entry.amount;
     }

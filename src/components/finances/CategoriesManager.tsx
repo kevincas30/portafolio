@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Archive, ArchiveRestore, LoaderCircle, Plus, Trash2 } from "lucide-react";
+import { Archive, ArchiveRestore, Bug, LoaderCircle, Plus, Trash2 } from "lucide-react";
 import { FinanceDialog, inputClass, KindToggle, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/finances/FinanceDialog";
 import { CATEGORY_COLORS } from "@/lib/finance/defaults";
 import { amountToInput, formatAmount, parseAmount } from "@/lib/finance/money";
@@ -32,13 +32,13 @@ export function CategoriesManager({ settings, usedCategoryIds, onSave, onClose }
   const add = () => {
     const used = new Set(rows.map((row) => row.color));
     const color = CATEGORY_COLORS.find((item) => !used.has(item)) ?? CATEGORY_COLORS[rows.length % CATEGORY_COLORS.length];
-    setRows((list) => [...list, { id: globalThis.crypto.randomUUID(), name: "", kind, color, budget: null, archived: false, budgetInput: "" }]);
+    setRows((list) => [...list, { id: globalThis.crypto.randomUUID(), name: "", kind, color, budget: null, archived: false, ant: false, budgetInput: "" }]);
   };
 
   const save = async () => {
     setError("");
     const antThreshold = parseAmount(threshold);
-    if (antThreshold === null) return setError("El umbral de gasto hormiga tiene que ser un monto, por ejemplo 10.");
+    if (antThreshold === null) return setError("El tope del gasto hormiga tiene que ser un monto, por ejemplo 15.");
 
     const categories: FinanceCategory[] = [];
     for (const { budgetInput, ...row } of rows) {
@@ -113,6 +113,18 @@ export function CategoriesManager({ settings, usedCategoryIds, onSave, onClose }
                       <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-bold text-[var(--muted)]">€/mes</span>
                     </div>
                   )}
+                  {kind === "expense" && (
+                    <button
+                      type="button"
+                      onClick={() => patch(row.id, { ant: !row.ant })}
+                      aria-pressed={row.ant}
+                      aria-label={`${row.name || "La categoría"} cuenta como gasto hormiga`}
+                      title={row.ant ? "Cuenta como hormiga" : "No cuenta como hormiga"}
+                      className={`inline-flex min-h-10 items-center gap-1.5 rounded-xl border px-2.5 text-xs font-extrabold transition ${row.ant ? "border-[var(--charge-border)] bg-[var(--charge-soft)] text-[var(--charge-text)]" : "border-[var(--line)] text-[var(--muted)] hover:bg-[var(--surface-muted)]"}`}
+                    >
+                      <Bug aria-hidden="true" className="size-4" /> Hormiga
+                    </button>
+                  )}
                   {used ? (
                     <button
                       type="button"
@@ -160,7 +172,10 @@ export function CategoriesManager({ settings, usedCategoryIds, onSave, onClose }
 
         <label className="block border-t border-[var(--line)] pt-5">
           <span className={labelClass}>Gasto hormiga</span>
-          <span className="mb-2 block text-xs font-semibold text-[var(--muted-strong)]">Los gastos sueltos de hasta este monto cuentan como hormiga (los fijos no).</span>
+          <span className="mb-2 block text-xs font-semibold leading-5 text-[var(--muted-strong)]">
+            Cuenta como hormiga un gasto suelto de hasta este monto en una categoría marcada con <Bug aria-hidden="true" className="inline size-3.5 align-[-2px]" /> Hormiga.
+            Los gastos fijos y las categorías necesarias (súper, internet, transporte…) nunca cuentan.
+          </span>
           <div className="relative w-40">
             <input value={threshold} onChange={(event) => setThreshold(event.target.value)} inputMode="decimal" className={`${inputClass} pr-10 tabular-nums`} />
             <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm font-bold text-[var(--muted)]">€</span>

@@ -59,7 +59,7 @@ export function MonthStats({ summary, previous, antThreshold, fixedExpense }: Mo
         </Stat>
         <Stat icon={Bug} label="Hormiga" value={formatAmount(summary.ant.total)} tone="bg-[var(--charge-soft)] text-[var(--charge-text)]">
           <span className="text-xs font-bold text-[var(--muted-strong)]">
-            {summary.ant.count} {summary.ant.count === 1 ? "gasto" : "gastos"} de hasta {formatAmount(antThreshold)}
+            {summary.ant.count} {summary.ant.count === 1 ? "gasto chico" : "gastos chicos"} (hasta {formatAmount(antThreshold)}) en caprichos
             {summary.expense > 0 && ` · ${percent.format(antShare)} del total`}
           </span>
         </Stat>

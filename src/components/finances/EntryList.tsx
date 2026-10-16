@@ -2,20 +2,20 @@ import { Bug, Repeat } from "lucide-react";
 import { CategoryDot } from "@/components/finances/FinanceDialog";
 import { UNCATEGORIZED_COLOR } from "@/lib/finance/defaults";
 import { formatAmount } from "@/lib/finance/money";
-import { isAntExpense } from "@/lib/finance/summary";
+import { isAntExpense, type AntRules } from "@/lib/finance/summary";
 import { formatLongDate } from "@/lib/dates";
 import type { FinanceCategory, FinanceEntry } from "@/types/finance";
 
 interface EntryListProps {
   entries: FinanceEntry[];
   categories: Map<string, FinanceCategory>;
-  antThreshold: number;
+  antRules: AntRules;
   onSelect: (entry: FinanceEntry) => void;
   emptyText: string;
 }
 
 /** Movimientos agrupados por dia, del mas nuevo al mas viejo, con el neto de cada dia. */
-export function EntryList({ entries, categories, antThreshold, onSelect, emptyText }: EntryListProps) {
+export function EntryList({ entries, categories, antRules, onSelect, emptyText }: EntryListProps) {
   const days = new Map<string, FinanceEntry[]>();
   const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt));
   for (const entry of sorted) days.set(entry.date, [...(days.get(entry.date) ?? []), entry]);
@@ -37,7 +37,7 @@ export function EntryList({ entries, categories, antThreshold, onSelect, emptyTe
             <ul className="divide-y divide-[var(--line-soft)] overflow-hidden rounded-[20px] border border-[var(--line-soft)] bg-[var(--surface)]">
               {items.map((entry) => {
                 const category = categories.get(entry.categoryId);
-                const ant = isAntExpense(entry, antThreshold);
+                const ant = isAntExpense(entry, antRules);
                 return (
                   <li key={entry.id}>
                     <button type="button" onClick={() => onSelect(entry)} className="flex min-h-14 w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-[var(--surface-muted)]">
