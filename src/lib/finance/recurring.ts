@@ -19,7 +19,8 @@ export function runRecurring(rules: RecurringRule[], todayKey: string, newId: ()
   const currentMonth = monthOf(todayKey);
   const entries: PendingEntry[] = [];
   const updated = rules.map((rule) => {
-    if (!rule.active) return rule;
+    // Los enlazados a un servicio de cliente se anotan al registrar el pago (client-income.ts).
+    if (!rule.active || rule.subscriptionId) return rule;
     let month = rule.generatedThrough ? shiftMonth(rule.generatedThrough, 1) : rule.startMonth;
     let last = rule.generatedThrough;
     for (let step = 0; step < MAX_CATCH_UP_MONTHS && month <= currentMonth; step += 1) {
@@ -50,7 +51,7 @@ export function nextRecurringDate(rule: RecurringRule): string {
 
 /** Total mensual comprometido en gastos fijos activos. */
 export function monthlyFixedExpense(rules: RecurringRule[]): number {
-  return rules.filter((rule) => rule.active && rule.kind === "expense").reduce((total, rule) => total + rule.amount, 0);
+  return rules.filter((rule) => rule.active && rule.kind === "expense" && !rule.subscriptionId).reduce((total, rule) => total + rule.amount, 0);
 }
 
 /** Reanudar una regla pausada no anota los meses en que estuvo en pausa: arranca en el mes en curso. */
