@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { defaultFinanceSettings } from "@/lib/finance/defaults";
 import { dateInMonth, monthRange, shiftMonth } from "@/lib/finance/months";
-import { nextRecurringDate, runRecurring } from "@/lib/finance/recurring";
+import { nextRecurringDate, resumeRule, runRecurring } from "@/lib/finance/recurring";
 import { budgetState, change, monthSummary, monthTotals } from "@/lib/finance/summary";
 import type { FinanceEntry, FinanceSettings, RecurringRule } from "@/types/finance";
 
@@ -140,6 +140,18 @@ describe("runRecurring", () => {
     const run = runRecurring([{ ...rule, startMonth: "2020-01" }], "2026-10-15", ids());
     expect(run.entries).toHaveLength(24);
     expect(run.rules[0].generatedThrough).toBe("2021-12");
+  });
+
+  it("al reanudar no anota los meses en pausa, pero si el mes en curso", () => {
+    const paused = { ...rule, active: false, generatedThrough: "2026-03" };
+    const resumed = resumeRule(paused, "2026-10-15");
+    expect(resumed).toMatchObject({ active: true, generatedThrough: "2026-09" });
+    expect(runRecurring([resumed], "2026-10-15", ids()).entries.map((item) => item.date)).toEqual(["2026-10-01"]);
+  });
+
+  it("al reanudar una regla que arranca en el futuro no toca generatedThrough", () => {
+    const future = { ...rule, active: false, startMonth: "2026-12" };
+    expect(resumeRule(future, "2026-10-15").generatedThrough).toBeNull();
   });
 
   it("calcula la proxima fecha", () => {

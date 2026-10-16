@@ -52,3 +52,14 @@ export function nextRecurringDate(rule: RecurringRule): string {
 export function monthlyFixedExpense(rules: RecurringRule[]): number {
   return rules.filter((rule) => rule.active && rule.kind === "expense").reduce((total, rule) => total + rule.amount, 0);
 }
+
+/** Reanudar una regla pausada no anota los meses en que estuvo en pausa: arranca en el mes en curso. */
+export function resumeRule(rule: RecurringRule, todayKey: string): RecurringRule {
+  const previous = shiftMonth(monthOf(todayKey), -1);
+  const skipped = !rule.generatedThrough || rule.generatedThrough < previous;
+  return {
+    ...rule,
+    active: true,
+    generatedThrough: skipped && rule.startMonth <= previous ? previous : rule.generatedThrough,
+  };
+}
