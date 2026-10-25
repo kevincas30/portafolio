@@ -32,7 +32,7 @@ describe("blob de finanzas", () => {
     expect(await decodeFinanceSettings(await encodeFinanceSettings(settings, dek, "u1"), dek, "u1")).toEqual(settings);
 
     const partial = await encryptJson({ v: 1, categories: [] }, dek, aad.financeSettings("u1"));
-    expect(await decodeFinanceSettings(partial, dek, "u1")).toEqual({ categories: [], recurring: [], antThreshold: 1500 });
+    expect(await decodeFinanceSettings(partial, dek, "u1")).toEqual({ categories: [], recurring: [], teamMemberId: null, antThreshold: 1500 });
   });
 
   it("marca `ant` en categorias guardadas antes de que existiera, segun las hormiga por defecto", async () => {

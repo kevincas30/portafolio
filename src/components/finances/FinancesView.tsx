@@ -218,6 +218,8 @@ export function FinancesView({ finances, owner, onLock, headerActions }: Finance
         <RecurringManager
           rules={settings.recurring}
           categories={settings.categories}
+          clients={finances.clients}
+          teamMemberId={settings.teamMemberId}
           onSave={finances.saveRecurringRules}
           onCreated={(count) => showToast(count === 1 ? "Se anotó 1 movimiento" : `Se anotaron ${count} movimientos`)}
           onClose={() => setRecurringOpen(false)}
