@@ -11,6 +11,8 @@ export interface CalendarCell {
   /** Indice absoluto de mes (anio * 12 + mes 0-11). */
   month: number;
   state: PeriodState;
+  /** Fecha de cobro del periodo que arranca en ese mes (dia ajustado a meses cortos). */
+  start: string;
 }
 
 type CalendarSource = Pick<Subscription, "nextDueDate" | "billingInterval" | "active" | "payments">;
@@ -63,9 +65,10 @@ export function periodStates(source: CalendarSource, todayKey = getTodayKey()): 
 /** Los 12 meses de un anio para un servicio mensual. */
 export function monthCells(source: CalendarSource, year: number, todayKey = getTodayKey()): CalendarCell[] {
   const states = periodStates(source, todayKey);
+  const { day } = parseKey(source.nextDueDate);
   return Array.from({ length: 12 }, (_, index) => {
     const month = year * 12 + index;
-    return { month, state: states.get(month) ?? "idle" };
+    return { month, state: states.get(month) ?? "idle", start: periodStartKey(month, day) };
   });
 }
 
@@ -78,7 +81,7 @@ export function yearCells(source: CalendarSource, todayKey = getTodayKey(), maxY
   const last = Math.max(...months);
   const cells: CalendarCell[] = [];
   for (let month = first; month <= last; month += 12) {
-    cells.push({ month, state: states.get(month) ?? "idle" });
+    cells.push({ month, state: states.get(month) ?? "idle", start: periodStartKey(month, parseKey(source.nextDueDate).day) });
   }
   return cells.slice(-maxYears);
 }
