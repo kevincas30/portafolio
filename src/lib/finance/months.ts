@@ -33,6 +33,7 @@ export function monthRange(last: MonthKey, count: number): MonthKey[] {
 
 const monthFormatter = new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" });
 const shortMonthFormatter = new Intl.DateTimeFormat("es-ES", { month: "short" });
+const monthNameFormatter = new Intl.DateTimeFormat("es-ES", { month: "long" });
 
 function toDate(month: MonthKey): Date {
   const [year, monthNumber] = parts(month);
@@ -42,6 +43,11 @@ function toDate(month: MonthKey): Date {
 /** "octubre de 2026" */
 export function formatMonth(month: MonthKey): string {
   return monthFormatter.format(toDate(month));
+}
+
+/** "octubre" */
+export function formatMonthName(month: MonthKey): string {
+  return monthNameFormatter.format(toDate(month));
 }
 
 /** "oct" */

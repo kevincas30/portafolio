@@ -7,11 +7,11 @@ import { teamMembers } from "@/lib/client-owner";
 import { coverageLabel, importClientPayments, lastPayment, myServices } from "@/lib/finance/client-income";
 import { UNCATEGORIZED_COLOR } from "@/lib/finance/defaults";
 import { amountToInput, formatAmount, parseAmount } from "@/lib/finance/money";
-import { monthOf } from "@/lib/finance/months";
+import { formatMonth, formatMonthName, monthOf } from "@/lib/finance/months";
 import { monthlyFixedExpense, nextRecurringDate, resumeRule, runRecurring, type PendingEntry } from "@/lib/finance/recurring";
 import { formatMediumDate, formatShortDateWithYear, getTodayKey } from "@/lib/dates";
 import type { Client } from "@/types/client";
-import type { EntryKind, FinanceCategory, FinanceSettings, RecurringRule } from "@/types/finance";
+import type { EntryKind, FinanceCategory, FinanceSettings, RecurringFrequency, RecurringRule } from "@/types/finance";
 
 interface RecurringManagerProps {
   rules: RecurringRule[];
@@ -35,6 +35,7 @@ interface Draft {
   note: string;
   day: string;
   startMonth: string;
+  frequency: RecurringFrequency;
 }
 
 function defaultCategory(categories: FinanceCategory[], kind: EntryKind, preferred?: string): string {
@@ -53,8 +54,11 @@ function emptyDraft(categories: FinanceCategory[]): Draft {
     note: "",
     day: String(Number(today.slice(8, 10))),
     startMonth: monthOf(today),
+    frequency: "monthly",
   };
 }
+
+const frequencyUnit = (frequency: RecurringFrequency | undefined) => (frequency === "yearly" ? "año" : "mes");
 
 const chipClass = (selected: boolean) =>
   `inline-flex min-h-9 items-center gap-2 rounded-full border px-3 text-xs font-bold transition ${selected ? "border-[var(--ink)] bg-[var(--accent-soft)] text-[var(--ink)]" : "border-[var(--line)] text-[var(--muted-strong)] hover:bg-[var(--surface-muted)]"}`;
@@ -97,6 +101,7 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
       note: rule.note,
       day: String(rule.day),
       startMonth: rule.startMonth,
+      frequency: rule.frequency ?? "monthly",
     });
     setEditing(rule);
   };
@@ -136,7 +141,7 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
     const fields = { kind: draft.kind, amount, categoryId: draft.categoryId, note, day };
     const next = editing && editing !== "new"
       ? rules.map((rule) => (rule.id === editing.id ? { ...rule, ...fields } : rule))
-      : [...rules, { id: globalThis.crypto.randomUUID(), ...fields, startMonth: draft.startMonth, generatedThrough: null, active: true }];
+      : [...rules, { id: globalThis.crypto.randomUUID(), ...fields, startMonth: draft.startMonth, frequency: draft.frequency, generatedThrough: null, active: true }];
     if (await run(next)) close();
   };
 
@@ -148,6 +153,7 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
 
   const options = categories.filter((category) => category.kind === draft.kind && (!category.archived || category.id === draft.categoryId));
   const fixed = monthlyFixedExpense(rules);
+  const hasYearlyExpense = rules.some((rule) => rule.active && rule.kind === "expense" && !rule.subscriptionId && rule.frequency === "yearly");
   const editingLinked = editing !== null && editing !== "new" && Boolean(editing.subscriptionId);
   const selectedSubscription = subscriptions.get(draft.subscriptionId);
 
@@ -174,19 +180,19 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
     if (amount === null || !Number.isInteger(day) || day < 1 || day > 31 || !/^\d{4}-\d{2}$/.test(draft.startMonth)) return null;
     const rule: RecurringRule = {
       id: "preview", kind: draft.kind, amount, categoryId: draft.categoryId, note: draft.note.trim(), day,
-      startMonth: draft.startMonth, generatedThrough: null, active: true,
+      startMonth: draft.startMonth, frequency: draft.frequency, generatedThrough: null, active: true,
     };
     const run = runRecurring([rule], getTodayKey(), previewId);
-    return { entries: run.entries, next: `Después: ${draft.kind === "income" ? "+" : "−"}${formatAmount(amount)} cada mes, el próximo el ${formatMediumDate(nextRecurringDate(run.rules[0]))}.` };
+    return { entries: run.entries, next: `Después: ${draft.kind === "income" ? "+" : "−"}${formatAmount(amount)} cada ${frequencyUnit(draft.frequency)}, el próximo el ${formatMediumDate(nextRecurringDate(run.rules[0]))}.` };
   })();
 
   return (
     <FinanceDialog eyebrow="Gastos" title="Gastos e ingresos fijos" onClose={onClose} size="lg">
       <div className="space-y-5 px-5 py-6 sm:px-7 sm:py-7">
         <p className="text-xs font-semibold leading-5 text-[var(--muted-strong)]">
-          Alquiler, suscripciones, sueldo… Se anotan solos cada mes el día que elijas, en cuanto abres tu bóveda.
+          Alquiler, suscripciones, sueldo, el seguro anual… Se anotan solos cada mes o cada año el día que elijas, en cuanto abres tu bóveda.
           Los servicios de tus clientes se anotan cuando registras el pago en Clientes.
-          {fixed > 0 && <> Ahora mismo: <span className="font-extrabold text-[var(--ink)]">{formatAmount(fixed)}/mes</span> en gastos fijos.</>}
+          {fixed > 0 && <> Ahora mismo: <span className="font-extrabold text-[var(--ink)]">{formatAmount(fixed)}/mes</span> en gastos fijos{hasYearlyExpense && " (los anuales, repartidos en 12 meses)"}.</>}
         </p>
 
         {rules.length > 0 && (
@@ -202,7 +208,7 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
                 detail = subscription
                   ? `Al registrar el pago · precio ${formatAmount(Math.round(subscription.amount * 100))}/${subscription.billingInterval === "monthly" ? "mes" : "año"} · próximo cobro: ${formatMediumDate(subscription.nextDueDate)}`
                   : "Al registrar el pago · el servicio ya no está en tus clientes";
-              } else detail = `Día ${rule.day} · próximo: ${formatMediumDate(nextRecurringDate(rule))}`;
+              } else detail = `${rule.frequency === "yearly" ? "Cada año" : `Día ${rule.day}`} · próximo: ${formatMediumDate(nextRecurringDate(rule))}`;
               return (
                 <li key={rule.id} className={`flex flex-wrap items-center gap-3 px-4 py-3 ${rule.active ? "" : "opacity-60"}`}>
                   <CategoryDot color={category?.color ?? UNCATEGORIZED_COLOR} className="size-3" />
@@ -225,6 +231,7 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
                   ) : (
                     <span className={`text-sm font-extrabold tabular-nums ${rule.kind === "income" ? "text-[var(--success-text)]" : "text-[var(--danger-text)]"}`}>
                       {rule.kind === "income" ? "+" : "−"}{formatAmount(rule.amount)}
+                      {rule.frequency === "yearly" && <span className="text-xs font-bold">/año</span>}
                     </span>
                   )}
                   <span className="flex gap-1">
@@ -372,13 +379,31 @@ export function RecurringManager({ rules, categories, clients, teamMemberId, onS
                     </label>
                     {editing === "new" && (
                       <label className="block">
-                        <span className={labelClass}>Empieza en</span>
+                        <span className={labelClass}>{draft.frequency === "yearly" ? "Primer cobro en" : "Empieza en"}</span>
                         <input type="month" value={draft.startMonth} onChange={(event) => setDraft({ ...draft, startMonth: event.target.value })} className={inputClass} />
                       </label>
                     )}
                   </>
                 )}
               </div>
+            )}
+
+            {!isLinked && editing === "new" && (
+              <fieldset>
+                <legend className={labelClass}>Se repite</legend>
+                <div className="flex flex-wrap gap-2">
+                  {([{ id: "monthly", label: "Cada mes" }, { id: "yearly", label: "Cada año" }] as const).map((option) => (
+                    <button key={option.id} type="button" onClick={() => setDraft({ ...draft, frequency: option.id })} aria-pressed={draft.frequency === option.id} className={chipClass(draft.frequency === option.id)}>
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+                {draft.frequency === "yearly" && /^\d{4}-\d{2}$/.test(draft.startMonth) && (
+                  <p className="mt-2 text-xs font-semibold text-[var(--muted)]">
+                    Se anota una vez al año, el día {draft.day || "?"} de {formatMonthName(draft.startMonth)}, desde {formatMonth(draft.startMonth)}.
+                  </p>
+                )}
+              </fieldset>
             )}
 
             {(!isLinked || draft.subscriptionId) && (

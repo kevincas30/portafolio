@@ -36,6 +36,8 @@ export interface FinanceCategory {
   ant: boolean;
 }
 
+export type RecurringFrequency = "monthly" | "yearly";
+
 export interface RecurringRule {
   id: string;
   kind: EntryKind;
@@ -44,8 +46,10 @@ export interface RecurringRule {
   note: string;
   /** Dia del mes en que se anota (se ajusta a meses cortos). */
   day: number;
-  /** Primer mes que se anota. */
+  /** Primer mes que se anota. En los anuales, tambien el mes de cada anio. */
   startMonth: MonthKey;
+  /** Cada cuanto se anota. Ausente = mensual (reglas guardadas antes de existir los anuales). */
+  frequency?: RecurringFrequency;
   /** Ultimo mes ya anotado. null = todavia ninguno. */
   generatedThrough: MonthKey | null;
   active: boolean;
@@ -58,7 +62,7 @@ export interface RecurringRule {
   importedPaymentIds?: string[];
 }
 
-export type RecurringDraft = Pick<RecurringRule, "kind" | "amount" | "categoryId" | "note" | "day" | "startMonth">;
+export type RecurringDraft = Pick<RecurringRule, "kind" | "amount" | "categoryId" | "note" | "day" | "startMonth" | "frequency">;
 
 export interface FinanceSettings {
   categories: FinanceCategory[];
