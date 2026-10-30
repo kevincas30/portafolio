@@ -34,7 +34,9 @@ export type InvoiceDraft = Omit<Invoice, "id" | "createdAt" | "updatedAt">;
 export interface AutonomoSettings {
   /** YYYY-MM-DD del alta en Hacienda; define el 7% de inicio de actividad. */
   activityStart: string | null;
-  /** Epigrafe de actividad profesional (p. ej. 763): sus facturas a empresas llevan retencion. */
+  /** Epigrafe del IAE (p. ej. `763`); vacio si todavia no se eligio. */
+  epigrafe: string;
+  /** Actividad profesional (seccion 2.ª del IAE): sus facturas a empresas llevan retencion. */
   professional: boolean;
   /** Lo que ya tienes en la cuenta aparte para impuestos (centimos). */
   setAside: number;

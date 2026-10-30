@@ -47,7 +47,7 @@ describe("blob de facturas de autónomo", () => {
 
   it("cifra y descifra los ajustes, completando lo que falte", async () => {
     const dek = await importDek(generateDek());
-    const settings = { activityStart: "2026-11-01", professional: false, setAside: 123_450, filed: ["303-2026-4"], roadmapDone: [1, 4] };
+    const settings = { activityStart: "2026-11-01", epigrafe: "845", professional: false, setAside: 123_450, filed: ["303-2026-4"], roadmapDone: [1, 4] };
     expect(await decodeAutonomoSettings(await encodeAutonomoSettings(settings, dek, "u1"), dek, "u1")).toEqual(settings);
 
     const partial = await encryptJson({ v: 1 }, dek, aad.autonomoSettings("u1"));
@@ -70,5 +70,15 @@ describe("estado del calendario y la hoja de ruta", () => {
     const decoded = await decodeAutonomoSettings(sealed, dek, "u1");
     expect(decoded.filed).toEqual(["303-2026-4"]);
     expect(decoded.roadmapDone).toEqual([1, 2]);
+  });
+});
+
+describe("epígrafe en los ajustes", () => {
+  it("se guarda como texto corto y si falta queda vacío", async () => {
+    const dek = await importDek(generateDek());
+    const long = await encryptJson({ v: 1, epigrafe: "x".repeat(40) }, dek, aad.autonomoSettings("u1"));
+    expect((await decodeAutonomoSettings(long, dek, "u1")).epigrafe).toBe("");
+    const missing = await encryptJson({ v: 1, professional: true }, dek, aad.autonomoSettings("u1"));
+    expect((await decodeAutonomoSettings(missing, dek, "u1")).epigrafe).toBe("");
   });
 });

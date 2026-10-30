@@ -9,6 +9,7 @@ export type InvoiceBlob = Omit<Invoice, "id" | "createdAt" | "updatedAt">;
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const ROADMAP_STEPS = 10;
+const MAX_EPIGRAFE = 12;
 const COUNTERPARTY_TYPES = new Set(["company", "freelancer", "individual", "foreign"]);
 
 function assertObject(value: unknown): asserts value is Record<string, unknown> {
@@ -62,6 +63,7 @@ export async function decodeAutonomoSettings(sealed: Sealed, dek: CryptoKey, use
   const defaults = defaultAutonomoSettings();
   return {
     activityStart: typeof raw.activityStart === "string" && DATE.test(raw.activityStart) ? raw.activityStart : defaults.activityStart,
+    epigrafe: typeof raw.epigrafe === "string" && raw.epigrafe.length <= MAX_EPIGRAFE ? raw.epigrafe : defaults.epigrafe,
     professional: typeof raw.professional === "boolean" ? raw.professional : defaults.professional,
     setAside: Number.isInteger(raw.setAside) && (raw.setAside as number) >= 0 ? (raw.setAside as number) : defaults.setAside,
     filed: Array.isArray(raw.filed) ? raw.filed.filter((id): id is string => typeof id === "string") : defaults.filed,
