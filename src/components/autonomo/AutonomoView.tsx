@@ -2,6 +2,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight, LoaderCircle, Lock, Plus, Settings2 } from "lucide-react";
 import { AutonomoSettingsForm } from "@/components/autonomo/AutonomoSettingsForm";
 import { counterpartyLabels, InvoiceForm } from "@/components/autonomo/InvoiceForm";
+import { TaxPanel } from "@/components/autonomo/TaxPanel";
 import { headerButtonClass } from "@/components/passwords/PasswordsHeader";
 import { invoiceAmounts, quarterOf, type Quarter } from "@/lib/autonomo/invoice";
 import { formatAmount } from "@/lib/finance/money";
@@ -100,7 +101,11 @@ export function AutonomoView({ autonomo, owner, onLock, headerActions }: Autonom
           <LoaderCircle aria-hidden="true" className="size-6 animate-spin" />
           <p className="mt-3 text-sm font-bold">Descifrando tus facturas…</p>
         </div>
-      ) : byQuarter.size === 0 ? (
+      ) : (
+        <TaxPanel invoices={autonomo.invoices} settings={autonomo.settings} year={year} today={today} onSaveSettings={autonomo.saveSettings} />
+      )}
+
+      {!autonomo.ready ? null : byQuarter.size === 0 ? (
         <p className="rounded-[22px] border border-dashed border-[var(--line)] px-5 py-10 text-center text-sm font-bold text-[var(--muted-strong)]">
           No hay facturas registradas en {year}. Registra las que emites con tu generador y las que recibes de tus gastos.
         </p>

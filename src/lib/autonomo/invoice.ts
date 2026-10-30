@@ -4,7 +4,7 @@ import type { AutonomoSettings, Invoice, WithholdingRate } from "@/types/autonom
 const REDUCED_WITHHOLDING_YEARS = 3;
 
 export function defaultAutonomoSettings(): AutonomoSettings {
-  return { activityStart: null, professional: true };
+  return { activityStart: null, professional: true, setAside: 0 };
 }
 
 export interface InvoiceAmounts {

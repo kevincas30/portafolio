@@ -62,5 +62,6 @@ export async function decodeAutonomoSettings(sealed: Sealed, dek: CryptoKey, use
   return {
     activityStart: typeof raw.activityStart === "string" && DATE.test(raw.activityStart) ? raw.activityStart : defaults.activityStart,
     professional: typeof raw.professional === "boolean" ? raw.professional : defaults.professional,
+    setAside: Number.isInteger(raw.setAside) && (raw.setAside as number) >= 0 ? (raw.setAside as number) : defaults.setAside,
   };
 }

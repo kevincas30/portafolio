@@ -47,10 +47,18 @@ describe("blob de facturas de autónomo", () => {
 
   it("cifra y descifra los ajustes, completando lo que falte", async () => {
     const dek = await importDek(generateDek());
-    const settings = { activityStart: "2026-11-01", professional: false };
+    const settings = { activityStart: "2026-11-01", professional: false, setAside: 123_450 };
     expect(await decodeAutonomoSettings(await encodeAutonomoSettings(settings, dek, "u1"), dek, "u1")).toEqual(settings);
 
     const partial = await encryptJson({ v: 1 }, dek, aad.autonomoSettings("u1"));
     expect(await decodeAutonomoSettings(partial, dek, "u1")).toEqual(defaultAutonomoSettings());
+  });
+});
+
+describe("ajustes de autónomo", () => {
+  it("lo apartado tiene que ser un entero no negativo", async () => {
+    const dek = await importDek(generateDek());
+    const sealed = await encryptJson({ v: 1, setAside: -5 }, dek, aad.autonomoSettings("u1"));
+    expect((await decodeAutonomoSettings(sealed, dek, "u1")).setAside).toBe(0);
   });
 });

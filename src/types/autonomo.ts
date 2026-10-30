@@ -36,4 +36,6 @@ export interface AutonomoSettings {
   activityStart: string | null;
   /** Epigrafe de actividad profesional (p. ej. 763): sus facturas a empresas llevan retencion. */
   professional: boolean;
+  /** Lo que ya tienes en la cuenta aparte para impuestos (centimos). */
+  setAside: number;
 }

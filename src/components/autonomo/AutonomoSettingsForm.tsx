@@ -20,7 +20,7 @@ export function AutonomoSettingsForm({ settings, onSave, onClose }: AutonomoSett
     setError("");
     setSubmitting(true);
     try {
-      await onSave({ activityStart: activityStart || null, professional });
+      await onSave({ ...settings, activityStart: activityStart || null, professional });
       onClose();
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "No se pudieron guardar los ajustes.");

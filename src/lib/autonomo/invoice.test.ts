@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { invoiceAmounts, quarterOf, suggestWithholding } from "@/lib/autonomo/invoice";
 import type { AutonomoSettings } from "@/types/autonomo";
 
-const settings: AutonomoSettings = { activityStart: "2026-11-01", professional: true };
+const settings: AutonomoSettings = { activityStart: "2026-11-01", professional: true, setAside: 0 };
 
 describe("importes de una factura", () => {
   it("calcula IVA, retención y total como el ejemplo de la guía (Quorum, 7%)", () => {
