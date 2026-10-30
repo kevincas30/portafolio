@@ -134,3 +134,16 @@ export interface FinanceBatch {
 export const getVaultFinances = (signal?: AbortSignal) =>
   request<{ entries: StoredFinanceEntry[]; settings: SealedSettings | null }>("user-vault/finances", { signal });
 export const applyFinanceBatch = (batch: FinanceBatch) => request<{ ok: true }>("user-vault/finances", send("POST", batch));
+
+export type SealedInvoice = SealedFinanceEntry;
+export type StoredInvoice = StoredFinanceEntry;
+
+export interface AutonomoBatch {
+  upserts: SealedInvoice[];
+  deletes: string[];
+  settings?: SealedSettings;
+}
+
+export const getVaultAutonomo = (signal?: AbortSignal) =>
+  request<{ invoices: StoredInvoice[]; settings: SealedSettings | null }>("user-vault/autonomo", { signal });
+export const applyAutonomoBatch = (batch: AutonomoBatch) => request<{ ok: true }>("user-vault/autonomo", send("POST", batch));

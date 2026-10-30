@@ -32,6 +32,8 @@ export const aad = {
   settings: (userId: string) => `settings:v1:${userId}`,
   financeEntry: (userId: string, entryId: string) => `fin:v1:${userId}:${entryId}`,
   financeSettings: (userId: string) => `fin-settings:v1:${userId}`,
+  autonomoInvoice: (userId: string, invoiceId: string) => `aut-inv:v1:${userId}:${invoiceId}`,
+  autonomoSettings: (userId: string) => `aut-settings:v1:${userId}`,
 };
 
 function subtle(): SubtleCrypto {

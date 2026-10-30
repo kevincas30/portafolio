@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { LockKeyhole } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
+import { AutonomoPage } from "@/components/autonomo/AutonomoPage";
 import { ClientsPage } from "@/components/clients/ClientsPage";
 import { FinancesPage } from "@/components/finances/FinancesPage";
 import { PasswordsPage } from "@/components/passwords/PasswordsPage";
@@ -14,6 +15,7 @@ const sectionTitles: Record<AppSection, string> = {
   clients: "Clientes · Panel",
   passwords: "Contraseñas · Panel",
   finances: "Gastos · Panel",
+  autonomo: "Autónomo · Panel",
 };
 
 export function Dashboard() {
@@ -36,7 +38,7 @@ export function Dashboard() {
 
 function UnlockedDashboard({ onLock }: { onLock: PanelSession["lock"] }) {
   const [activeSection, setActiveSection] = useState<AppSection>("clients");
-  // Una sola boveda para todo el panel: la usan Contraseñas y Gastos.
+  // Una sola boveda para todo el panel: la usan Contraseñas, Gastos y Autónomo.
   const userVault = useUserVault();
 
   useEffect(() => {
@@ -65,6 +67,9 @@ function UnlockedDashboard({ onLock }: { onLock: PanelSession["lock"] }) {
         </div>
         <div className={activeSection === "finances" ? "block" : "hidden"}>
           <FinancesPage userVault={userVault} active={activeSection === "finances"} />
+        </div>
+        <div className={activeSection === "autonomo" ? "block" : "hidden"}>
+          <AutonomoPage userVault={userVault} />
         </div>
       </div>
     </main>

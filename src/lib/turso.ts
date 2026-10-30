@@ -180,6 +180,24 @@ export async function getTurso(): Promise<Client> {
           payload_version INTEGER NOT NULL DEFAULT 1,
           updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )`,
+      // Autonomo: facturas registradas y ajustes, tambien cifrados con la DEK.
+      `CREATE TABLE IF NOT EXISTS autonomo_invoices (
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL REFERENCES vault_users(id),
+          payload TEXT NOT NULL,
+          payload_iv TEXT NOT NULL,
+          payload_version INTEGER NOT NULL DEFAULT 1,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )`,
+      `CREATE TABLE IF NOT EXISTS autonomo_settings (
+          user_id TEXT PRIMARY KEY REFERENCES vault_users(id),
+          payload TEXT NOT NULL,
+          payload_iv TEXT NOT NULL,
+          payload_version INTEGER NOT NULL DEFAULT 1,
+          updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )`,
+      "CREATE INDEX IF NOT EXISTS autonomo_invoices_user_id_idx ON autonomo_invoices(user_id)",
       "CREATE INDEX IF NOT EXISTS credentials_name_idx ON credentials(name)",
       "CREATE INDEX IF NOT EXISTS credentials_group_name_idx ON credentials(group_name)",
       "CREATE INDEX IF NOT EXISTS payments_subscription_id_idx ON payments(subscription_id)",
