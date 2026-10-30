@@ -58,12 +58,17 @@ function statusOf(obligation: FilingObligation, today: string, filed: Set<string
   return obligation.start <= today ? "open" : "upcoming";
 }
 
-/** Obligaciones del año pasado y el actual desde el alta (sin alta, solo las del año en curso), por plazo. */
+/**
+ * Obligaciones desde el alta hasta el año en curso (sin alta, solo las del año en curso), por plazo.
+ * Se recorren todos los años desde el alta para que lo vencido sin presentar nunca desaparezca.
+ */
 export function obligationsFor(today: string, settings: AutonomoSettings): ScheduledObligation[] {
   const year = Number(today.slice(0, 4));
   const filed = new Set(settings.filed);
   const from = settings.activityStart ?? `${year}-01-01`;
-  return [year - 1, year]
+  // El 4T y la renta del año anterior se presentan este año: ese año fiscal entra siempre.
+  const firstYear = Math.min(Number(from.slice(0, 4)), year - 1);
+  return Array.from({ length: year - firstYear + 1 }, (_, index) => firstYear + index)
     .flatMap(filingObligations)
     .filter((obligation) => obligation.periodEnd >= from)
     .map((obligation, index) => ({ obligation, index }))

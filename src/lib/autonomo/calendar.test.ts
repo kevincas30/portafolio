@@ -61,3 +61,21 @@ describe("calendario a hoy", () => {
     expect(ids.some((id) => id.includes("2025"))).toBe(false);
   });
 });
+
+describe("bordes del calendario", () => {
+  it("lo vencido sin presentar sigue a la vista aunque pasen los años", () => {
+    const list = obligationsFor("2028-03-01", settings());
+    expect(list.find((item) => item.id === "303-2026-4")?.status).toBe("overdue");
+    expect(list.find((item) => item.id === "100-2026")?.status).toBe("overdue");
+  });
+
+  it("el último día del plazo sigue abierto y el siguiente ya está vencido", () => {
+    expect(obligationsFor("2027-01-30", settings())[0]).toMatchObject({ id: "303-2026-4", status: "open" });
+    expect(obligationsFor("2027-01-31", settings())[0]).toMatchObject({ id: "303-2026-4", status: "overdue" });
+  });
+
+  it("el 390 tiene etapas y la renta no", () => {
+    expect(obligationsFor("2027-01-15", settings()).find((item) => item.id === "390-2026")?.stage).toBe("file");
+    expect(obligationsFor("2027-05-15", settings()).find((item) => item.id === "100-2026")).toMatchObject({ status: "open", stage: null });
+  });
+});
