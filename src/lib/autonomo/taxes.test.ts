@@ -102,3 +102,10 @@ describe("plazos y hucha", () => {
     expect(taxSavings(invoices, "2026-10-10")).toEqual({ vat: 42_000, irpf: 23_000, total: 65_000 });
   });
 });
+
+describe("hucha con trimestres presentados", () => {
+  it("lo ya presentado sale de la hucha", () => {
+    const invoices = [...busyPriorYear, invoice({ date: "2026-08-01", base: 100_000, vatRate: 21 })];
+    expect(taxSavings(invoices, "2026-10-10", ["303-2026-3"])).toEqual({ vat: 0, irpf: 19_000, total: 19_000 });
+  });
+});

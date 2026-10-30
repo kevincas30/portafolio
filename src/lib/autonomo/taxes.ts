@@ -134,13 +134,17 @@ export interface TaxSavings {
   total: number;
 }
 
-/** Lo que hay que tener apartado hoy: el IVA y el 130 a ingresar de los trimestres pendientes. */
-export function taxSavings(invoices: Invoice[], today: string): TaxSavings {
+/**
+ * Lo que hay que tener apartado hoy: el IVA y el 130 a ingresar de los trimestres pendientes.
+ * Un modelo ya presentado (`303-2026-3` en `filed`) ya salio de la cuenta y no cuenta.
+ */
+export function taxSavings(invoices: Invoice[], today: string, filed: string[] = []): TaxSavings {
+  const done = new Set(filed);
   let vat = 0;
   let irpf = 0;
   for (const { year, quarter } of pendingQuarters(today)) {
-    vat += Math.max(0, quarterlyVat(invoices, year)[quarter - 1].result);
-    irpf += Math.max(0, quarterly130(invoices, year)[quarter - 1].result);
+    if (!done.has(`303-${year}-${quarter}`)) vat += Math.max(0, quarterlyVat(invoices, year)[quarter - 1].result);
+    if (!done.has(`130-${year}-${quarter}`)) irpf += Math.max(0, quarterly130(invoices, year)[quarter - 1].result);
   }
   return { vat, irpf, total: vat + irpf };
 }

@@ -47,7 +47,7 @@ describe("blob de facturas de autónomo", () => {
 
   it("cifra y descifra los ajustes, completando lo que falte", async () => {
     const dek = await importDek(generateDek());
-    const settings = { activityStart: "2026-11-01", professional: false, setAside: 123_450 };
+    const settings = { activityStart: "2026-11-01", professional: false, setAside: 123_450, filed: ["303-2026-4"], roadmapDone: [1, 4] };
     expect(await decodeAutonomoSettings(await encodeAutonomoSettings(settings, dek, "u1"), dek, "u1")).toEqual(settings);
 
     const partial = await encryptJson({ v: 1 }, dek, aad.autonomoSettings("u1"));
@@ -60,5 +60,15 @@ describe("ajustes de autónomo", () => {
     const dek = await importDek(generateDek());
     const sealed = await encryptJson({ v: 1, setAside: -5 }, dek, aad.autonomoSettings("u1"));
     expect((await decodeAutonomoSettings(sealed, dek, "u1")).setAside).toBe(0);
+  });
+});
+
+describe("estado del calendario y la hoja de ruta", () => {
+  it("guarda lo presentado y los pasos hechos, descartando valores inválidos", async () => {
+    const dek = await importDek(generateDek());
+    const sealed = await encryptJson({ v: 1, filed: ["303-2026-4", 7], roadmapDone: [1, 2, 11, "3"] }, dek, aad.autonomoSettings("u1"));
+    const decoded = await decodeAutonomoSettings(sealed, dek, "u1");
+    expect(decoded.filed).toEqual(["303-2026-4"]);
+    expect(decoded.roadmapDone).toEqual([1, 2]);
   });
 });

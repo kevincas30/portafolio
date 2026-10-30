@@ -38,4 +38,8 @@ export interface AutonomoSettings {
   professional: boolean;
   /** Lo que ya tienes en la cuenta aparte para impuestos (centimos). */
   setAside: number;
+  /** Modelos ya presentados: `303-2026-3`, `130-2026-3`, `390-2026`, `100-2026`. */
+  filed: string[];
+  /** Pasos hechos de la hoja de ruta de la guia (1 a 10). */
+  roadmapDone: number[];
 }

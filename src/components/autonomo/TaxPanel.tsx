@@ -22,7 +22,7 @@ function resultLabel(amount: number, refundable: boolean): string {
 
 export function TaxPanel({ invoices, settings, year, today, onSaveSettings }: TaxPanelProps) {
   const [editing, setEditing] = useState(false);
-  const savings = taxSavings(invoices, today);
+  const savings = taxSavings(invoices, today, settings.filed);
   const missing = savings.total - settings.setAside;
   const vat = quarterlyVat(invoices, year);
   const irpf = quarterly130(invoices, year);
@@ -49,7 +49,7 @@ export function TaxPanel({ invoices, settings, year, today, onSaveSettings }: Ta
         <button type="button" onClick={() => setEditing(true)} className="mt-3 min-h-10 w-full rounded-full border border-[var(--line)] text-xs font-extrabold text-[var(--ink)] transition hover:bg-[var(--surface-muted)]">
           Actualizar lo apartado
         </button>
-        <p className="mt-3 text-xs text-[var(--muted-strong)]">Suma el trimestre en curso y el anterior mientras su plazo siga abierto. Es una estimación: confírmala con la gestoría.</p>
+        <p className="mt-3 text-xs text-[var(--muted-strong)]">Suma el trimestre en curso y el anterior mientras su plazo siga abierto, salvo lo que ya marcaste como presentado. Es una estimación: confírmala con la gestoría.</p>
       </section>
 
       <section className="overflow-x-auto rounded-[22px] border border-[var(--line)] bg-[var(--surface)]">

@@ -17,8 +17,8 @@ Branch: `feat/autonomo` (from `origin/main`). Delivery strategy: ordered work-un
 | ID | Specs | Route | Status | Commit |
 |----|-------|-------|--------|--------|
 | T1 | S1, S4, S6 | inline | done (RED→GREEN: 15 tests) | 9d8f8bf |
-| T2 | S4, S5 | inline | done (RED→GREEN: 10 tests) | see L7 |
-| T3 | S3 | inline | pending | — |
+| T2 | S4, S5 | inline | done (RED→GREEN: 10 tests) | ad1dc4d |
+| T3 | S3 | inline | done (RED→GREEN: 7 tests) | see L8 |
 | T4 | S2 | inline | pending | — |
 | T5 | S4 | inline | pending | — |
 
@@ -39,3 +39,4 @@ Route evidence: no Writer trigger reason (tasks are sequential and depend on T1'
 - **L5** (2026-10-30) — User: "haz los commits en orden pero pushea a main, tengo permiso como colaborador" → each task is committed in order and pushed directly to `main`.
 - **L6** (2026-10-30) — T1 done: `src/types/autonomo.ts`, `src/lib/autonomo/{invoice,blob}.ts` (+ tests), aad `aut-inv`/`aut-settings`, tables `autonomo_invoices`/`autonomo_settings`, route `user-vault/autonomo` (same scoping as finances, guarded by the vault middleware), hook `useVaultAutonomo`, components `src/components/autonomo/*`, fourth tab in `SectionSwitcher`/`Dashboard`. Checks: vitest 24 files / 153 tests pass; `tsc --noEmit` clean. `astro check` not run: local Node 22.15.1 < Astro's required 22.23.4. Not checked in the browser for the same reason. Next: T2.
 - **L7** (2026-10-30) — T2 done: `src/lib/autonomo/{taxes,tax-rules}.ts` (+ tests) and `TaxPanel.tsx`. 303: IVA accrued − deductible IVA, negative quarters compensated forward, Q4 negative "a devolver o compensar". 130 per AEAT instructions (boxes 01–19 without sections II, 16 and 18): 20% of cumulative net yield, 5% hard-to-justify expenses capped at 2,000 €/year, previous positive box 07, withholdings, box 13 reduction by prior-year net yield (no prior activity counts as 0 → 100 €), negatives carried forward. Sources: AEAT modelo 130 instructions and activities manual 3.7. Tax savings = positive 303 + 130 of pending quarters (previous while its window is open + current) vs. `setAside` setting. Checks: vitest 25 files / 163 tests; `tsc --noEmit` clean. Next: T3.
+- **L8** (2026-10-30) — T3 done: `src/lib/autonomo/{calendar,roadmap}.ts` (+ tests), `CalendarPanel.tsx`, `RoadmapDialog.tsx`. Obligations 303/130 per quarter (1st–20th of the month after; Q4 1–30 January), 390 (1–30 January), Renta 100 (1 April–30 June, exact start published yearly by AEAT); shown from the activity start (or the current year if unset), sorted by deadline with status filed/overdue/open/upcoming and stage review (days 1–9) / file (day 10+). Settings gained `filed` and `roadmapDone`; the tax savings skip filed models. Checks: vitest 26 files / 170 tests; `tsc --noEmit` clean. Next: T4 (Vercel Blob).

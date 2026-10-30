@@ -8,6 +8,7 @@ export const AUTONOMO_BLOB_VERSION = 1;
 export type InvoiceBlob = Omit<Invoice, "id" | "createdAt" | "updatedAt">;
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
+const ROADMAP_STEPS = 10;
 const COUNTERPARTY_TYPES = new Set(["company", "freelancer", "individual", "foreign"]);
 
 function assertObject(value: unknown): asserts value is Record<string, unknown> {
@@ -63,5 +64,9 @@ export async function decodeAutonomoSettings(sealed: Sealed, dek: CryptoKey, use
     activityStart: typeof raw.activityStart === "string" && DATE.test(raw.activityStart) ? raw.activityStart : defaults.activityStart,
     professional: typeof raw.professional === "boolean" ? raw.professional : defaults.professional,
     setAside: Number.isInteger(raw.setAside) && (raw.setAside as number) >= 0 ? (raw.setAside as number) : defaults.setAside,
+    filed: Array.isArray(raw.filed) ? raw.filed.filter((id): id is string => typeof id === "string") : defaults.filed,
+    roadmapDone: Array.isArray(raw.roadmapDone)
+      ? raw.roadmapDone.filter((step): step is number => Number.isInteger(step) && step >= 1 && step <= ROADMAP_STEPS)
+      : defaults.roadmapDone,
   };
 }

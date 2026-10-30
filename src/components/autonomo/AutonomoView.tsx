@@ -1,7 +1,9 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { ChevronLeft, ChevronRight, LoaderCircle, Lock, Plus, Settings2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, ListChecks, LoaderCircle, Lock, Plus, Settings2 } from "lucide-react";
 import { AutonomoSettingsForm } from "@/components/autonomo/AutonomoSettingsForm";
+import { CalendarPanel } from "@/components/autonomo/CalendarPanel";
 import { counterpartyLabels, InvoiceForm } from "@/components/autonomo/InvoiceForm";
+import { RoadmapDialog } from "@/components/autonomo/RoadmapDialog";
 import { TaxPanel } from "@/components/autonomo/TaxPanel";
 import { headerButtonClass } from "@/components/passwords/PasswordsHeader";
 import { invoiceAmounts, quarterOf, type Quarter } from "@/lib/autonomo/invoice";
@@ -34,6 +36,7 @@ export function AutonomoView({ autonomo, owner, onLock, headerActions }: Autonom
   const [kindFilter, setKindFilter] = useState<KindFilter>("all");
   const [form, setForm] = useState<{ invoice?: Invoice } | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [roadmapOpen, setRoadmapOpen] = useState(false);
 
   const byQuarter = useMemo(() => {
     const groups = new Map<Quarter, Invoice[]>();
@@ -63,6 +66,9 @@ export function AutonomoView({ autonomo, owner, onLock, headerActions }: Autonom
             {headerActions}
             <button type="button" onClick={onLock} className={headerButtonClass}>
               <Lock aria-hidden="true" className="size-4" /> Bloquear
+            </button>
+            <button type="button" onClick={() => setRoadmapOpen(true)} className={headerButtonClass}>
+              <ListChecks aria-hidden="true" className="size-4" /> Hoja de ruta
             </button>
             <button type="button" onClick={() => setSettingsOpen(true)} className={headerButtonClass}>
               <Settings2 aria-hidden="true" className="size-4" /> Mi actividad
@@ -102,7 +108,10 @@ export function AutonomoView({ autonomo, owner, onLock, headerActions }: Autonom
           <p className="mt-3 text-sm font-bold">Descifrando tus facturas…</p>
         </div>
       ) : (
-        <TaxPanel invoices={autonomo.invoices} settings={autonomo.settings} year={year} today={today} onSaveSettings={autonomo.saveSettings} />
+        <>
+          <TaxPanel invoices={autonomo.invoices} settings={autonomo.settings} year={year} today={today} onSaveSettings={autonomo.saveSettings} />
+          <CalendarPanel settings={autonomo.settings} today={today} onSaveSettings={autonomo.saveSettings} />
+        </>
       )}
 
       {!autonomo.ready ? null : byQuarter.size === 0 ? (
@@ -152,7 +161,8 @@ export function AutonomoView({ autonomo, owner, onLock, headerActions }: Autonom
           onClose={() => setForm(null)}
         />
       )}
-      {settingsOpen && <AutonomoSettingsForm settings={autonomo.settings} onSave={autonomo.saveSettings} onClose={() => setSettingsOpen(false)} />}
+      {roadmapOpen && <RoadmapDialog settings={autonomo.settings} onSave={autonomo.saveSettings} onClose={() => setRoadmapOpen(false)} />}
+      {settingsOpen &&<AutonomoSettingsForm settings={autonomo.settings} onSave={autonomo.saveSettings} onClose={() => setSettingsOpen(false)} />}
     </div>
   );
 }
