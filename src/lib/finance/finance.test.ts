@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { defaultFinanceSettings } from "@/lib/finance/defaults";
 import { dateInMonth, monthRange, shiftMonth } from "@/lib/finance/months";
-import { nextRecurringDate, resumeRule, runRecurring } from "@/lib/finance/recurring";
+import { monthlyFixedExpense, nextRecurringDate, resumeRule, runRecurring } from "@/lib/finance/recurring";
 import { antRules, budgetState, change, isAntExpense, monthSummary, monthTotals } from "@/lib/finance/summary";
 import type { FinanceEntry, FinanceSettings, RecurringRule } from "@/types/finance";
 
@@ -178,5 +178,52 @@ describe("runRecurring", () => {
   it("calcula la proxima fecha", () => {
     expect(nextRecurringDate({ ...rule, day: 31, generatedThrough: "2027-01" })).toBe("2027-02-28");
     expect(nextRecurringDate(rule)).toBe("2026-08-01");
+  });
+});
+
+describe("fijos anuales", () => {
+  const seguro: RecurringRule = {
+    id: "seguro", kind: "expense", amount: 36000, categoryId: "casa", note: "Seguro",
+    day: 15, startMonth: "2024-03", frequency: "yearly", generatedThrough: null, active: true,
+  };
+  const ids = () => { let n = 0; return () => `n${++n}`; };
+
+  it("anota una vez por anio, en el mes de inicio", () => {
+    const run = runRecurring([seguro], "2026-10-25", ids());
+    expect(run.entries.map((item) => item.date)).toEqual(["2024-03-15", "2025-03-15", "2026-03-15"]);
+    expect(run.rules[0].generatedThrough).toBe("2026-03");
+    expect(nextRecurringDate(run.rules[0])).toBe("2027-03-15");
+  });
+
+  it("no anota antes del dia del aniversario", () => {
+    const run = runRecurring([{ ...seguro, generatedThrough: "2025-03" }], "2026-03-14", ids());
+    expect(run.entries).toEqual([]);
+    expect(runRecurring([{ ...seguro, generatedThrough: "2025-03" }], "2026-03-15", ids()).entries).toHaveLength(1);
+  });
+
+  it("el tope de 24 es de movimientos: un anual atrasado se pone al dia entero", () => {
+    const run = runRecurring([{ ...seguro, startMonth: "2015-03" }], "2026-10-25", ids());
+    expect(run.entries).toHaveLength(12);
+    expect(run.rules[0].generatedThrough).toBe("2026-03");
+  });
+
+  it("al reanudar salta al proximo aniversario que no paso", () => {
+    const paused = { ...seguro, active: false, generatedThrough: "2025-03" };
+    const resumed = resumeRule(paused, "2026-10-25");
+    expect(resumed).toMatchObject({ active: true, generatedThrough: "2026-03" });
+    expect(runRecurring([resumed], "2026-10-25", ids()).entries).toEqual([]);
+    expect(nextRecurringDate(resumed)).toBe("2027-03-15");
+  });
+
+  it("al reanudar en el mes del aniversario lo anota", () => {
+    const resumed = resumeRule({ ...seguro, active: false, generatedThrough: "2025-03" }, "2026-03-20");
+    expect(resumed.generatedThrough).toBe("2025-03");
+    expect(runRecurring([resumed], "2026-03-20", ids()).entries.map((item) => item.date)).toEqual(["2026-03-15"]);
+  });
+
+  it("el total mensual reparte los anuales en 12", () => {
+    const alquiler: RecurringRule = { ...seguro, id: "alquiler", amount: 80000, frequency: undefined };
+    expect(monthlyFixedExpense([alquiler, seguro])).toBe(83000);
+    expect(monthlyFixedExpense([{ ...seguro, amount: 10000 }])).toBe(833);
   });
 });
